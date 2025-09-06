@@ -1,0 +1,128 @@
+import { z } from "zod";
+
+// Text field schema
+export const textFieldSchema = z.object({
+  type: z.literal("text"),
+  label: z.string(),
+  name: z.string(),
+  placeholder: z.string().optional(),
+  required: z.boolean().optional(),
+  defaultValue: z.string().optional(),
+  minLength: z.number().optional(),
+  maxLength: z.number().optional(),
+  pattern: z.string().optional(),
+});
+
+// Number field schema
+export const numberFieldSchema = z.object({
+  type: z.literal("number"),
+  label: z.string(),
+  name: z.string(),
+  min: z.number().optional(),
+  max: z.number().optional(),
+  step: z.number().optional(),
+  required: z.boolean().optional(),
+  defaultValue: z.number().optional(),
+});
+
+// Checkbox field schema
+export const checkboxFieldSchema = z.object({
+  type: z.literal("checkbox"),
+  label: z.string(),
+  name: z.string(),
+  required: z.boolean().optional(),
+  defaultChecked: z.boolean().optional(),
+});
+
+// Select field schema
+export const selectFieldSchema = z.object({
+  type: z.literal("select"),
+  label: z.string(),
+  name: z.string(),
+  required: z.boolean().optional(),
+  options: z.array(
+    z.object({
+      label: z.string(),
+      value: z.string(),
+      disabled: z.boolean().optional(),
+    })
+  ),
+  defaultValue: z.string().optional(),
+});
+
+// Radio field schema
+export const radioFieldSchema = z.object({
+  type: z.literal("radio"),
+  label: z.string(),
+  name: z.string(),
+  required: z.boolean().optional(),
+  options: z.array(
+    z.object({
+      label: z.string(),
+      value: z.string(),
+      disabled: z.boolean().optional(),
+    })
+  ),
+  defaultValue: z.string().optional(),
+});
+
+// Textarea field schema
+export const textareaFieldSchema = z.object({
+  type: z.literal("textarea"),
+  label: z.string(),
+  name: z.string(),
+  placeholder: z.string().optional(),
+  required: z.boolean().optional(),
+  defaultValue: z.string().optional(),
+  minLength: z.number().optional(),
+  maxLength: z.number().optional(),
+  rows: z.number().optional(),
+});
+
+// Date field schema
+export const dateFieldSchema = z.object({
+  type: z.literal("date"),
+  label: z.string(),
+  name: z.string(),
+  required: z.boolean().optional(),
+  min: z.string().optional(), // ISO date string
+  max: z.string().optional(), // ISO date string
+  defaultValue: z.string().optional(), // ISO date string
+});
+
+// Group/Section schema (for nested fields)
+export const groupFieldSchema = z.object({
+  type: z.literal("group"),
+  label: z.string(),
+  name: z.string().optional(),
+  fields: z.array(z.lazy(() => formFieldSchema)),
+  description: z.string().optional(),
+  condition: z
+    .object({
+      field: z.string(),
+      value: z.any(),
+      operator: z.enum(["equals", "notEquals", "greaterThan", "lessThan"]).optional(),
+    })
+    .optional(),
+});
+
+// Union schema for all field types
+export const formFieldSchema = z.union([
+  textFieldSchema,
+  numberFieldSchema,
+  checkboxFieldSchema,
+  selectFieldSchema,
+  radioFieldSchema,
+  textareaFieldSchema,
+  dateFieldSchema,
+  groupFieldSchema,
+  dividerFieldSchema,
+]);
+
+// Divider schema 
+export const dividerFieldSchema = z.object({
+  type: z.literal("divider"),
+  label: z.string().optional(),
+});
+
+export type FormField = z.infer<typeof formFieldSchema>;
