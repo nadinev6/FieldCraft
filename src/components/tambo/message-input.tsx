@@ -224,7 +224,11 @@ const MessageInput = React.forwardRef<HTMLFormElement, MessageInputProps>(
         <form
           ref={ref}
           onSubmit={handleSubmit}
-          className={cn(messageInputVariants({ variant }), className)}
+          className={cn(
+            messageInputVariants({ variant }),
+            "dark:border dark:border-[var(--container-border-dark)]",
+            className
+          )}
           data-slot="message-input-form"
           {...props}
         >

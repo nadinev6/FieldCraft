@@ -115,7 +115,7 @@ function SettingsPanelBase(props: SettingsProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 max-w-2xl">
+    <div className="bg-white rounded-lg shadow-md p-6 max-w-2xl dark:border dark:border-[var(--container-border-dark)]">
       <h2 className="text-2xl font-semibold text-gray-900 mb-6">Settings</h2>
 
       {/* Personal Information */}

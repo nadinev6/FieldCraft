@@ -128,6 +128,7 @@ const ResizablePanel = React.forwardRef<HTMLDivElement, ResizablePanelProps>(
           "transition-[width] duration-75 ease-out",
           "overflow-x-auto",
           "flex-1 min-w-0",
+          "dark:border dark:border-[var(--container-border-dark)]",
           isLeftPanel
             ? "border-r border-border"
             : "border-l border-border ml-auto",
