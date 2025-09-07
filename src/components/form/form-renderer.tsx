@@ -140,6 +140,33 @@ export const FormRenderer: React.FC<FormRendererProps & { formDef?: any[] }> = (
   // Use exampleForm as default if no formDef is provided
   const actualFormDef = formDef || exampleForm;
 
+  // Check if we have any renderable fields
+  const hasRenderableFields = actualFormDef.some(section => {
+    if (section.type === "group" && Array.isArray(section.fields)) {
+      return section.fields.length > 0;
+    }
+    return section.type !== "divider";
+  });
+
+  // If no renderable fields, show a message
+  if (!hasRenderableFields) {
+    return (
+      <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+            No Form Fields Available
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            The form definition is empty or contains no renderable fields.
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-500">
+            Try asking for a specific form, like "Create a user registration form with username, email, and password fields"
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const handleButtonClick = (button: z.infer<typeof buttonSchema>, event: React.MouseEvent<HTMLButtonElement>) => {
     if (button.action) {
       // Emit a custom event with the action identifier

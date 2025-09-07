@@ -226,6 +226,7 @@ const MessageInput = React.forwardRef<HTMLFormElement, MessageInputProps>(
           onSubmit={handleSubmit}
           className={cn(
             messageInputVariants({ variant }),
+           "shadow-lg shadow-black/10 dark:shadow-black/30",
             "dark:border dark:border-[var(--container-border-dark)]",
             className
           )}
