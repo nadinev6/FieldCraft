@@ -5,17 +5,17 @@ import { formFieldSchema } from "@/lib/form-field-schemas";
 
 // Standard field styling
 const baseInputClass =
-  "w-full px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-900 dark:text-gray-100 dark:border-zinc-700";
+  "w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 dark:bg-zinc-800 dark:text-gray-100 dark:border-zinc-600 dark:focus:border-zinc-500";
 
 const baseLabelClass =
-  "block mb-2 font-semibold text-gray-700 dark:text-gray-200";
+  "block mb-2 font-medium text-gray-700 dark:text-gray-200 text-sm";
 
 // Button styling variants
 const buttonVariants = {
-  primary: "px-6 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition dark:bg-blue-500 dark:hover:bg-blue-600",
-  secondary: "px-6 py-2 rounded-lg bg-gray-200 text-gray-800 font-semibold hover:bg-gray-300 transition dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600",
-  outline: "px-6 py-2 rounded-lg border border-gray-300 bg-transparent text-gray-700 font-semibold hover:bg-gray-50 transition dark:border-zinc-600 dark:text-gray-200 dark:hover:bg-zinc-800",
-  danger: "px-6 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition dark:bg-red-500 dark:hover:bg-red-600",
+  primary: "px-6 py-3 rounded-lg bg-gray-900 text-white font-medium hover:bg-gray-800 transition-all duration-200 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200",
+  secondary: "px-6 py-3 rounded-lg bg-gray-200 text-gray-800 font-medium hover:bg-gray-300 transition-all duration-200 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600",
+  outline: "px-6 py-3 rounded-lg border border-gray-300 bg-transparent text-gray-700 font-medium hover:bg-gray-50 transition-all duration-200 dark:border-zinc-600 dark:text-gray-200 dark:hover:bg-zinc-800",
+  danger: "px-6 py-3 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-all duration-200 dark:bg-red-500 dark:hover:bg-red-600",
 };
 
 // Button schema for custom buttons
@@ -47,6 +47,33 @@ const FieldComponents: Record<string, React.FC<any>> = {
       <input type="password" id={name} name={name} className={baseInputClass} {...props} />
     </div>
   ),
+  number: ({ label, name, min, max, step, ...props }) => (
+    <div className="mb-4">
+      <label htmlFor={name} className={baseLabelClass}>{label}</label>
+      <input 
+        type="number" 
+        id={name} 
+        name={name} 
+        min={min}
+        max={max}
+        step={step}
+        className={baseInputClass} 
+        {...props} 
+      />
+    </div>
+  ),
+  select: ({ label, name, options, ...props }) => (
+    <div className="mb-4">
+      <label htmlFor={name} className={baseLabelClass}>{label}</label>
+      <select id={name} name={name} className={baseInputClass} {...props}>
+        {options?.map((option: any, idx: number) => (
+          <option key={idx} value={option.value} disabled={option.disabled}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  ),
   date: ({ label, name, ...props }) => (
     <div className="mb-4">
       <label htmlFor={name} className={baseLabelClass}>{label}</label>
@@ -54,9 +81,11 @@ const FieldComponents: Record<string, React.FC<any>> = {
     </div>
   ),
   checkbox: ({ label, name, ...props }) => (
-    <div className="mb-4 flex items-center">
-      <input type="checkbox" id={name} name={name} className="mr-2 accent-blue-600 dark:accent-blue-500" {...props} />
-      <label htmlFor={name} className={baseLabelClass}>{label}</label>
+    <div className="mb-4">
+      <div className="flex items-center">
+        <input type="checkbox" id={name} name={name} className="mr-3 w-4 h-4 accent-blue-600 dark:accent-blue-500" {...props} />
+        <label htmlFor={name} className="text-sm font-medium text-gray-700 dark:text-gray-200">{label}</label>
+      </div>
     </div>
   ),
   radio: ({ label, name, options, ...props }) => (
@@ -71,11 +100,11 @@ const FieldComponents: Record<string, React.FC<any>> = {
                 id={`${name}-${idx}`}
                 name={name}
                 value={option.value}
-                className="mr-2 accent-blue-600 dark:accent-blue-500"
+                className="mr-3 w-4 h-4 accent-blue-600 dark:accent-blue-500"
                 disabled={option.disabled}
                 {...props}
               />
-              <label htmlFor={`${name}-${idx}`} className="text-gray-700 dark:text-gray-200">
+              <label htmlFor={`${name}-${idx}`} className="text-sm text-gray-700 dark:text-gray-200">
                 {option.label}
               </label>
             </div>
@@ -97,14 +126,20 @@ const FieldComponents: Record<string, React.FC<any>> = {
     </div>
   ),
   divider: ({ label }) => (
-    <hr aria-label={label} className="my-8 border-gray-300 dark:border-zinc-700" />
+    <div className="my-8">
+      {label && <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">{label}</h3>}
+      <hr className="border-gray-300 dark:border-zinc-700" />
+    </div>
   ),
 };
 
 export const FormRenderer: React.FC<FormRendererProps & { formDef?: any[] }> = ({
-  formDef = exampleForm,
+  formDef,
   buttons,
 }) => {
+  // Use exampleForm as default if no formDef is provided
+  const actualFormDef = formDef || exampleForm;
+
   const handleButtonClick = (button: z.infer<typeof buttonSchema>, event: React.MouseEvent<HTMLButtonElement>) => {
     if (button.action) {
       // Emit a custom event with the action identifier
@@ -121,12 +156,13 @@ export const FormRenderer: React.FC<FormRendererProps & { formDef?: any[] }> = (
   };
 
   return (
-    <form className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900">
-      {formDef.map((section, idx) => {
+    <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
+      <form>
+        {actualFormDef.map((section, idx) => {
         if (section.type === "group" && Array.isArray(section.fields)) {
           return (
             <fieldset key={idx} className="mb-8">
-              <legend className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">
+              <legend className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
                 {section.label}
               </legend>
               {section.fields.map((field: any, fIdx: number) => {
@@ -164,6 +200,7 @@ export const FormRenderer: React.FC<FormRendererProps & { formDef?: any[] }> = (
           </button>
         )}
       </div>
-    </form>
+      </form>
+    </div>
   );
 };
