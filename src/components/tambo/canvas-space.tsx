@@ -100,7 +100,13 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
     if (messagesWithComponents.length > 0) {
       const latestMessage =
         messagesWithComponents[messagesWithComponents.length - 1];
-      setRenderedComponent(latestMessage.renderedComponent);
+      // Only update if the latest message actually has a rendered component
+      if (latestMessage.renderedComponent) {
+        setRenderedComponent(latestMessage.renderedComponent);
+      }
+    } else {
+      // Only clear if there are no messages with components at all
+      setRenderedComponent(null);
     }
   }, [thread?.messages]);
 

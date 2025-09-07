@@ -66,7 +66,7 @@
   --muted-backdrop: oklch(0.25 0.07 252 / 0.1);
   
   /* Grid pattern color */
-  --dot-color: oklch(88% 0.08 150 / 0.5);
+  --dot-color: oklch(88% 0.08 150 / 0.8);
   --message-border-dark: oklch(1 0 0 / 15%);
   --container-border-dark: oklch(1 0 0 / 10%);
   
@@ -106,7 +106,7 @@
   --container: oklch(0.98 0 247);
   --backdrop: oklch(0.25 0.07 252 / 0.25);
   --muted-backdrop: oklch(0.25 0.07 252 / 0.1);
-  --dot-color: oklch(88% 0.08 150 / 0.4);
+  --dot-color: oklch(88% 0.08 150 / 0.7);
   --message-border-dark: oklch(1 0 0 / 15%);
   --container-border-dark: oklch(1 0 0 / 10%);
   --radius: 0.5rem;

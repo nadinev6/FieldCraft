@@ -127,7 +127,6 @@ const ResizablePanel = React.forwardRef<HTMLDivElement, ResizablePanelProps>(
           "h-screen flex flex-col bg-background relative",
           "transition-[width] duration-75 ease-out",
           "overflow-x-auto",
-          "flex-1 min-w-0",
           "dark:border dark:border-[var(--container-border-dark)]",
           isLeftPanel
             ? "border-r border-border"
@@ -135,8 +134,7 @@ const ResizablePanel = React.forwardRef<HTMLDivElement, ResizablePanelProps>(
           className,
         )}
         style={{
-          //width: `${width}px`,
-          flex: "1 1 auto",
+          width: `${width}px`,
         }}
         {...props}
       >

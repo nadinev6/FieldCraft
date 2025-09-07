@@ -14,13 +14,11 @@ export default function App() {
     >
       <div className="flex h-screen w-full">
         {/* Left panel: Chat (1/3) */}
-        <div className="flex-[1_1_33%] min-w-0 h-full shadow-2xl">
-  <MessageThreadPanel contextKey="main-thread" className="w-full h-full flex-1" />
-        </div>
+        <MessageThreadPanel contextKey="main-thread" className="h-full shadow-2xl" />
 
         {/* Right panel: Canvas (2/3) */}
-        <div className="flex-[2_2_67%] min-w-0 h-full shadow-2xl">
-  <CanvasSpace className="w-full h-full flex-1" />
+        <div className="flex-1 min-w-0 h-full shadow-2xl">
+          <CanvasSpace className="w-full h-full flex-1" />
         </div>
       </div>
     </TamboProvider>
