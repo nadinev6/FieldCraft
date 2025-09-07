@@ -69,6 +69,7 @@
   --dot-color: oklch(88% 0.08 150 / 0.8);
   --message-border-dark: oklch(1 0 0 / 15%);
   --container-border-dark: oklch(1 0 0 / 10%);
+  --user-message-bubble: oklch(88.5% 0.08 150);
   
   --radius: 0.5rem;
   --panel-left-width: 500px;
@@ -109,6 +110,7 @@
   --dot-color: oklch(88% 0.08 150 / 0.7);
   --message-border-dark: oklch(1 0 0 / 15%);
   --container-border-dark: oklch(1 0 0 / 10%);
+  --user-message-bubble: oklch(88.5% 0.08 150);
   --radius: 0.5rem;
   --panel-left-width: 500px;
   --panel-right-width: 500px;
