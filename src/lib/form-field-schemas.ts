@@ -90,6 +90,12 @@ export const dateFieldSchema = z.object({
   defaultValue: z.string().optional(), // ISO date string
 });
 
+// Divider schema 
+export const dividerFieldSchema = z.object({
+  type: z.literal("divider"),
+  label: z.string().optional(),
+});
+
 // Group/Section schema (for nested fields)
 export const groupFieldSchema = z.object({
   type: z.literal("group"),
@@ -119,10 +125,5 @@ export const formFieldSchema = z.union([
   dividerFieldSchema,
 ]);
 
-// Divider schema 
-export const dividerFieldSchema = z.object({
-  type: z.literal("divider"),
-  label: z.string().optional(),
-});
 
 export type FormField = z.infer<typeof formFieldSchema>;
