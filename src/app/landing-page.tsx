@@ -4,11 +4,11 @@ import { PlaceholdersAndVanishInput } from "../ui/placeholders-and-vanish-input"
 
 export function PlaceholdersAndVanishInputDemo() {
   const placeholders = [
+    "Welcome to Field Craft",
     "Create a registration form for a work event",
-    "What fields are required for a sign up form?",
     "Show me an example of a sign-up form",
     "Create an order form for some items",
-    "How to add field to a consent form?",
+    "What fields to add  to a consent form?",
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
