@@ -1,17 +1,9 @@
+"use client";
 import { PlaceholdersAndVanishInput } from "@/components/PlaceholdersAndVanishInput";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen relative">
-      {/* Theme Switcher in top right */}
-      <div className="absolute top-8 right-8 z-10">
-        <ThemeSwitcher />
-      </div>
-      
-      {/* Main content */}
+    <div className="min-h-screen p-8 flex flex-col items-center justify-center">
       <PlaceholdersAndVanishInput
         placeholders={[
           "Welcome to Field Craft",
@@ -21,7 +13,7 @@ export default function Home() {
           "What fields to add to a consent form?"
         ]}
         onChange={(e) => console.log(e.target.value)}
-        onSubmit={(e) => console.log("submitted")}
+        onSubmit={() => console.log("submitted")}
       />
     </div>
   );
