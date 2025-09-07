@@ -4,11 +4,11 @@ import { PlaceholdersAndVanishInput } from "../ui/placeholders-and-vanish-input"
 
 export function PlaceholdersAndVanishInputDemo() {
   const placeholders = [
-    "What's the first rule of Fight Club?",
-    "Who is Tyler Durden?",
-    "Where is Andrew Laeddis Hiding?",
-    "Write a Javascript method to reverse a string",
-    "How to assemble your own PC?",
+    "Create a registration form for a work event",
+    "What fields are required for a sign up form?",
+    "Show me an example of a sign-up form",
+    "Create an order form for some items",
+    "How to add field to a consent form?",
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
