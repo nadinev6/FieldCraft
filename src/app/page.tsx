@@ -1,4 +1,5 @@
 import { ApiKeyCheck } from "@/components/ApiKeyCheck";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import Image from "next/image";
 
 const KeyFilesSection = () => (
@@ -96,6 +97,9 @@ export default function Home() {
     <div className="min-h-screen p-8 flex flex-col items-center justify-center font-[family-name:var(--font-geist-sans)]">
       <main className="max-w-2xl w-full space-y-8">
         <div className="flex flex-col items-center">
+          <div className="absolute top-8 right-8">
+            <ThemeSwitcher />
+          </div>
           <a href="https://tambo.co" target="_blank" rel="noopener noreferrer">
             <Image
               src="/Octo-Icon.svg"
