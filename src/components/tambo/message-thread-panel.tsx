@@ -266,8 +266,7 @@ export const MessageThreadPanel = React.forwardRef<
             <MessageInput contextKey={contextKey}>
               <MessageInputTextarea />
               <MessageInputToolbar>
-                {/* Uncomment this to enable client-side MCP config modal button */}
-                {/* <MessageInputMcpConfigButton /> */}
+                <MessageInputMcpConfigButton />
                 <MessageInputSubmitButton />
               </MessageInputToolbar>
               <MessageInputError />

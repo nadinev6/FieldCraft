@@ -7,6 +7,12 @@ import type { JSX } from "react";
 import React, { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
+import { z } from "zod";
+
+// Zod schema for ThemeSwitcher component (no props needed as it manages its own state)
+export const themeSwitcherSchema = z.object({});
+
+export type ThemeSwitcherProps = z.infer<typeof themeSwitcherSchema>;
 
 function ThemeOption({
   icon,
