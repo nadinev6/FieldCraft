@@ -1,6 +1,6 @@
 "use client";
 
-import { PlaceholdersAndVanishInput } from "@/ui/placeholders-and-vanish-input";
+import { PlaceholdersAndVanishInput } from "@/ui/placeholders-and-vanish-input"; 
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
