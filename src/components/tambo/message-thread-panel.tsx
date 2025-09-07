@@ -266,7 +266,7 @@ export const MessageThreadPanel = React.forwardRef<
             <MessageInput contextKey={contextKey}>
               <MessageInputTextarea />
               <MessageInputToolbar>
-                <MessageInputMcpConfigButton />
+                {/* <MessageInputMcpConfigButton /> */}
                 <MessageInputSubmitButton />
               </MessageInputToolbar>
               <MessageInputError />
