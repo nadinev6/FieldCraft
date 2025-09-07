@@ -11,6 +11,7 @@
 import { Graph, graphSchema } from "@/components/tambo/graph";
 import { DataCard, dataCardSchema } from "@/components/ui/card-data";
 import { FormRenderer, formRendererPropsSchema } from "@/components/form/form-renderer";
+import { ThemeSwitcher, themeSwitcherSchema } from "@/components/theme-switcher";
 import {
   getCountryPopulations,
   getGlobalPopulationTrend,
@@ -120,6 +121,12 @@ export const components: TamboComponent[] = [
     description: "A component that dynamically renders forms based on a provided schema definition. Supports various field types including text, number, checkbox, select, radio, textarea, date, and grouped sections with conditional logic.",
     component: FormRenderer,
     propsSchema: formRendererPropsSchema,
+  },
+  {
+    name: "ThemeSwitcher",
+    description: "A component that allows users to switch between light, dark, and system themes. Displays three toggle options with smooth animations.",
+    component: ThemeSwitcher,
+    propsSchema: themeSwitcherSchema,
   },
   // Add more components here
 ];
