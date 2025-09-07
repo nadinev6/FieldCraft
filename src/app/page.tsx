@@ -1,10 +1,17 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { PlaceholdersAndVanishInput } from "@/components/PlaceholdersAndVanishInput";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 
 export default function Home() {
+  const router = useRouter();
+
+  const handleSubmit = () => {
+    router.push("/chat");
+  };
+
   return (
-    <div className="min-h-screen p-8 flex flex-col items-center justify-center relative">
+    <div className="min-h-screen p-8 flex flex-col items-center justify-center relative bg-gradient-to-b from-[#7FFFC3]/25 via-transparent to-transparent">
       {/* Theme Switcher in top-right corner */}
       <div className="absolute top-8 right-8 z-10">
         <ThemeSwitcher />
@@ -12,7 +19,7 @@ export default function Home() {
       
       {/* Main Content */}
       <div className="flex flex-col items-center justify-center space-y-10 sm:space-y-20">
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-center dark:text-white text-black">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-normal text-center dark:text-white text-black">
           Craft Forms with AI
         </h1>
         
@@ -24,21 +31,10 @@ export default function Home() {
             "Create an order form for some items",
             "What fields to add to a consent form?"
           ]}
-          onChange={(e) => console.log(e.target.value)}
-          onSubmit={() => console.log("submitted")}
+          onChange={(value) => console.log(value)}
+          onSubmit={handleSubmit}
         />
       </div>
-      <PlaceholdersAndVanishInput
-        placeholders={[
-          "Welcome to Field Craft",
-          "Create a registration form for a work event",
-          "Show me an example of a sign-up form",
-          "Create an order form for some items",
-          "What fields to add to a consent form?"
-        ]}
-        onChange={(e) => console.log(e.target.value)}
-        onSubmit={() => console.log("submitted")}
-      />
     </div>
   );
 }
