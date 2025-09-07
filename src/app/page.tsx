@@ -28,9 +28,6 @@ export default function Home() {
           onSubmit={() => console.log("submitted")}
         />
       </div>
-    </div>
-  );
-}
       <PlaceholdersAndVanishInput
         placeholders={[
           "Welcome to Field Craft",
