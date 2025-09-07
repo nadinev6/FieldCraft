@@ -8,7 +8,7 @@ export function PlaceholdersAndVanishInputDemo() {
     "Create a registration form for a work event",
     "Show me an example of a sign-up form",
     "Create an order form for some items",
-    "What fields to add  to a consent form?",
+    "What fields to add to a consent form?",
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
