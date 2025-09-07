@@ -336,13 +336,14 @@ const MessageSuggestionsList = React.forwardRef<
             >
               <button
                 className={cn(
-                  "py-2 px-2.5 rounded-2xl text-xs transition-colors",
-                  "border border-flat",
+                  "py-2 px-2.5 rounded-xl text-xs transition-all duration-200",
+                  "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200",
+                  "shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_1px_3px_rgba(0,0,0,0.1),0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_1px_3px_rgba(0,0,0,0.2),0_1px_2px_rgba(0,0,0,0.1)]",
                   isGenerating
-                    ? "bg-muted/50 text-muted-foreground"
+                    ? "opacity-60 cursor-not-allowed"
                     : selectedSuggestionId === suggestion.id
-                      ? "bg-accent text-accent-foreground"
-                      : "bg-background hover:bg-accent hover:text-accent-foreground",
+                      ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                      : "hover:bg-gray-50 dark:hover:bg-gray-700 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] dark:active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] active:translate-y-[0.5px]",
                 )}
                 onClick={async () =>
                   !isGenerating && (await accept({ suggestion }))
@@ -359,7 +360,7 @@ const MessageSuggestionsList = React.forwardRef<
           placeholders.map((_, index) => (
             <div
               key={`placeholder-${index}`}
-              className="py-2 px-2.5 rounded-2xl text-xs border border-flat bg-muted/20 text-transparent animate-pulse"
+              className="py-2 px-2.5 rounded-xl text-xs bg-gray-100 dark:bg-gray-800 text-transparent animate-pulse shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_1px_3px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_1px_3px_rgba(0,0,0,0.2)]"
               data-placeholder-index={index}
             >
               <span className="invisible">Placeholder</span>
