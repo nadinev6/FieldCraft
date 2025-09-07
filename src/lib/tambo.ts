@@ -10,6 +10,7 @@
 
 import { Graph, graphSchema } from "@/components/tambo/graph";
 import { DataCard, dataCardSchema } from "@/components/ui/card-data";
+import { FormRenderer, formRendererPropsSchema } from "@/components/form/form-renderer";
 import {
   getCountryPopulations,
   getGlobalPopulationTrend,
@@ -113,6 +114,12 @@ export const components: TamboComponent[] = [
       "A component that displays options as clickable cards with links and summaries with the ability to select multiple items.",
     component: DataCard,
     propsSchema: dataCardSchema,
+  },
+  {
+    name: "FormRenderer",
+    description: "A component that dynamically renders forms based on a provided schema definition. Supports various field types including text, number, checkbox, select, radio, textarea, date, and grouped sections with conditional logic.",
+    component: FormRenderer,
+    propsSchema: formRendererPropsSchema,
   },
   // Add more components here
 ];

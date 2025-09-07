@@ -1,5 +1,7 @@
 import React from "react";
 import { exampleForm } from "@/lib/form-definitions";
+import { z } from "zod";
+import { formFieldSchema } from "@/lib/form-field-schemas";
 
 // Standard field styling
 const baseInputClass =
@@ -10,6 +12,13 @@ const baseLabelClass =
 
 const baseButtonClass =
   "w-full py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition dark:bg-blue-500 dark:hover:bg-blue-600";
+
+// Zod schema for FormRenderer props
+export const formRendererPropsSchema = z.object({
+  formDef: z.array(formFieldSchema).describe("Array of form field definitions that define the structure and fields of the form to render"),
+});
+
+export type FormRendererProps = z.infer<typeof formRendererPropsSchema>;
 
 // Individual field components
 const FieldComponents: Record<string, React.FC<any>> = {
@@ -43,7 +52,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
   // Add other field types 
 };
 
-export const FormRenderer: React.FC<{ formDef?: any[] }> = ({
+export const FormRenderer: React.FC<FormRendererProps & { formDef?: any[] }> = ({
   formDef = exampleForm,
 }) => {
   return (
