@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Star } from 'lucide-react';
 import { exampleForm } from "@/lib/form-definitions";
 import { z } from "zod";
 import { formFieldSchema } from "@/lib/form-field-schemas";

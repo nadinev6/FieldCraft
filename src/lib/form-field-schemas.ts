@@ -114,6 +114,17 @@ export const groupFieldSchema = z.object({
     .optional(),
 });
 
+// Star rating field schema
+export const starRatingFieldSchema = z.object({
+  type: z.literal("starRating"),
+  label: z.string(),
+  name: z.string(),
+  maxRating: z.number().min(1).max(10).optional().default(5),
+  required: z.boolean().optional(),
+  defaultValue: z.number().min(0).optional(),
+  allowHalf: z.boolean().optional().default(false),
+});
+
 // Union schema for all field types
 export const formFieldSchema = z.union([
   textFieldSchema,
@@ -125,6 +136,7 @@ export const formFieldSchema = z.union([
   dateFieldSchema,
   groupFieldSchema,
   dividerFieldSchema,
+  starRatingFieldSchema,
 ]);
 
 
