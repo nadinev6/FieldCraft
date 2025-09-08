@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { exampleForm } from "@/lib/form-definitions";
 import { z } from "zod";
 import { formFieldSchema } from "@/lib/form-field-schemas";
@@ -149,6 +151,27 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   // Use exampleForm as default if formDef is not provided or is explicitly undefined
   const actualFormDef = formDef === undefined ? exampleForm : formDef;
   
+  // State to manage collapsed groups
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<number, boolean>>({});
+  
+  // Initialize collapsed state for groups
+  useEffect(() => {
+    const initialCollapsedState: Record<number, boolean> = {};
+    actualFormDef.forEach((section, idx) => {
+      if (section.type === "group" && section.collapsible) {
+        initialCollapsedState[idx] = section.defaultCollapsed || false;
+      }
+    });
+    setCollapsedGroups(initialCollapsedState);
+  }, [actualFormDef]);
+  
+  const toggleGroupCollapse = (groupIndex: number) => {
+    setCollapsedGroups(prev => ({
+      ...prev,
+      [groupIndex]: !prev[groupIndex]
+    }));
+  };
+  
   // Check if formDef is invalid or empty *after* applying the default
   const isValidForm = Array.isArray(actualFormDef) && actualFormDef.length > 0;
   
@@ -206,17 +229,44 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       return null;
     }
     
+    const isCollapsed = collapsedGroups[idx] || false;
+    const isCollapsible = section.collapsible || false;
+    
     return (
       <fieldset key={idx} className="mb-8">
-        <legend>{section.label}</legend>
-        {section.fields.map((field, fIdx) => {
-          const Field = FieldComponents[field.type];
-          if (!Field) {
-            console.warn(`No component for field type: ${field.type}`);
-            return null;
-          }
-          return <Field key={fIdx} {...field} />;
-        })}
+        <legend className="flex items-center w-full">
+          {isCollapsible ? (
+            <button
+              type="button"
+              onClick={() => toggleGroupCollapse(idx)}
+              className="flex items-center gap-2 text-left font-medium text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+            >
+              <ChevronDown 
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  isCollapsed ? '-rotate-90' : 'rotate-0'
+                }`}
+              />
+              {section.label}
+            </button>
+          ) : (
+            <span className="font-medium text-gray-800 dark:text-gray-200">{section.label}</span>
+          )}
+        </legend>
+        
+        <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          isCollapsed ? 'max-h-0 opacity-0' : 'max-h-none opacity-100'
+        }`}>
+          <div className="pt-4">
+            {section.fields.map((field, fIdx) => {
+              const Field = FieldComponents[field.type];
+              if (!Field) {
+                console.warn(`No component for field type: ${field.type}`);
+                return null;
+              }
+              return <Field key={fIdx} {...field} />;
+            })}
+          </div>
+        </div>
       </fieldset>
     );
   }
