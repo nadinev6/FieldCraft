@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { exampleForm } from "@/lib/form-definitions";
 import { z } from "zod";
 import { formFieldSchema } from "@/lib/form-field-schemas";
@@ -6,10 +7,8 @@ import { formFieldSchema } from "@/lib/form-field-schemas";
 // Standard field styling
 const baseInputClass =
   "w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 dark:bg-zinc-800 dark:text-gray-100 dark:border-zinc-600 dark:focus:border-zinc-500";
-
 const baseLabelClass =
   "block mb-2 font-medium text-gray-700 dark:text-gray-200 text-sm";
-
 // Button styling variants
 const buttonVariants = {
   primary: "px-6 py-3 rounded-lg bg-gray-900 text-white font-medium hover:bg-gray-800 transition-all duration-200 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200",
@@ -25,10 +24,11 @@ const buttonSchema = z.object({
   variant: z.enum(["primary", "secondary", "outline", "danger"]).optional().default("primary").describe("The visual style variant of the button"),
   action: z.string().optional().describe("Optional action identifier for handling button clicks"),
 });
+
 // Zod schema for FormRenderer props
 export const formRendererPropsSchema = z.object({
-  formDef: z.array(formFieldSchema).describe("Array of form field definitions that define the structure and fields of the form to render"),
-  buttons: z.array(buttonSchema).optional().describe("Optional array of custom buttons to render at the bottom of the form"),
+  formDef: z.array(formFieldSchema).optional().describe("Array of form field definitions that define the structure and fields of the form to render"),
+  buttons: z.array(buttonSchema).optional().describe("Optional array of custom buttons to render at the bottom of the form"),
 });
 
 export type FormRendererProps = z.infer<typeof formRendererPropsSchema>;
@@ -133,101 +133,113 @@ const FieldComponents: Record<string, React.FC<any>> = {
   ),
 };
 
-export const FormRenderer: React.FC<FormRendererProps & { formDef?: any[] }> = ({
-  formDef,
-  buttons,
+export const FormRenderer: React.FC<FormRendererProps> = ({
+  formDef, // Destructure directly
+  buttons,
 }) => {
-  // Use exampleForm as default if no formDef is provided
-  const actualFormDef = formDef || exampleForm;
+  // Use exampleForm as default if formDef is not provided or is explicitly undefined
+  const actualFormDef = formDef === undefined ? exampleForm : formDef;
+  
+  // Check if formDef is invalid or empty *after* applying the default
+  const isValidForm = Array.isArray(actualFormDef) && actualFormDef.length > 0;
+  
+  if (!isValidForm) {
+    return (
+      <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+            Invalid Form Definition
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Please provide a valid form configuration.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-  // Check if we have any renderable fields
-  const hasRenderableFields = actualFormDef.some(section => {
-    if (section.type === "group" && Array.isArray(section.fields)) {
-      return section.fields.length > 0;
-    }
-    return section.type !== "divider";
-  });
+  // Log form data for debugging
+  useEffect(() => {
+    console.log("FormRenderer received formDef:", formDef);
+    console.log("Using actualFormDef:", actualFormDef);
+  }, [formDef, actualFormDef]); // Add actualFormDef to dependency array
 
-  // If no renderable fields, show a message
-  if (!hasRenderableFields) {
-    return (
-      <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
-        <div className="text-center">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-            No Form Fields Available
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            The form definition is empty or contains no renderable fields.
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-500">
-            Try asking for a specific form, like "Create a user registration form with username, email, and password fields"
-          </p>
-        </div>
-      </div>
-    );
+  // ... (handleButtonClick and return statement remain the same) ...
+   const handleButtonClick = (button: z.infer<typeof buttonSchema>, event: React.MouseEvent<HTMLButtonElement>) => {
+    if (button.action) {
+      // Emit a custom event with the action identifier
+      const customEvent = new CustomEvent('formButtonClick', {
+        detail: { action: button.action, button, event }
+      });
+      window.dispatchEvent(customEvent);
+    }
+    
+    // For submit buttons, let the default form submission behavior occur
+    if (button.type !== 'submit') {
+      event.preventDefault();
+    }
+  };
+
+  return (
+    <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
+      <form>
+{actualFormDef.map((section, idx) => {
+  console.log(`Processing section ${idx}:`, section);
+  
+  if (!section) {
+    console.log(`Skipping empty section ${idx}`);
+    return null;
   }
-
-  const handleButtonClick = (button: z.infer<typeof buttonSchema>, event: React.MouseEvent<HTMLButtonElement>) => {
-    if (button.action) {
-      // Emit a custom event with the action identifier
-      const customEvent = new CustomEvent('formButtonClick', {
-        detail: { action: button.action, button, event }
-      });
-      window.dispatchEvent(customEvent);
+  
+  if (section.type === "group") {
+    if (!section.fields || !Array.isArray(section.fields) || section.fields.length === 0) {
+      console.log(`Skipping empty group "${section.label}"`);
+      return null;
     }
     
-    // For submit buttons, let the default form submission behavior occur
-    if (button.type !== 'submit') {
-      event.preventDefault();
-    }
-  };
-
-  return (
-    <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
-      <form>
-        {actualFormDef.map((section, idx) => {
-        if (section.type === "group" && Array.isArray(section.fields)) {
-          return (
-            <fieldset key={idx} className="mb-8">
-              <legend className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
-                {section.label}
-              </legend>
-              {section.fields.map((field: any, fIdx: number) => {
-                const Field = FieldComponents[field.type];
-                return Field ? (
-                  <Field key={fIdx} {...field} />
-                ) : null;
-              })}
-            </fieldset>
-          );
-        }
-        if (section.type === "divider") {
-          const Divider = FieldComponents.divider;
-          return Divider ? <Divider key={idx} {...section} /> : null;
-        }
-        return null;
-      })}
-      
-      {/* Custom buttons or default submit button */}
-      <div className="flex gap-3 justify-end mt-6">
-        {buttons && buttons.length > 0 ? (
-          buttons.map((button, idx) => (
-            <button
-              key={idx}
-              type={button.type}
-              className={buttonVariants[button.variant]}
-              onClick={(e) => handleButtonClick(button, e)}
-            >
-              {button.label}
-            </button>
-          ))
-        ) : (
-          <button type="submit" className={buttonVariants.primary}>
-            Submit
-          </button>
-        )}
-      </div>
-      </form>
-    </div>
-  );
+    return (
+      <fieldset key={idx} className="mb-8">
+        <legend>{section.label}</legend>
+        {section.fields.map((field, fIdx) => {
+          const Field = FieldComponents[field.type];
+          if (!Field) {
+            console.warn(`No component for field type: ${field.type}`);
+            return null;
+          }
+          return <Field key={fIdx} {...field} />;
+        })}
+      </fieldset>
+    );
+  }
+  
+  if (section.type === "divider") {
+    return <hr key={idx} className="my-8 border-t border-gray-200" />;
+  }
+  
+  console.log(`Unknown section type: ${section.type}`);
+  return null;
+})}
+        
+        {/* Custom buttons or default submit button */}
+        <div className="flex gap-3 justify-end mt-6">
+          {buttons && buttons.length > 0 ? (
+            buttons.map((button, idx) => (
+              <button
+                key={idx}
+                type={button.type}
+                className={buttonVariants[button.variant]}
+                onClick={(e) => handleButtonClick(button, e)}
+              >
+                {button.label}
+              </button>
+            ))
+          ) : (
+            <button type="submit" className={buttonVariants.primary}>
+              Submit
+            </button>
+          )}
+        </div>
+      </form>
+    </div>
+  );
 };
