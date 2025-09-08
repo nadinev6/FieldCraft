@@ -41,6 +41,12 @@ const FieldComponents: Record<string, React.FC<any>> = {
       <input type="text" id={name} name={name} className={baseInputClass} {...props} />
     </div>
   ),
+  email: ({ label, name, ...props }) => (
+    <div className="mb-4">
+      <label htmlFor={name} className={baseLabelClass}>{label}</label>
+      <input type="email" id={name} name={name} className={baseInputClass} {...props} />
+    </div>
+  ),
   password: ({ label, name, ...props }) => (
     <div className="mb-4">
       <label htmlFor={name} className={baseLabelClass}>{label}</label>
@@ -62,6 +68,14 @@ const FieldComponents: Record<string, React.FC<any>> = {
       />
     </div>
   ),
+  checkbox: ({ label, name, ...props }) => (
+    <div className="mb-4">
+      <div className="flex items-center">
+        <input type="checkbox" id={name} name={name} className="mr-3 w-4 h-4 accent-blue-600 dark:accent-blue-500" {...props} />
+        <label htmlFor={name} className="text-sm font-medium text-gray-700 dark:text-gray-200">{label}</label>
+      </div>
+    </div>
+  ),
   select: ({ label, name, options, ...props }) => (
     <div className="mb-4">
       <label htmlFor={name} className={baseLabelClass}>{label}</label>
@@ -74,18 +88,22 @@ const FieldComponents: Record<string, React.FC<any>> = {
       </select>
     </div>
   ),
+  textarea: ({ label, name, rows = 4, ...props }) => (
+    <div className="mb-4">
+      <label htmlFor={name} className={baseLabelClass}>{label}</label>
+      <textarea
+        id={name}
+        name={name}
+        rows={rows}
+        className={baseInputClass}
+        {...props}
+      />
+    </div>
+  ),
   date: ({ label, name, ...props }) => (
     <div className="mb-4">
       <label htmlFor={name} className={baseLabelClass}>{label}</label>
       <input type="date" id={name} name={name} className={baseInputClass} {...props} />
-    </div>
-  ),
-  checkbox: ({ label, name, ...props }) => (
-    <div className="mb-4">
-      <div className="flex items-center">
-        <input type="checkbox" id={name} name={name} className="mr-3 w-4 h-4 accent-blue-600 dark:accent-blue-500" {...props} />
-        <label htmlFor={name} className="text-sm font-medium text-gray-700 dark:text-gray-200">{label}</label>
-      </div>
     </div>
   ),
   radio: ({ label, name, options, ...props }) => (
@@ -111,18 +129,6 @@ const FieldComponents: Record<string, React.FC<any>> = {
           ))}
         </div>
       </fieldset>
-    </div>
-  ),
-  textarea: ({ label, name, rows = 4, ...props }) => (
-    <div className="mb-4">
-      <label htmlFor={name} className={baseLabelClass}>{label}</label>
-      <textarea
-        id={name}
-        name={name}
-        rows={rows}
-        className={baseInputClass}
-        {...props}
-      />
     </div>
   ),
   divider: ({ label }) => (
