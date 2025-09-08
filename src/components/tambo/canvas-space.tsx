@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { useTamboThread } from "@tambo-ai/react";
+import { ExternalLink } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import * as React from "react";
 import type { TamboThreadMessage } from "@tambo-ai/react";
@@ -191,6 +192,19 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
 
       {/* Zoom Controls */}
       <div className="absolute bottom-4 right-4 flex space-x-2 bg-white dark:bg-zinc-800 p-2 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700">
+        <button
+          onClick={() => {
+            if (activeCanvasMessageId) {
+              const url = `${window.location.origin}/chat?messageId=${activeCanvasMessageId}`;
+              window.open(url, '_blank');
+            }
+          }}
+          disabled={!activeCanvasMessageId}
+          className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Open in new tab"
+        >
+          <ExternalLink className="w-4 h-4" />
+        </button>
         <button
           onClick={handleZoomOut}
           className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"

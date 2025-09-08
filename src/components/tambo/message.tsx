@@ -9,6 +9,7 @@ import type TamboAI from "@tambo-ai/typescript-sdk";
 import { cva, type VariantProps } from "class-variance-authority";
 import stringify from "json-stringify-pretty-compact";
 import { Check, ChevronDown, ExternalLink, Loader2, X } from "lucide-react";
+import { Check, ChevronDown, Eye, Loader2, X } from "lucide-react";
 import * as React from "react";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -491,8 +492,8 @@ const MessageRenderedComponentArea = React.forwardRef<
               className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-secondary transition-colors duration-200 cursor-pointer group"
               aria-label="View component in canvas"
             >
-              View component
-              <ExternalLink className="w-3.5 h-3.5" />
+              View in Canvas
+              <Eye className="w-3.5 h-3.5" />
             </button>
           </div>
         ) : (
