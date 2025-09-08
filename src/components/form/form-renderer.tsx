@@ -219,10 +219,17 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   }
   
   if (section.type === "divider") {
-    return <hr key={idx} className="my-8 border-t border-gray-200" />;
+    return <FieldComponents.divider key={idx} {...section} />;
   }
   
-  console.log(`Unknown section type: ${section.type}`);
+  // Check if it's an individual field type
+  const Field = FieldComponents[section.type];
+  if (Field) {
+    console.log(`Rendering individual field of type: ${section.type}`);
+    return <Field key={idx} {...section} />;
+  }
+  
+  console.warn(`Unknown section type: ${section.type}`);
   return null;
 })}
         
