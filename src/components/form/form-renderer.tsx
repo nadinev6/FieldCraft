@@ -303,80 +303,105 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   return (
     <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
       <form>
-{actualFormDef.map((section, idx) => {
-  console.log(`Processing section ${idx}:`, section);
-  
-  if (!section) {
-    console.log(`Skipping empty section ${idx}`);
-    return null;
-  }
-  
-  if (section.type === "group") {
-    if (!section.fields || !Array.isArray(section.fields) || section.fields.length === 0) {
-      console.log(`Skipping empty group "${section.label}"`);
-      return null;
-    }
-    
-    const isCollapsed = collapsedGroups[idx] || false;
-    const isCollapsible = section.collapsible || false;
-    
-    return (
-      <fieldset key={idx} className="mb-8">
-        <legend className="flex items-center w-full">
-          {isCollapsible ? (
-            <button
-              type="button"
-              onClick={() => toggleGroupCollapse(idx)}
-              className="flex items-center gap-2 text-left font-medium text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
-            >
-              <ChevronDown 
-                className={`w-4 h-4 transition-transform duration-200 ${
-                  isCollapsed ? '-rotate-90' : 'rotate-0'
-                }`}
-              />
-              {section.label}
-            </button>
-          ) : (
-            <span className="font-medium text-gray-800 dark:text-gray-200">{section.label}</span>
-          )}
-        </legend>
-        
-        <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
-          isCollapsed ? 'max-h-0 opacity-0' : 'max-h-none opacity-100'
-        }`}>
-          <div className={cn(
-            "pt-4",
-            section.columns && "grid gap-x-4 items-start",
-            section.columns && getGridColsClass(section.columns)
-          )}>
-            {section.fields.map((field, fIdx) => {
-              const Field = FieldComponents[field.type];
-              if (!Field) {
-                console.warn(`No component for field type: ${field.type}`);
-                return null;
-              }
-              return <Field key={fIdx} {...field} />;
-            })}
-          </div>
-        </div>
-      </fieldset>
-    );
-  }
-  
-  if (section.type === "divider") {
-    return <FieldComponents.divider key={idx} {...section} />;
-  }
-  
-  // Check if it's an individual field type
-  const Field = FieldComponents[section.type];
-  if (Field) {
-    console.log(`Rendering individual field of type: ${section.type}`);
-    return <Field key={idx} {...section} />;
-  }
-  
-  console.warn(`Unknown section type: ${section.type}`);
-  return null;
-})}
+        {actualFormDef.map((section, idx) => {
+          console.log(`Processing section ${idx}:`, section);
+          console.log(`Section type: '${section?.type}' (typeof: ${typeof section?.type})`);
+          
+          if (!section) {
+            console.log(`Skipping empty section ${idx}`);
+            return null;
+          }
+          
+          // Normalize the type for robust matching
+          let normalizedType = section.type;
+          if (typeof section.type === 'string') {
+            normalizedType = section.type.toLowerCase().trim();
+            // Map common AI variations to our component keys
+            if (normalizedType === 'rating') {
+              normalizedType = 'starrating';
+            }
+          }
+          
+          console.log(`Normalized type: '${normalizedType}'`);
+          console.log(`Is group? ${normalizedType === "group"}`);
+          console.log(`Is divider? ${normalizedType === "divider"}`);
+          console.log(`FieldComponents lookup for '${normalizedType}':`, FieldComponents[normalizedType]);
+          
+          if (normalizedType === "group") {
+            if (!section.fields || !Array.isArray(section.fields) || section.fields.length === 0) {
+              console.log(`Skipping empty group "${section.label}"`);
+              return null;
+            }
+            
+            const isCollapsed = collapsedGroups[idx] || false;
+            const isCollapsible = section.collapsible || false;
+            
+            return (
+              <fieldset key={idx} className="mb-8">
+                <legend className="flex items-center w-full">
+                  {isCollapsible ? (
+                    <button
+                      type="button"
+                      onClick={() => toggleGroupCollapse(idx)}
+                      className="flex items-center gap-2 text-left font-medium text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+                    >
+                      <ChevronDown 
+                        className={`w-4 h-4 transition-transform duration-200 ${
+                          isCollapsed ? '-rotate-90' : 'rotate-0'
+                        }`}
+                      />
+                      {section.label}
+                    </button>
+                  ) : (
+                    <span className="font-medium text-gray-800 dark:text-gray-200">{section.label}</span>
+                  )}
+                </legend>
+                
+                <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                  isCollapsed ? 'max-h-0 opacity-0' : 'max-h-none opacity-100'
+                }`}>
+                  <div className={cn(
+                    "pt-4",
+                    section.columns && "grid gap-x-4 items-start",
+                    section.columns && getGridColsClass(section.columns)
+                  )}>
+                    {section.fields.map((field, fIdx) => {
+                      // Also normalize field types within groups
+                      let fieldNormalizedType = field.type;
+                      if (typeof field.type === 'string') {
+                        fieldNormalizedType = field.type.toLowerCase().trim();
+                        if (fieldNormalizedType === 'rating') {
+                          fieldNormalizedType = 'starrating';
+                        }
+                      }
+                      
+                      const Field = FieldComponents[fieldNormalizedType];
+                      if (!Field) {
+                        console.warn(`No component for field type: '${field.type}' (normalized: '${fieldNormalizedType}')`);
+                        return null;
+                      }
+                      return <Field key={fIdx} {...field} />;
+                    })}
+                  </div>
+                </div>
+              </fieldset>
+            );
+          }
+          
+          if (normalizedType === "divider") {
+            return <FieldComponents.divider key={idx} {...section} />;
+          }
+          
+          // Check if it's an individual field type
+          const Field = FieldComponents[normalizedType];
+          if (Field) {
+            console.log(`Rendering individual field of normalized type: ${normalizedType}`);
+            return <Field key={idx} {...section} />;
+          }
+          
+          console.warn(`Unknown section type: '${section.type}' (normalized: '${normalizedType}')`);
+          return null;
+        })}
         
         {/* Custom buttons or default submit button */}
         <div className="flex gap-3 justify-end mt-6">
