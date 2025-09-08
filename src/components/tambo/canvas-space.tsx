@@ -28,6 +28,9 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
   const { thread } = useTamboThread();
 
   // declare activeCanvasMessageId state
+  const [zoomLevel, setZoomLevel] = useState(1.0);
+  const MIN_ZOOM = 0.5;
+  const MAX_ZOOM = 2.0;
   const [activeCanvasMessageId, setActiveCanvasMessageId] = useState<string | null>(null);
 
 
@@ -133,6 +136,21 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
     return latestComponent || null;
   }, [thread?.messages, activeCanvasMessageId]);
 
+  const handleZoomIn = useCallback(() => {
+    setZoomLevel((prev) => Math.min(prev + 0.1, MAX_ZOOM));
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setZoomLevel((prev) => Math.max(prev - 0.1, MIN_ZOOM));
+  }, []);
+
+  const handleResetZoom = useCallback(() => {
+    setZoomLevel(1.0);
+  }, []);
+
+  // Ensure the scroll container can scroll horizontally when zoomed
+  const scrollContainerClasses = "w-full flex-1 overflow-y-auto overflow-x-auto [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:bg-gray-300";
+
   return (
     <div
       className={cn(
@@ -143,7 +161,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
     >
       <div
         ref={scrollContainerRef}
-        className="w-full flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:bg-gray-300"
+        className={scrollContainerClasses}
       >
         <div className="p-8 h-full flex flex-col">
           {componentToRender ? (
@@ -152,6 +170,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                 className={cn(
                   "mx-auto max-w-full transition-all duration-200 ease-out transform flex justify-center",
                   "opacity-100 scale-100",
+              style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}
                 )}
               >
                 {componentToRender}
@@ -168,6 +187,31 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Zoom Controls */}
+      <div className="absolute bottom-4 right-4 flex space-x-2 bg-white dark:bg-zinc-800 p-2 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700">
+        <button
+          onClick={handleZoomOut}
+          className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+          aria-label="Zoom out"
+        >
+          -
+        </button>
+        <button
+          onClick={handleResetZoom}
+          className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors text-sm font-medium"
+          aria-label="Reset zoom"
+        >
+          {Math.round(zoomLevel * 100)}%
+        </button>
+        <button
+          onClick={handleZoomIn}
+          className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
+          aria-label="Zoom in"
+        >
+          +
+        </button>
       </div>
     </div>
   );
