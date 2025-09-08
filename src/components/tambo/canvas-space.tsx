@@ -30,10 +30,6 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
   // State for managing the currently rendered component
   const [renderedComponent, setRenderedComponent] =
     useState<React.ReactNode | null>(null);
-
-  // State for tracking explicitly selected component by message ID
-  const [activeCanvasMessageId, setActiveCanvasMessageId] = useState<string | null>(null);
-
   // Ref for the scrollable container to enable auto-scrolling
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -50,7 +46,6 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
       !thread ||
       (previousThreadId.current && previousThreadId.current !== thread.id)
     ) {
-      setRenderedComponent(null);
       setActiveCanvasMessageId(null);
     }
 
@@ -67,11 +62,9 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
       event: CustomEvent<{ messageId: string; component: React.ReactNode }>,
     ) => {
       try {
-        setRenderedComponent(event.detail.component);
         setActiveCanvasMessageId(event.detail.messageId);
       } catch (error) {
         console.error("Failed to render component:", error);
-        setRenderedComponent(null);
         setActiveCanvasMessageId(null);
       }
     };
@@ -90,67 +83,51 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
   }, []);
 
   /**
-   * Effect to manage component display based on thread messages and active selection
-   * Prioritizes explicitly selected components, falls back to latest component
+   * Effect to validate activeCanvasMessageId and reset if invalid
    */
   useEffect(() => {
     if (!thread?.messages) {
-      setRenderedComponent(null);
       setActiveCanvasMessageId(null);
       return;
     }
 
-    // If there's an actively selected component, try to maintain it
+    // If there's an actively selected message, validate it still exists and has a component
     if (activeCanvasMessageId) {
       const activeMessage = thread.messages.find(
         (msg: TamboThreadMessage) => msg.id === activeCanvasMessageId
       );
       
-      if (activeMessage && activeMessage.renderedComponent) {
-        // Active message still exists and has a component, keep displaying it
-        setRenderedComponent(activeMessage.renderedComponent);
-        return;
-      } else {
+      if (!activeMessage || !activeMessage.renderedComponent) {
         // Active message no longer exists or has no component, reset selection
         setActiveCanvasMessageId(null);
       }
     }
-
-    // No active selection or active selection is invalid, show latest component
-    const messagesWithComponents = thread.messages.filter(
-      (msg: TamboThreadMessage) => msg.renderedComponent,
-    );
-
-    if (messagesWithComponents.length > 0) {
-      const latestMessage =
-        messagesWithComponents[messagesWithComponents.length - 1];
-      if (latestMessage.renderedComponent) {
-        setRenderedComponent(latestMessage.renderedComponent);
-      }
-    } else {
-      // No messages with components, clear the canvas
-      setRenderedComponent(null);
-    }
   }, [thread?.messages, activeCanvasMessageId]);
 
-  /**
-   * Effect to auto-scroll to bottom when new components are rendered
-   * Includes a small delay to ensure smooth scrolling
-   */
-  useEffect(() => {
-    if (scrollContainerRef.current && renderedComponent) {
-      const timeoutId = setTimeout(() => {
-        if (scrollContainerRef.current) {
-          scrollContainerRef.current.scrollTo({
-            top: scrollContainerRef.current.scrollHeight,
-            behavior: "smooth",
-          });
-        }
-      }, 100);
-
-      return () => clearTimeout(timeoutId);
+  // Derive the component to render directly from thread.messages (recommended pattern)
+  const componentToRender = React.useMemo(() => {
+    if (!thread?.messages) {
+      return null;
     }
-  }, [renderedComponent]);
+
+    // If there's an actively selected message, use its component
+    if (activeCanvasMessageId) {
+      const activeMessage = thread.messages.find(
+        (msg: TamboThreadMessage) => msg.id === activeCanvasMessageId
+      );
+      if (activeMessage?.renderedComponent) {
+        return activeMessage.renderedComponent;
+      }
+    }
+
+    // Fall back to the latest message with a rendered component
+    const latestComponent = thread.messages
+      .slice()
+      .reverse()
+      .find((message: TamboThreadMessage) => message.renderedComponent)?.renderedComponent;
+
+    return latestComponent || null;
+  }, [thread?.messages, activeCanvasMessageId]);
 
   return (
     <div
@@ -165,7 +142,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
         className="w-full flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:bg-gray-300"
       >
         <div className="p-8 h-full flex flex-col">
-          {renderedComponent ? (
+          {componentToRender ? (
             <div className="h-full space-y-6 pb-8 flex flex-col items-center justify-center w-full">
               <div
                 className={cn(
@@ -173,7 +150,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                   "opacity-100 scale-100",
                 )}
               >
-                {renderedComponent}
+                {componentToRender}
               </div>
             </div>
           ) : (
