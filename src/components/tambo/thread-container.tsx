@@ -37,6 +37,8 @@ export const ThreadContainer = React.forwardRef<
       className={cn(
         // Base layout and styling
         "flex flex-col overflow-hidden bg-background",
+        // Dark mode gradient background for thread container only
+        "dark:bg-[var(--dark-gradient-background)]",
         "w-full flex-1",
 
         // Add smooth transitions for layout changes
