@@ -150,7 +150,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
             <div className="h-full space-y-6 pb-8 flex flex-col items-center justify-center w-full">
               <div
                 className={cn(
-                  "w-full transition-all duration-200 ease-out transform flex justify-center",
+                  "mx-auto max-w-full transition-all duration-200 ease-out transform flex justify-center",
                   "opacity-100 scale-100",
                 )}
               >
