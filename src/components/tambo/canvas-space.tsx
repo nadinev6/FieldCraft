@@ -27,6 +27,10 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
   // Access the current Tambo thread context
   const { thread } = useTamboThread();
 
+  // declare activeCanvasMessageId state
+  const [activeCanvasMessageId, setActiveCanvasMessageId] = useState<string | null>(null);
+
+
   // State for managing the currently rendered component
   const [renderedComponent, setRenderedComponent] =
     useState<React.ReactNode | null>(null);
