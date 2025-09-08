@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { useTamboThread } from "@tambo-ai/react";
 import { ExternalLink } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import * as React from "react";
 import type { TamboThreadMessage } from "@tambo-ai/react";
 
@@ -24,6 +24,9 @@ interface CanvasSpaceProps {
  * <CanvasSpace className="custom-styles" />
  * ```
  */
+
+const MIN_ZOOM = 0.5;
+const MAX_ZOOM = 2.0;
 export function CanvasSpace({ className }: CanvasSpaceProps) {
   // Access the current Tambo thread context
   const { thread } = useTamboThread();
@@ -171,7 +174,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                 className={cn(
                   "mx-auto max-w-full transition-all duration-200 ease-out transform flex justify-center",
                   "opacity-100 scale-100",
-              style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}
+                  { 'transform': `scale(${zoomLevel})`, 'transformOrigin': "center" } // ADDED THIS LINE
                 )}
               >
                 {componentToRender}
@@ -217,7 +220,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
           className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors text-sm font-medium"
           aria-label="Reset zoom"
         >
-          {Math.round(zoomLevel * 100)}%
+        {Math.round(zoomLevel * 100)}%
         </button>
         <button
           onClick={handleZoomIn}

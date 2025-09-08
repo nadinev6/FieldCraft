@@ -107,33 +107,33 @@ const FieldComponents: Record<string, React.FC<any>> = {
     </div>
   ),
   radio: ({ label, name, options, defaultValue, ...props }) => {
-    return (
-      <div className="mb-4">
-        <fieldset>
-          <legend className={baseLabelClass}>{label}</legend>
-          <div className="space-y-2">
-            {options?.map((option: any, idx: number) => (
-              <div key={idx} className="flex items-center">
-                <input
-                  type="radio"
-                  id={`${name}-${idx}`}
-                  name={name}
-                  value={option.value}
-                  className="mr-3 w-4 h-4 accent-blue-600 dark:accent-blue-500"
-                  disabled={option.disabled}
-                  checked={option.value === defaultValue} // Use checked prop
-                  {...props} // Spread the remaining props
-                />
-                <label htmlFor={`${name}-${idx}`} className="text-sm text-gray-700 dark:text-gray-200">
-                  {option.label}
-                </label>
-              </div>
-            ))}
-          </div>
-        </fieldset>
-      </div>
-    );
-  },
+  return (
+    <div className="mb-4">
+      <fieldset>
+        <legend className={baseLabelClass}>{label}</legend>
+        <div className="space-y-2">
+          {options?.map((option: any, idx: number) => (
+            <div key={`${name}-${option.value}`} className="flex items-center">
+              <input
+                type="radio"
+                id={`${name}-${option.value}`}
+                name={name}
+                value={option.value}
+                className="mr-3 w-4 h-4 accent-blue-600 dark:accent-blue-500"
+                disabled={option.disabled}
+                defaultChecked={option.value === defaultValue} // Use defaultChecked for initial state
+                {...props}
+              />
+              <label htmlFor={`${name}-${option.value}`} className="text-sm text-gray-700 dark:text-gray-200">
+                {option.label}
+              </label>
+            </div>
+          ))}
+        </div>
+      </fieldset>
+    </div>
+  );
+},
   divider: ({ label }) => (
     <div className="my-8">
       {label && <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">{label}</h3>}
