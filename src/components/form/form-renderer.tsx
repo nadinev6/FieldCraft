@@ -215,7 +215,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
         <input
           type="hidden"
           name={name}
-          value={rating}
+          defaultValue={rating}
           {...props}
         />
       </div>
