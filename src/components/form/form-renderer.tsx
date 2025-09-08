@@ -215,6 +215,9 @@ const FieldComponents: Record<string, React.FC<any>> = {
       <hr className="border-gray-300 dark:border-zinc-700" />
     </div>
   ),
+  verticalDivider: () => (
+    <div className="w-px bg-gray-300 dark:bg-zinc-700 mx-4 self-stretch"></div>
+  ),
 };
 
 export const FormRenderer: React.FC<FormRendererProps> = ({
@@ -329,7 +332,10 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
         <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
           isCollapsed ? 'max-h-0 opacity-0' : 'max-h-none opacity-100'
         }`}>
-          <div className="pt-4">
+          <div className={cn(
+            "pt-4",
+            section.columns && `grid grid-cols-${section.columns} gap-x-4 items-start`
+          )}>
             {section.fields.map((field, fIdx) => {
               const Field = FieldComponents[field.type];
               if (!Field) {

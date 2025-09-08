@@ -173,9 +173,12 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
               <div
                 className={cn(
                   "mx-auto max-w-full transition-all duration-200 ease-out transform flex justify-center",
-                  "opacity-100 scale-100",
-                  { 'transform': `scale(${zoomLevel})`, 'transformOrigin': "center" } // ADDED THIS LINE
+                  "opacity-100"
                 )}
+                style={{
+                  transform: `scale(${zoomLevel})`,
+                  transformOrigin: "center",
+                }}
               >
                 {componentToRender}
               </div>
@@ -198,7 +201,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
         <button
           onClick={() => {
             if (activeCanvasMessageId) {
-              const url = `${window.location.origin}/chat?messageId=${activeCanvasMessageId}`;
+              const url = `${window.location.origin}/canvas-only?messageId=${activeCanvasMessageId}`;
               window.open(url, '_blank');
             }
           }}

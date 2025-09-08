@@ -96,6 +96,11 @@ export const dividerFieldSchema = z.object({
   label: z.string().optional(),
 });
 
+// Vertical divider schema
+export const verticalDividerFieldSchema = z.object({
+  type: z.literal("verticalDivider"),
+});
+
 // Group/Section schema (for nested fields)
 export const groupFieldSchema = z.object({
   type: z.literal("group"),
@@ -105,6 +110,7 @@ export const groupFieldSchema = z.object({
   description: z.string().optional(),
   collapsible: z.boolean().optional().default(false).describe("Whether this group can be collapsed/expanded"),
   defaultCollapsed: z.boolean().optional().default(false).describe("Initial collapsed state if collapsible is true"),
+  columns: z.number().min(1).optional().describe("Number of columns for fields within this group"),
   condition: z
     .object({
       field: z.string(),
@@ -136,6 +142,7 @@ export const formFieldSchema = z.union([
   dateFieldSchema,
   groupFieldSchema,
   dividerFieldSchema,
+  verticalDividerFieldSchema,
   starRatingFieldSchema,
 ]);
 
