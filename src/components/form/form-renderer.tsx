@@ -4,6 +4,7 @@ import { exampleForm } from "@/lib/form-definitions";
 import { z } from "zod";
 import { formFieldSchema } from "@/lib/form-field-schemas";
 import { ChevronDown, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Standard field styling
 const baseInputClass =
@@ -34,6 +35,17 @@ export const formRendererPropsSchema = z.object({
 });
 
 export type FormRendererProps = z.infer<typeof formRendererPropsSchema>;
+
+// Helper function to get explicit Tailwind grid column classes
+const getGridColsClass = (columns?: number) => {
+  switch (columns) {
+    case 1: return "grid-cols-1";
+    case 2: return "grid-cols-2";
+    case 3: return "grid-cols-3";
+    case 4: return "grid-cols-4";
+    default: return "grid-cols-1"; // Default to 1 column if not specified or invalid
+  }
+};
 
 // Individual field components
 const FieldComponents: Record<string, React.FC<any>> = {
@@ -334,7 +346,8 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
         }`}>
           <div className={cn(
             "pt-4",
-            section.columns && `grid grid-cols-${section.columns} gap-x-4 items-start`
+            section.columns && "grid gap-x-4 items-start",
+            section.columns && getGridColsClass(section.columns)
           )}>
             {section.fields.map((field, fIdx) => {
               const Field = FieldComponents[field.type];
