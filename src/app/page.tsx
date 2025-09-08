@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { PlaceholdersAndVanishInput } from "@/components/PlaceholdersAndVanishInput";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 
+
 export default function Home() {
   const router = useRouter();
 
@@ -17,11 +18,13 @@ export default function Home() {
         <ThemeSwitcher />
       </div>
       
+
       {/* Main Content */}
       <div className="flex flex-col items-center justify-center space-y-10 sm:space-y-20 max-w-4xl w-full px-4">
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-normal text-center dark:text-white text-black">
           Craft Forms with AI
         </h1>
+
         
         <div className="w-full max-w-2xl mx-auto">
           <PlaceholdersAndVanishInput

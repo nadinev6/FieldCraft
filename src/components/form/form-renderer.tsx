@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react'; // Added useState here
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { ChevronDown, Star } from 'lucide-react';
 import { exampleForm } from "@/lib/form-definitions";
 import { z } from "zod";
 import { formFieldSchema } from "@/lib/form-field-schemas";
+import { ChevronDown, Star } from "lucide-react";
 
 // Standard field styling
 const baseInputClass =
   "w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 dark:bg-zinc-800 dark:text-gray-100 dark:border-zinc-600 dark:focus:border-zinc-500";
 const baseLabelClass =
   "block mb-2 font-medium text-gray-700 dark:text-gray-200 text-sm";
+
 // Button styling variants
 const buttonVariants = {
   primary: "px-6 py-3 rounded-lg bg-gray-900 text-white font-medium hover:bg-gray-800 transition-all duration-200 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200",
@@ -109,33 +109,33 @@ const FieldComponents: Record<string, React.FC<any>> = {
     </div>
   ),
   radio: ({ label, name, options, defaultValue, ...props }) => {
-  return (
-    <div className="mb-4">
-      <fieldset>
-        <legend className={baseLabelClass}>{label}</legend>
-        <div className="space-y-2">
-          {options?.map((option: any, idx: number) => (
-            <div key={`${name}-${option.value}`} className="flex items-center">
-              <input
-                type="radio"
-                id={`${name}-${option.value}`}
-                name={name}
-                value={option.value}
-                className="mr-3 w-4 h-4 accent-blue-600 dark:accent-blue-500"
-                disabled={option.disabled}
-                defaultChecked={option.value === defaultValue} // Use defaultChecked for initial state
-                {...props}
-              />
-              <label htmlFor={`${name}-${option.value}`} className="text-sm text-gray-700 dark:text-gray-200">
-                {option.label}
-              </label>
-            </div>
-          ))}
-        </div>
-      </fieldset>
-    </div>
-  );
-},
+    return (
+      <div className="mb-4">
+        <fieldset>
+          <legend className={baseLabelClass}>{label}</legend>
+          <div className="space-y-2">
+            {options?.map((option: any, idx: number) => (
+              <div key={`${name}-${option.value}`} className="flex items-center">
+                <input
+                  type="radio"
+                  id={`${name}-${option.value}`}
+                  name={name}
+                  value={option.value}
+                  className="mr-3 w-4 h-4 accent-blue-600 dark:accent-blue-500"
+                  disabled={option.disabled}
+                  defaultChecked={option.value === defaultValue} // Use defaultChecked for initial state
+                  {...props}
+                />
+                <label htmlFor={`${name}-${option.value}`} className="text-sm text-gray-700 dark:text-gray-200">
+                  {option.label}
+                </label>
+              </div>
+            ))}
+          </div>
+        </fieldset>
+      </div>
+    );
+  },
   starRating: ({ label, name, maxRating = 5, defaultValue = 0, allowHalf = false, ...props }) => {
     const [rating, setRating] = useState(defaultValue);
     const [hoverRating, setHoverRating] = useState(0);
@@ -262,13 +262,11 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       </div>
     );
   }
-
   // Log form data for debugging
   useEffect(() => {
     console.log("FormRenderer received formDef:", formDef);
     console.log("Using actualFormDef:", actualFormDef);
   }, [formDef, actualFormDef]); // Add actualFormDef to dependency array
-
   // ... (handleButtonClick and return statement remain the same) ...
    const handleButtonClick = (button: z.infer<typeof buttonSchema>, event: React.MouseEvent<HTMLButtonElement>) => {
     if (button.action) {
@@ -284,7 +282,6 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       event.preventDefault();
     }
   };
-
   return (
     <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
       <form>
