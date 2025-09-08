@@ -29,8 +29,8 @@ const buttonSchema = z.object({
 
 // Zod schema for FormRenderer props
 export const formRendererPropsSchema = z.object({
-  formDef: z.array(formFieldSchema).optional().describe("Array of form field definitions that define the structure and fields of the form to render"),
-  buttons: z.array(buttonSchema).optional().describe("Optional array of custom buttons to render at the bottom of the form"),
+  formDef: z.array(formFieldSchema).optional().describe("Array of form field definitions that define the structure and fields of the form to render"),
+  buttons: z.array(buttonSchema).optional().describe("Optional array of custom buttons to render at the bottom of the form"),
 });
 
 export type FormRendererProps = z.infer<typeof formRendererPropsSchema>;
@@ -136,6 +136,79 @@ const FieldComponents: Record<string, React.FC<any>> = {
     </div>
   );
 },
+  starRating: ({ label, name, maxRating = 5, defaultValue = 0, allowHalf = false, ...props }) => {
+    const [rating, setRating] = useState(defaultValue);
+    const [hoverRating, setHoverRating] = useState(0);
+    
+    const handleStarClick = (starValue: number) => {
+      setRating(starValue);
+    };
+    
+    const handleStarHover = (starValue: number) => {
+      setHoverRating(starValue);
+    };
+    
+    const handleMouseLeave = () => {
+      setHoverRating(0);
+    };
+    
+    const getStarFill = (starIndex: number) => {
+      const currentRating = hoverRating || rating;
+      if (allowHalf) {
+        if (starIndex <= currentRating - 0.5) {
+          return 'full';
+        } else if (starIndex <= currentRating) {
+          return 'half';
+        }
+        return 'empty';
+      } else {
+        return starIndex <= currentRating ? 'full' : 'empty';
+      }
+    };
+    
+    return (
+      <div className="mb-4">
+        <label className={baseLabelClass}>{label}</label>
+        <div className="flex items-center gap-1" onMouseLeave={handleMouseLeave}>
+          {Array.from({ length: maxRating }, (_, index) => {
+            const starValue = index + 1;
+            const fillType = getStarFill(starValue);
+            
+            return (
+              <button
+                key={starValue}
+                type="button"
+                className="p-1 hover:scale-110 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                onClick={() => handleStarClick(starValue)}
+                onMouseEnter={() => handleStarHover(starValue)}
+                aria-label={`Rate ${starValue} out of ${maxRating} stars`}
+              >
+                <Star
+                  className={`w-6 h-6 transition-colors duration-150 ${
+                    fillType === 'full'
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : fillType === 'half'
+                      ? 'fill-yellow-200 text-yellow-400'
+                      : 'fill-transparent text-gray-300 hover:text-yellow-400'
+                  }`}
+                />
+              </button>
+            );
+          })}
+          <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+            {rating > 0 ? `${rating}/${maxRating}` : 'No rating'}
+          </span>
+        </div>
+        {/* Hidden input for form submission */}
+        <input
+          type="hidden"
+          name={name}
+          value={rating}
+          {...props}
+        />
+      </div>
+    );
+  },
   divider: ({ label }) => (
     <div className="my-8">
       {label && <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">{label}</h3>}
@@ -145,12 +218,12 @@ const FieldComponents: Record<string, React.FC<any>> = {
 };
 
 export const FormRenderer: React.FC<FormRendererProps> = ({
-  formDef, // Destructure directly
-  buttons,
+  formDef, // Destructure directly
+  buttons,
 }) => {
-  // Use exampleForm as default if formDef is not provided or is explicitly undefined
-  const actualFormDef = formDef === undefined ? exampleForm : formDef;
-  
+  // Use exampleForm as default if formDef is not provided or is explicitly undefined
+  const actualFormDef = formDef === undefined ? exampleForm : formDef;
+  
   // State to manage collapsed groups
   const [collapsedGroups, setCollapsedGroups] = useState<Record<number, boolean>>({});
   
@@ -172,49 +245,49 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     }));
   };
   
-  // Check if formDef is invalid or empty *after* applying the default
-  const isValidForm = Array.isArray(actualFormDef) && actualFormDef.length > 0;
-  
-  if (!isValidForm) {
-    return (
-      <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
-        <div className="text-center">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-            Invalid Form Definition
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Please provide a valid form configuration.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Check if formDef is invalid or empty *after* applying the default
+  const isValidForm = Array.isArray(actualFormDef) && actualFormDef.length > 0;
+  
+  if (!isValidForm) {
+    return (
+      <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+            Invalid Form Definition
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Please provide a valid form configuration.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-  // Log form data for debugging
-  useEffect(() => {
-    console.log("FormRenderer received formDef:", formDef);
-    console.log("Using actualFormDef:", actualFormDef);
-  }, [formDef, actualFormDef]); // Add actualFormDef to dependency array
+  // Log form data for debugging
+  useEffect(() => {
+    console.log("FormRenderer received formDef:", formDef);
+    console.log("Using actualFormDef:", actualFormDef);
+  }, [formDef, actualFormDef]); // Add actualFormDef to dependency array
 
-  // ... (handleButtonClick and return statement remain the same) ...
+  // ... (handleButtonClick and return statement remain the same) ...
    const handleButtonClick = (button: z.infer<typeof buttonSchema>, event: React.MouseEvent<HTMLButtonElement>) => {
-    if (button.action) {
-      // Emit a custom event with the action identifier
-      const customEvent = new CustomEvent('formButtonClick', {
-        detail: { action: button.action, button, event }
-      });
-      window.dispatchEvent(customEvent);
-    }
-    
-    // For submit buttons, let the default form submission behavior occur
-    if (button.type !== 'submit') {
-      event.preventDefault();
-    }
-  };
+    if (button.action) {
+      // Emit a custom event with the action identifier
+      const customEvent = new CustomEvent('formButtonClick', {
+        detail: { action: button.action, button, event }
+      });
+      window.dispatchEvent(customEvent);
+    }
+    
+    // For submit buttons, let the default form submission behavior occur
+    if (button.type !== 'submit') {
+      event.preventDefault();
+    }
+  };
 
-  return (
-    <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
-      <form>
+  return (
+    <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
+      <form>
 {actualFormDef.map((section, idx) => {
   console.log(`Processing section ${idx}:`, section);
   
@@ -285,27 +358,27 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   console.warn(`Unknown section type: ${section.type}`);
   return null;
 })}
-        
-        {/* Custom buttons or default submit button */}
-        <div className="flex gap-3 justify-end mt-6">
-          {buttons && buttons.length > 0 ? (
-            buttons.map((button, idx) => (
-              <button
-                key={idx}
-                type={button.type}
-                className={buttonVariants[button.variant]}
-                onClick={(e) => handleButtonClick(button, e)}
-              >
-                {button.label}
-              </button>
-            ))
-          ) : (
-            <button type="submit" className={buttonVariants.primary}>
-              Submit
-            </button>
-          )}
-        </div>
-      </form>
-    </div>
-  );
+        
+        {/* Custom buttons or default submit button */}
+        <div className="flex gap-3 justify-end mt-6">
+          {buttons && buttons.length > 0 ? (
+            buttons.map((button, idx) => (
+              <button
+                key={idx}
+                type={button.type}
+                className={buttonVariants[button.variant]}
+                onClick={(e) => handleButtonClick(button, e)}
+              >
+                {button.label}
+              </button>
+            ))
+          ) : (
+            <button type="submit" className={buttonVariants.primary}>
+              Submit
+            </button>
+          )}
+        </div>
+      </form>
+    </div>
+  );
 };
