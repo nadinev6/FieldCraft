@@ -34,6 +34,13 @@ export const exampleForm = [
         type: "date",
         label: "Birthdate",
         name: "birthdate"
+      },
+      {
+        type: "starRating",
+        label: "Overall Satisfaction",
+        name: "satisfaction_rating",
+        maxRating: 5,
+        defaultValue: 0
       }
     ]
   }

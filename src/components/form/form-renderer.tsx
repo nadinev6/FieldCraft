@@ -223,6 +223,9 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
 }) => {
   // Use exampleForm as default if formDef is not provided or is explicitly undefined
   const actualFormDef = formDef === undefined ? exampleForm : formDef;
+
+  console.log("FormRenderer is using this form definition:", actualFormDef);
+
   
   // State to manage collapsed groups
   const [collapsedGroups, setCollapsedGroups] = useState<Record<number, boolean>>({});
