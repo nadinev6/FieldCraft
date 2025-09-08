@@ -31,6 +31,9 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
   const [renderedComponent, setRenderedComponent] =
     useState<React.ReactNode | null>(null);
 
+  // State for tracking explicitly selected component by message ID
+  const [activeCanvasMessageId, setActiveCanvasMessageId] = useState<string | null>(null);
+
   // Ref for the scrollable container to enable auto-scrolling
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -38,16 +41,17 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
   const previousThreadId = useRef<string | null>(null);
 
   /**
-   * Effect to clear the canvas when switching between threads
+   * Effect to reset canvas state when switching between threads
    * Prevents components from previous threads being displayed in new threads
    */
   useEffect(() => {
-    // If there's no thread, or if the thread ID changed, clear the canvas
+    // If there's no thread, or if the thread ID changed, reset the canvas state
     if (
       !thread ||
       (previousThreadId.current && previousThreadId.current !== thread.id)
     ) {
       setRenderedComponent(null);
+      setActiveCanvasMessageId(null);
     }
 
     // Update the previous thread ID reference
@@ -64,9 +68,11 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
     ) => {
       try {
         setRenderedComponent(event.detail.component);
+        setActiveCanvasMessageId(event.detail.messageId);
       } catch (error) {
         console.error("Failed to render component:", error);
         setRenderedComponent(null);
+        setActiveCanvasMessageId(null);
       }
     };
 
@@ -84,15 +90,33 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
   }, []);
 
   /**
-   * Effect to automatically display the latest component from thread messages
-   * Updates when thread messages change or new components are added
+   * Effect to manage component display based on thread messages and active selection
+   * Prioritizes explicitly selected components, falls back to latest component
    */
   useEffect(() => {
     if (!thread?.messages) {
       setRenderedComponent(null);
+      setActiveCanvasMessageId(null);
       return;
     }
 
+    // If there's an actively selected component, try to maintain it
+    if (activeCanvasMessageId) {
+      const activeMessage = thread.messages.find(
+        (msg: TamboThreadMessage) => msg.id === activeCanvasMessageId
+      );
+      
+      if (activeMessage && activeMessage.renderedComponent) {
+        // Active message still exists and has a component, keep displaying it
+        setRenderedComponent(activeMessage.renderedComponent);
+        return;
+      } else {
+        // Active message no longer exists or has no component, reset selection
+        setActiveCanvasMessageId(null);
+      }
+    }
+
+    // No active selection or active selection is invalid, show latest component
     const messagesWithComponents = thread.messages.filter(
       (msg: TamboThreadMessage) => msg.renderedComponent,
     );
@@ -100,15 +124,14 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
     if (messagesWithComponents.length > 0) {
       const latestMessage =
         messagesWithComponents[messagesWithComponents.length - 1];
-      // Only update if the latest message actually has a rendered component
       if (latestMessage.renderedComponent) {
         setRenderedComponent(latestMessage.renderedComponent);
       }
     } else {
-      // Only clear if there are no messages with components at all
+      // No messages with components, clear the canvas
       setRenderedComponent(null);
     }
-  }, [thread?.messages]);
+  }, [thread?.messages, activeCanvasMessageId]);
 
   /**
    * Effect to auto-scroll to bottom when new components are rendered
