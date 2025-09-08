@@ -79,23 +79,23 @@
 
 .dark {
   /* Dark Mode Tailwind CSS Variables customized with tambo colors */
-  --background: linear-gradient(135deg, oklch(0.12 0.02 280) 0%, oklch(0.16 0.03 260) 100%);
+  --background: oklch(0.12 0.02 280);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(0.14 0.02 280);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.15 0.02 280);
+  --popover: oklch(0.14 0.02 280);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.922 0 0);
   --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.18 0.02 280);
+  --secondary: oklch(0.16 0.02 280);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.16 0.02 280);
+  --muted: oklch(0.14 0.02 280);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.16 0.02 280);
+  --accent: oklch(0.14 0.02 280);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
-  --input: oklch(0.16 0.02 280);
+  --input: oklch(0.14 0.02 280);
   --ring: oklch(0.556 0 0);
   --chart-1: oklch(0.72 0.15 60);
   --chart-2: oklch(0.62 0.2 6);
@@ -104,13 +104,14 @@
   --chart-5: oklch(0.62 0.2 313);
 
   /* Tambo Specific Variables needed for tambo components */
-  --container: oklch(0.98 0 247);
+  --container: oklch(0.14 0.02 280);
   --backdrop: oklch(0.25 0.07 252 / 0.25);
   --muted-backdrop: oklch(0.25 0.07 252 / 0.1);
   --dot-color: oklch(88% 0.08 150 / 0.7);
   --message-border-dark: oklch(1 0 0 / 15%);
   --container-border-dark: oklch(1 0 0 / 10%);
   --user-message-bubble: oklch(88.5% 0.08 150);
+  --dark-gradient-background: linear-gradient(135deg, oklch(0.12 0.02 280) 0%, oklch(0.16 0.03 260) 100%);
   --radius: 0.5rem;
   --panel-left-width: 500px;
   --panel-right-width: 500px;
