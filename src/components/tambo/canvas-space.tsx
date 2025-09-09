@@ -179,20 +179,21 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
         <button
           onClick={() => {
             console.log('=== CANVAS LINK DEBUG ===');
-            console.log('About to construct URL with thread.id:', thread?.id);
             console.log('Thread ID being used for URL:', thread?.id);
-            console.log('Current thread:', thread);
-            console.log('Thread ID:', thread?.id);
-            console.log('componentToRender:', componentToRender);
-            console.log('typeof componentToRender:', typeof componentToRender);
-            console.log('componentToRender has props?', componentToRender && typeof componentToRender === 'object' && 'props' in componentToRender);
+            console.log('=== COMPONENT TO RENDER DEBUG ===');
+            console.log('componentToRender (full object):', componentToRender);
+            console.log('componentToRender type:', typeof componentToRender);
+            console.log('componentToRender is React element?', React.isValidElement(componentToRender));
             
             if (componentToRender) {
-              if (componentToRender && typeof componentToRender === 'object' && 'props' in componentToRender) {
-                console.log('componentToRender.props:', (componentToRender as any).props);
-                console.log('componentToRender.type:', (componentToRender as any).type);
-                console.log('componentToRender.type.name:', (componentToRender as any).type?.name);
-                console.log('Is FormRenderer?', (componentToRender as any).type === FormRenderer);
+              if (React.isValidElement(componentToRender)) {
+                const element = componentToRender as React.ReactElement;
+                console.log('Element type:', element.type);
+                console.log('Element type name:', (element.type as any)?.name || (element.type as any)?.displayName);
+                console.log('Element props:', element.props);
+                console.log('Props has formDef?', 'formDef' in element.props);
+                console.log('Props has buttons?', 'buttons' in element.props);
+                console.log('Direct type comparison with FormRenderer:', element.type === FormRenderer);
               }
               
               let url = `${window.location.origin}/canvas-only`;
@@ -200,52 +201,60 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
               
               // Always include threadId if available
               if (thread?.id) {
-                console.log('Adding threadId to URL:', thread.id);
-                console.log('ThreadId value being added:', JSON.stringify(thread.id));
                 params.set('threadId', thread.id);
+                console.log('Added threadId to URL:', thread.id);
               } else {
                 console.log('WARNING: No thread.id available to add to URL');
               }
               
-              // Extract FormRenderer props if applicable
-              if (typeof componentToRender === 'object' && 'props' in componentToRender && (componentToRender as any).type === FormRenderer) {
-                const props = (componentToRender as any).props;
-                console.log('Extracted props:', props);
-                console.log('Props has formDef?', props && 'formDef' in props);
-                console.log('Props has buttons?', props && 'buttons' in props);
+              // Extract form data from React element props
+              if (React.isValidElement(componentToRender)) {
+                const element = componentToRender as React.ReactElement;
+                const props = element.props;
                 
-                if (props && (props.formDef || props.buttons)) {
+                console.log('=== FORM DATA EXTRACTION ===');
+                console.log('Checking for formDef in props...');
+                console.log('formDef value:', props.formDef);
+                console.log('buttons value:', props.buttons);
+                
+                // Check if this looks like a FormRenderer (has formDef or buttons)
+                if (props.formDef || props.buttons) {
+                  console.log('Found form data in props, adding to URL...');
                   try {
                     if (props.formDef) {
-                      console.log('Adding formDef to URL:', props.formDef);
-                      params.set('formDef', encodeURIComponent(JSON.stringify(props.formDef)));
+                      const serializedFormDef = JSON.stringify(props.formDef);
+                      console.log('Serialized formDef:', serializedFormDef);
+                      params.set('formDef', encodeURIComponent(serializedFormDef));
+                      console.log('Added formDef to URL parameters');
                     }
                     if (props.buttons) {
-                      console.log('Adding buttons to URL:', props.buttons);
-                      params.set('buttons', encodeURIComponent(JSON.stringify(props.buttons)));
+                      const serializedButtons = JSON.stringify(props.buttons);
+                      console.log('Serialized buttons:', serializedButtons);
+                      params.set('buttons', encodeURIComponent(serializedButtons));
+                      console.log('Added buttons to URL parameters');
                     }
                   } catch (error) {
                     console.error('Failed to serialize form data:', error);
-                    if (activeCanvasMessageId) {
-                      console.log('Falling back to messageId approach:', activeCanvasMessageId);
-                      params.set('messageId', activeCanvasMessageId);
-                    }
+                    console.log('Falling back to messageId approach due to serialization error');
                   }
-                } else if (activeCanvasMessageId) {
-                  console.log('FormRenderer found but no formDef/buttons props, using messageId approach:', activeCanvasMessageId);
-                  params.set('messageId', activeCanvasMessageId);
+                } else {
+                  console.log('No form data found in props, using messageId approach');
                 }
-              } else if (activeCanvasMessageId) {
-                console.log('Not a FormRenderer or no props, using messageId approach:', activeCanvasMessageId);
+              }
+              
+              // Fallback to messageId if no form data was extracted
+              if (!params.has('formDef') && !params.has('buttons') && activeCanvasMessageId) {
+                console.log('Using messageId fallback:', activeCanvasMessageId);
                 params.set('messageId', activeCanvasMessageId);
               }
               
               // Construct final URL with all parameters
+              console.log('=== FINAL URL CONSTRUCTION ===');
+              console.log('URL parameters:', Object.fromEntries(params.entries()));
               if (params.toString()) {
                 url += `?${params.toString()}`;
               }
-              console.log('Opening URL:', url);
-              console.log('Final URL parameters:', params.toString());
+              console.log('Final URL being opened:', url);
               window.open(url, '_blank');
             } else {
               console.log('No componentToRender available');
