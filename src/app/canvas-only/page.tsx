@@ -5,6 +5,8 @@ import { CanvasSpace } from "@/components/tambo/canvas-space";
 import { FormRenderer } from "@/components/form/form-renderer";
 import { components, tools } from "@/lib/tambo";
 import { TamboProvider } from "@tambo-ai/react";
+import { useTamboThread } from "@tambo-ai/react";
+
 
 function CanvasOnlyContent() {
   const searchParams = useSearchParams();
