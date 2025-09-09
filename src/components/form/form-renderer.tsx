@@ -49,6 +49,18 @@ const getGridColsClass = (columns?: number) => {
   }
 };
 
+// Helper function to normalize field types
+const normalizeFieldType = (type: string): string => {
+  if (typeof type === 'string') {
+    const normalized = type.toLowerCase().trim();
+    if (normalized === 'rating') {
+      return 'starRating';
+    }
+    return normalized;
+  }
+  return type;
+};
+
 // Individual field components
 const FieldComponents: Record<string, React.FC<any>> = {
   text: ({ label, name, ...props }) => (
@@ -268,6 +280,21 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons }) 
     }
   };
 
+  // Helper function to render individual form fields
+  const renderFormField = (field: any, key: string | number) => {
+    const normalizedType = normalizeFieldType(field.type);
+    
+    console.log(`Rendering field with type: '${field.type}' (normalized: '${normalizedType}')`);
+    
+    const Field = FieldComponents[normalizedType];
+    if (!Field) {
+      console.warn(`No component for field type: '${field.type}' (normalized: '${normalizedType}')`);
+      return null;
+    }
+    
+    return <Field key={key} {...field} />;
+  };
+
   return (
     <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
       <form>
@@ -280,27 +307,22 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons }) 
             return null;
           }
           
-          let normalizedType = section.type;
-          if (typeof section.type === 'string') {
-            normalizedType = section.type.toLowerCase().trim();
-            if (normalizedType === 'rating') {
-              normalizedType = 'starRating';
-            }
-          }
+          const normalizedType = normalizeFieldType(section.type);
           
           console.log(`Normalized type: '${normalizedType}'`);
           console.log(`Is group? ${normalizedType === "group"}`);
           console.log(`Is divider? ${normalizedType === "divider"}`);
-          console.log(`FieldComponents lookup for '${normalizedType}':`, FieldComponents[normalizedType]);
           
           if (normalizedType === "group") {
             if (!section.fields || !Array.isArray(section.fields) || section.fields.length === 0) {
-              console.log(`Skipping empty group "${section.label}"`);
+              console.warn(`Skipping group "${section.label}" - missing or empty fields array:`, section);
               return null;
             }
             
             const isCollapsed = collapsedGroups[idx] || false;
             const isCollapsible = section.collapsible || false;
+            
+            console.log(`Rendering group "${section.label}" with ${section.fields.length} fields, columns: ${section.columns}`);
             
             return (
               <fieldset key={idx} className="mb-8">
@@ -311,11 +333,10 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons }) 
                       onClick={() => toggleGroupCollapse(idx)}
                       className="flex items-center gap-2 text-left font-medium text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
                     >
-                      <LucideIcon
+                      <ChevronDown
                         className={`w-4 h-4 transition-transform duration-200 ${
                           isCollapsed ? '-rotate-90' : 'rotate-0'
                         }`}
-                        icon="ChevronDown"
                       />
                       {section.label}
                     </button>
@@ -333,38 +354,20 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons }) 
                     section.columns && getGridColsClass(section.columns)
                   )}>
                     {section.fields.map((field, fIdx) => {
-                      let fieldNormalizedType = field.type;
-                      if (typeof field.type === 'string') {
-                        fieldNormalizedType = field.type.toLowerCase().trim();
-                        if (fieldNormalizedType === 'rating') {
-                          fieldNormalizedType = 'starRating';
-                        }
-                      }
-                      
-                      const Field = FieldComponents[fieldNormalizedType];
-                      if (!Field) {
-                        console.warn(`No component for field type: '${field.type}' (normalized: '${fieldNormalizedType}')`);
-                        return null;
-                      }
-                      return <Field key={fIdx} {...field} />;
+                      return renderFormField(field, fIdx);
                     })}
                   </div>
                 </div>
               </fieldset>
             );
-          }
-          
-          if (normalizedType === "divider") {
+          } else if (normalizedType === "divider") {
+            console.log(`Rendering divider: "${section.label}"`);
             return <FieldComponents.divider key={idx} {...section} />;
+          } else {
+            // Handle individual fields at the top level
+            console.log(`Rendering top-level field of type: '${section.type}' (normalized: '${normalizedType}')`);
+            return renderFormField(section, idx);
           }
-          
-          const Field = FieldComponents[normalizedType];
-          if (Field) {
-            return <Field key={idx} {...section} />;
-          }
-          
-          console.warn(`Unknown section type: '${section.type}' (normalized: '${normalizedType}')`);
-          return null;
         })}
         
         <div className="flex gap-3 justify-end mt-6">
