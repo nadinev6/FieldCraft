@@ -170,6 +170,8 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
         <button
           onClick={() => {
             console.log('=== CANVAS LINK DEBUG ===');
+            console.log('Current thread:', thread);
+            console.log('Thread ID:', thread?.id);
             console.log('componentToRender:', componentToRender);
             console.log('typeof componentToRender:', typeof componentToRender);
             console.log('componentToRender has props?', componentToRender && typeof componentToRender === 'object' && 'props' in componentToRender);
@@ -183,6 +185,13 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
               }
               
               let url = `${window.location.origin}/canvas-only`;
+              const params = new URLSearchParams();
+              
+              // Always include threadId if available
+              if (thread?.id) {
+                console.log('Adding threadId to URL:', thread.id);
+                params.set('threadId', thread.id);
+              }
               
               // Extract FormRenderer props if applicable
               if (typeof componentToRender === 'object' && 'props' in componentToRender && (componentToRender as any).type === FormRenderer) {
@@ -191,13 +200,8 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                 console.log('Props has formDef?', props && 'formDef' in props);
                 console.log('Props has buttons?', props && 'buttons' in props);
                 
-                console.log('Extracted props:', props);
-                console.log('Props has formDef?', props && 'formDef' in props);
-                console.log('Props has buttons?', props && 'buttons' in props);
-                
                 if (props && (props.formDef || props.buttons)) {
                   try {
-                    const params = new URLSearchParams();
                     if (props.formDef) {
                       console.log('Adding formDef to URL:', props.formDef);
                       params.set('formDef', encodeURIComponent(JSON.stringify(props.formDef)));
@@ -206,24 +210,26 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                       console.log('Adding buttons to URL:', props.buttons);
                       params.set('buttons', encodeURIComponent(JSON.stringify(props.buttons)));
                     }
-                    url += `?${params.toString()}`;
-                    console.log('Final URL:', url);
                   } catch (error) {
                     console.error('Failed to serialize form data:', error);
                     if (activeCanvasMessageId) {
                       console.log('Falling back to messageId approach:', activeCanvasMessageId);
-                      url += `?messageId=${activeCanvasMessageId}`;
+                      params.set('messageId', activeCanvasMessageId);
                     }
                   }
                 } else if (activeCanvasMessageId) {
                   console.log('FormRenderer found but no formDef/buttons props, using messageId approach:', activeCanvasMessageId);
-                  url += `?messageId=${activeCanvasMessageId}`;
+                  params.set('messageId', activeCanvasMessageId);
                 }
               } else if (activeCanvasMessageId) {
                 console.log('Not a FormRenderer or no props, using messageId approach:', activeCanvasMessageId);
-                url += `?messageId=${activeCanvasMessageId}`;
+                params.set('messageId', activeCanvasMessageId);
               }
               
+              // Construct final URL with all parameters
+              if (params.toString()) {
+                url += `?${params.toString()}`;
+              }
               console.log('Opening URL:', url);
               window.open(url, '_blank');
             } else {
