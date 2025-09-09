@@ -220,7 +220,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                 console.log('componentToRender.props:', (componentToRender as any).props);
                 console.log('componentToRender.type:', (componentToRender as any).type);
                 console.log('componentToRender.type.name:', (componentToRender as any).type?.name);
-              }
+              
               
               let url = `${window.location.origin}/canvas-only`;
               
@@ -278,8 +278,6 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
               console.log('Opening URL:', url);
               console.log('Opening URL:', url);
               window.open(url, '_blank');
-            } else {
-              console.log('No componentToRender available');
             } else {
               console.log('No componentToRender available');
             }
