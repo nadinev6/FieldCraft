@@ -374,13 +374,15 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons }) 
       <form>
         {actualFormDef.map((section, idx) => renderFormSection(section, idx))}
         
-        <div className="flex gap-3 justify-end mt-6">
+        <div className={cn("flex gap-3 mt-6", getButtonAlignmentClass(buttonsAlign))}>
           {buttons && buttons.length > 0 ? (
             buttons.map((button, idx) => (
               <button
                 key={idx}
                 type={button.type}
-                className={buttonVariants[button.variant]}
+                className={cn(
+                  button.colorClass || buttonVariants[button.variant || "primary"]
+                )}
                 onClick={(e) => handleButtonClick(button, e)}
               >
                 {button.label}

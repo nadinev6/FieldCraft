@@ -146,5 +146,21 @@ export const formFieldSchema = z.union([
   starRatingFieldSchema,
 ]);
 
+// Button schema for custom buttons
+const buttonSchema = z.object({
+  label: z.string().describe("The text displayed on the button"),
+  type: z.enum(["submit", "button", "reset"]).optional().default("button").describe("The HTML button type"),
+  variant: z.enum(["primary", "secondary", "outline", "danger"]).optional().default("primary").describe("The visual style variant of the button"),
+  action: z.string().optional().describe("Optional action identifier for handling button clicks"),
+  align: z.enum(["left", "center", "right"]).optional().default("right").describe("Horizontal alignment of the button group"),
+  colorClass: z.string().optional().describe("Custom Tailwind CSS classes for button styling (e.g., 'bg-blue-500 text-white')"),
+});
+
+// Zod schema for FormRenderer props
+export const formRendererPropsSchema = z.object({
+  formDef: z.array(formFieldSchema).optional().describe("Array of form field definitions that define the structure and fields of the form to render"),
+  buttons: z.array(buttonSchema).optional().describe("Optional array of custom buttons to render at the bottom of the form"),
+  buttonsAlign: z.enum(["left", "center", "right"]).optional().default("right").describe("Global alignment for all form buttons"),
+});
 
 export type FormField = z.infer<typeof formFieldSchema>;
