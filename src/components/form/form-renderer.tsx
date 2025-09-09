@@ -243,6 +243,48 @@ const FieldComponents: Record<string, React.FC<any>> = {
   verticalDivider: () => (
     <div className="w-px bg-gray-300 dark:bg-zinc-700 mx-4 self-stretch"></div>
   ),
+  heading: ({ text, level = "h2", alignment = "left", className, ...props }) => {
+    const HeadingTag = level as keyof JSX.IntrinsicElements;
+    const alignmentClass = alignment === "center" ? "text-center" : alignment === "right" ? "text-right" : "text-left";
+    const levelClasses = {
+      h1: "text-3xl font-bold mb-6 mt-8",
+      h2: "text-2xl font-bold mb-4 mt-6", 
+      h3: "text-xl font-semibold mb-3 mt-5",
+      h4: "text-lg font-semibold mb-2 mt-4",
+      h5: "text-base font-medium mb-2 mt-3",
+      h6: "text-sm font-medium mb-2 mt-2"
+    };
+    
+    return (
+      <HeadingTag 
+        className={cn(
+          levelClasses[level],
+          alignmentClass,
+          "text-gray-900 dark:text-gray-100",
+          className
+        )}
+        {...props}
+      >
+        {text}
+      </HeadingTag>
+    );
+  },
+  paragraph: ({ text, alignment = "left", className, ...props }) => {
+    const alignmentClass = alignment === "center" ? "text-center" : alignment === "right" ? "text-right" : "text-left";
+    
+    return (
+      <p 
+        className={cn(
+          "mb-4 text-gray-700 dark:text-gray-300 leading-relaxed",
+          alignmentClass,
+          className
+        )}
+        {...props}
+      >
+        {text}
+      </p>
+    );
+  },
 };
 
 export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons }) => {
