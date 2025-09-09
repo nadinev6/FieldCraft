@@ -131,6 +131,23 @@ export const starRatingFieldSchema = z.object({
   allowHalf: z.boolean().optional().default(false),
 });
 
+// Heading field schema
+export const headingFieldSchema = z.object({
+  type: z.literal("heading"),
+  text: z.string().describe("The heading text content"),
+  level: z.enum(["h1", "h2", "h3", "h4", "h5", "h6"]).optional().default("h2").describe("The heading level (h1-h6)"),
+  alignment: z.enum(["left", "center", "right"]).optional().default("left").describe("Text alignment"),
+  className: z.string().optional().describe("Additional CSS classes for custom styling"),
+});
+
+// Paragraph field schema
+export const paragraphFieldSchema = z.object({
+  type: z.literal("paragraph"),
+  text: z.string().describe("The paragraph text content"),
+  alignment: z.enum(["left", "center", "right"]).optional().default("left").describe("Text alignment"),
+  className: z.string().optional().describe("Additional CSS classes for custom styling"),
+});
+
 // Union schema for all field types
 export const formFieldSchema = z.union([
   textFieldSchema,
@@ -144,6 +161,8 @@ export const formFieldSchema = z.union([
   dividerFieldSchema,
   verticalDividerFieldSchema,
   starRatingFieldSchema,
+  headingFieldSchema,
+  paragraphFieldSchema,
 ]);
 
 // Button schema for custom buttons
