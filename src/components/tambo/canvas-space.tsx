@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { FormRenderer } from "@/components/form/form-renderer";
 import { useTamboThread } from "@tambo-ai/react";
 import { ExternalLink } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -173,30 +174,18 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
             console.log('typeof componentToRender:', typeof componentToRender);
             console.log('componentToRender has props?', componentToRender && typeof componentToRender === 'object' && 'props' in componentToRender);
             
-            console.log('=== CANVAS LINK DEBUG ===');
-            console.log('componentToRender:', componentToRender);
-            console.log('typeof componentToRender:', typeof componentToRender);
-            console.log('componentToRender has props?', componentToRender && typeof componentToRender === 'object' && 'props' in componentToRender);
-            
             if (componentToRender) {
-<<<<<<< HEAD
-=======
               if (componentToRender && typeof componentToRender === 'object' && 'props' in componentToRender) {
                 console.log('componentToRender.props:', (componentToRender as any).props);
                 console.log('componentToRender.type:', (componentToRender as any).type);
                 console.log('componentToRender.type.name:', (componentToRender as any).type?.name);
+                console.log('Is FormRenderer?', (componentToRender as any).type === FormRenderer);
               }
               
-                console.log('componentToRender.props:', (componentToRender as any).props);
-                console.log('componentToRender.type:', (componentToRender as any).type);
-                console.log('componentToRender.type.name:', (componentToRender as any).type?.name);
-              
-              
->>>>>>> edc33c459d922e8cefccbc66ac1626aa7da6d4ff
               let url = `${window.location.origin}/canvas-only`;
               
               // Extract FormRenderer props if applicable
-              if (typeof componentToRender === 'object' && 'props' in componentToRender) {
+              if (typeof componentToRender === 'object' && 'props' in componentToRender && (componentToRender as any).type === FormRenderer) {
                 const props = (componentToRender as any).props;
                 console.log('Extracted props:', props);
                 console.log('Props has formDef?', props && 'formDef' in props);
@@ -207,51 +196,37 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                 console.log('Props has buttons?', props && 'buttons' in props);
                 
                 if (props && (props.formDef || props.buttons)) {
-                  console.log('Found FormRenderer props, creating URL with form data');
-                  console.log('Found FormRenderer props, creating URL with form data');
-                  try {
-                    const params = new URLSearchParams();
                     if (props.formDef) {
-                      console.log('Adding formDef to URL:', props.formDef);
                       console.log('Adding formDef to URL:', props.formDef);
                       params.set('formDef', encodeURIComponent(JSON.stringify(props.formDef)));
                     }
                     if (props.buttons) {
                       console.log('Adding buttons to URL:', props.buttons);
-                      console.log('Adding buttons to URL:', props.buttons);
                       params.set('buttons', encodeURIComponent(JSON.stringify(props.buttons)));
                     }
                     url += `?${params.toString()}`;
-                    console.log('Final URL:', url);
                     console.log('Final URL:', url);
                   } catch (error) {
                     console.error('Failed to serialize form data:', error);
                     if (activeCanvasMessageId) {
                       console.log('Falling back to messageId approach:', activeCanvasMessageId);
-                      console.log('Falling back to messageId approach:', activeCanvasMessageId);
                       url += `?messageId=${activeCanvasMessageId}`;
                     }
                   }
                 } else if (activeCanvasMessageId) {
-<<<<<<< HEAD
                   url += `?messageId=${activeCanvasMessageId}`;
                 }
               } else if (activeCanvasMessageId) {
 =======
-                  console.log('No FormRenderer props found, using messageId approach:', activeCanvasMessageId);
-                  console.log('No FormRenderer props found, using messageId approach:', activeCanvasMessageId);
-                  // Fallback to messageId approach for non-FormRenderer components
+                  console.log('FormRenderer found but no formDef/buttons props, using messageId approach:', activeCanvasMessageId);
                   url += `?messageId=${activeCanvasMessageId}`;
                 }
               } else if (activeCanvasMessageId) {
-                console.log('Component has no props, using messageId approach:', activeCanvasMessageId);
-                console.log('Component has no props, using messageId approach:', activeCanvasMessageId);
-                // Fallback to messageId approach
+                console.log('Not a FormRenderer or no props, using messageId approach:', activeCanvasMessageId);
 >>>>>>> edc33c459d922e8cefccbc66ac1626aa7da6d4ff
                 url += `?messageId=${activeCanvasMessageId}`;
               }
               
-              console.log('Opening URL:', url);
               console.log('Opening URL:', url);
               window.open(url, '_blank');
             } else {
