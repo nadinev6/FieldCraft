@@ -5,6 +5,7 @@ import { z } from "zod";
 import { formFieldSchema } from "@/lib/form-field-schemas";
 import { ChevronDown, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { InfoPopover } from "@/components/ui/info-popover";
 
 // Base input styling
 const baseInputClass =
@@ -371,7 +372,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons }) 
               <button
                 type="button"
                 onClick={() => toggleGroupCollapse(idx)}
-                className="flex items-center gap-2 text-left font-medium text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+                className="flex items-center gap-2 text-left font-medium text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 transition-colors mr-2"
               >
                 <ChevronDown
                   className={`w-4 h-4 transition-transform duration-200 ${
@@ -381,7 +382,15 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons }) 
                 {section.label}
               </button>
             ) : (
-              <span className="font-medium text-gray-800 dark:text-gray-200">{section.label}</span>
+              <span className="font-medium text-gray-800 dark:text-gray-200 mr-2">{section.label}</span>
+            )}
+            {section.disclaimer && (
+              <InfoPopover
+                triggerLabel="Additional Information"
+                content={section.disclaimer}
+                side="right"
+                align="start"
+              />
             )}
           </legend>
           

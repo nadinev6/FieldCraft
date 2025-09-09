@@ -108,6 +108,7 @@ export const groupFieldSchema = z.object({
   name: z.string().optional(),
   fields: z.array(z.lazy(() => formFieldSchema)),
   description: z.string().optional(),
+  disclaimer: z.string().optional().describe("Optional disclaimer or additional instructions displayed in a popover"),
   collapsible: z.boolean().optional().default(false).describe("Whether this group can be collapsed/expanded"),
   defaultCollapsed: z.boolean().optional().default(false).describe("Initial collapsed state if collapsible is true"),
   columns: z.number().min(1).optional().describe("Number of columns for fields within this group"),
