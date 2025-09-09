@@ -12,6 +12,19 @@ function CanvasOnlyContent() {
   const formDefParam = searchParams.get('formDef');
   const buttonsParam = searchParams.get('buttons');
 
+  // Add thread debugging
+  const { thread } = useTamboThread();
+  
+  useEffect(() => {
+    console.log("=== CANVAS-ONLY CONTENT DEBUG ===");
+    console.log("Thread from useTamboThread():", thread);
+    console.log("Thread ID from useTamboThread():", thread?.id);
+    console.log("Thread messages count:", thread?.messages?.length || 0);
+    console.log("messageIdFromUrl:", messageIdFromUrl);
+    console.log("formDefParam:", formDefParam);
+    console.log("buttonsParam:", buttonsParam);
+  }, [thread, messageIdFromUrl, formDefParam, buttonsParam]);
+
   // Parse form data if available
   if (formDefParam || buttonsParam) {
     try {
@@ -72,6 +85,12 @@ export default function CanvasOnlyPage() {
   // Get thread ID from URL parameters
   const searchParams = useSearchParams();
   const threadId = searchParams.get('threadId') || 'default-thread';
+
+  console.log("=== CANVAS-ONLY PAGE DEBUG ===");
+  console.log("Raw threadId from URL:", searchParams.get('threadId'));
+  console.log("Final threadId being used:", threadId);
+  console.log("ThreadId type:", typeof threadId);
+  console.log("All URL search params:", Object.fromEntries(searchParams.entries()));
 
   return (
     <TamboProvider

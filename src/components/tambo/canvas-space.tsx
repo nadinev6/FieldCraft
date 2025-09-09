@@ -37,6 +37,15 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const previousThreadId = useRef<string | null>(null);
 
+  // Log thread ID immediately when component renders
+  useEffect(() => {
+    console.log("=== CANVAS SPACE THREAD DEBUG ===");
+    console.log("Current thread object:", thread);
+    console.log("Current thread.id:", thread?.id);
+    console.log("Thread ID type:", typeof thread?.id);
+    console.log("Is thread ID placeholder?", thread?.id === "placeholder");
+  }, [thread?.id]);
+
   // Log thread changes
   useEffect(() => {
     console.log("Thread changed:", thread?.id);
@@ -170,6 +179,8 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
         <button
           onClick={() => {
             console.log('=== CANVAS LINK DEBUG ===');
+            console.log('About to construct URL with thread.id:', thread?.id);
+            console.log('Thread ID being used for URL:', thread?.id);
             console.log('Current thread:', thread);
             console.log('Thread ID:', thread?.id);
             console.log('componentToRender:', componentToRender);
@@ -190,7 +201,10 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
               // Always include threadId if available
               if (thread?.id) {
                 console.log('Adding threadId to URL:', thread.id);
+                console.log('ThreadId value being added:', JSON.stringify(thread.id));
                 params.set('threadId', thread.id);
+              } else {
+                console.log('WARNING: No thread.id available to add to URL');
               }
               
               // Extract FormRenderer props if applicable
@@ -231,6 +245,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                 url += `?${params.toString()}`;
               }
               console.log('Opening URL:', url);
+              console.log('Final URL parameters:', params.toString());
               window.open(url, '_blank');
             } else {
               console.log('No componentToRender available');
