@@ -179,8 +179,6 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
             console.log('componentToRender has props?', componentToRender && typeof componentToRender === 'object' && 'props' in componentToRender);
             
             if (componentToRender) {
-<<<<<<< HEAD
-=======
               if (componentToRender && typeof componentToRender === 'object' && 'props' in componentToRender) {
                 console.log('componentToRender.props:', (componentToRender as any).props);
                 console.log('componentToRender.type:', (componentToRender as any).type);
@@ -192,7 +190,6 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                 console.log('componentToRender.type.name:', (componentToRender as any).type?.name);
               
               
->>>>>>> edc33c459d922e8cefccbc66ac1626aa7da6d4ff
               let url = `${window.location.origin}/canvas-only`;
               
               // Extract FormRenderer props if applicable
@@ -233,11 +230,6 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                     }
                   }
                 } else if (activeCanvasMessageId) {
-<<<<<<< HEAD
-                  url += `?messageId=${activeCanvasMessageId}`;
-                }
-              } else if (activeCanvasMessageId) {
-=======
                   console.log('No FormRenderer props found, using messageId approach:', activeCanvasMessageId);
                   console.log('No FormRenderer props found, using messageId approach:', activeCanvasMessageId);
                   // Fallback to messageId approach for non-FormRenderer components
@@ -247,7 +239,6 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                 console.log('Component has no props, using messageId approach:', activeCanvasMessageId);
                 console.log('Component has no props, using messageId approach:', activeCanvasMessageId);
                 // Fallback to messageId approach
->>>>>>> edc33c459d922e8cefccbc66ac1626aa7da6d4ff
                 url += `?messageId=${activeCanvasMessageId}`;
               }
               
