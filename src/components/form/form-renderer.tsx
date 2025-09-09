@@ -280,7 +280,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons }) 
     }
   };
 
-  // Helper function to render individual form fields
+  // Helper function to render individual form fields (input components only)
   const renderFormField = (field: any, key: string | number) => {
     const normalizedType = normalizeFieldType(field.type);
     
@@ -295,80 +295,84 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons }) 
     return <Field key={key} {...field} />;
   };
 
+  // Recursive function to render form sections (groups, dividers, or individual fields)
+  const renderFormSection = (section: any, idx: number): React.ReactNode => {
+    console.log(`Processing section ${idx}:`, section);
+    console.log(`Section type: '${section?.type}' (typeof: ${typeof section?.type})`);
+    
+    if (!section) {
+      console.log(`Skipping empty section ${idx}`);
+      return null;
+    }
+    
+    const normalizedType = normalizeFieldType(section.type);
+    
+    console.log(`Normalized type: '${normalizedType}'`);
+    console.log(`Is group? ${normalizedType === "group"}`);
+    console.log(`Is divider? ${normalizedType === "divider"}`);
+    
+    if (normalizedType === "group") {
+      if (!section.fields || !Array.isArray(section.fields) || section.fields.length === 0) {
+        console.warn(`Skipping group "${section.label}" - missing or empty fields array:`, section);
+        return null;
+      }
+      
+      const isCollapsed = collapsedGroups[idx] || false;
+      const isCollapsible = section.collapsible || false;
+      
+      console.log(`Rendering group "${section.label}" with ${section.fields.length} fields, columns: ${section.columns}`);
+      
+      return (
+        <fieldset key={idx} className="mb-8">
+          <legend className="flex items-center w-full">
+            {isCollapsible ? (
+              <button
+                type="button"
+                onClick={() => toggleGroupCollapse(idx)}
+                className="flex items-center gap-2 text-left font-medium text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+              >
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform duration-200 ${
+                    isCollapsed ? '-rotate-90' : 'rotate-0'
+                  }`}
+                />
+                {section.label}
+              </button>
+            ) : (
+              <span className="font-medium text-gray-800 dark:text-gray-200">{section.label}</span>
+            )}
+          </legend>
+          
+          <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+            isCollapsed ? 'max-h-0 opacity-0' : 'max-h-none opacity-100'
+          }`}>
+            <div className={cn(
+              "pt-4",
+              section.columns && "grid gap-x-4 items-start",
+              section.columns && getGridColsClass(section.columns)
+            )}>
+              {section.fields.map((field, fIdx) => {
+                // Recursively render each field in the group
+                // This handles nested groups, dividers, and individual fields
+                return renderFormSection(field, fIdx);
+              })}
+            </div>
+          </div>
+        </fieldset>
+      );
+    } else if (normalizedType === "divider") {
+      console.log(`Rendering divider: "${section.label}"`);
+      return <FieldComponents.divider key={idx} {...section} />;
+    } else {
+      // Handle individual fields (text, number, starRating, etc.)
+      console.log(`Rendering individual field of type: '${section.type}' (normalized: '${normalizedType}')`);
+      return renderFormField(section, idx);
+    }
+  };
   return (
     <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
       <form>
-        {actualFormDef.map((section, idx) => {
-          console.log(`Processing section ${idx}:`, section);
-          console.log(`Section type: '${section?.type}' (typeof: ${typeof section?.type})`);
-          
-          if (!section) {
-            console.log(`Skipping empty section ${idx}`);
-            return null;
-          }
-          
-          const normalizedType = normalizeFieldType(section.type);
-          
-          console.log(`Normalized type: '${normalizedType}'`);
-          console.log(`Is group? ${normalizedType === "group"}`);
-          console.log(`Is divider? ${normalizedType === "divider"}`);
-          
-          if (normalizedType === "group") {
-            if (!section.fields || !Array.isArray(section.fields) || section.fields.length === 0) {
-              console.warn(`Skipping group "${section.label}" - missing or empty fields array:`, section);
-              return null;
-            }
-            
-            const isCollapsed = collapsedGroups[idx] || false;
-            const isCollapsible = section.collapsible || false;
-            
-            console.log(`Rendering group "${section.label}" with ${section.fields.length} fields, columns: ${section.columns}`);
-            
-            return (
-              <fieldset key={idx} className="mb-8">
-                <legend className="flex items-center w-full">
-                  {isCollapsible ? (
-                    <button
-                      type="button"
-                      onClick={() => toggleGroupCollapse(idx)}
-                      className="flex items-center gap-2 text-left font-medium text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
-                    >
-                      <ChevronDown
-                        className={`w-4 h-4 transition-transform duration-200 ${
-                          isCollapsed ? '-rotate-90' : 'rotate-0'
-                        }`}
-                      />
-                      {section.label}
-                    </button>
-                  ) : (
-                    <span className="font-medium text-gray-800 dark:text-gray-200">{section.label}</span>
-                  )}
-                </legend>
-                
-                <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                  isCollapsed ? 'max-h-0 opacity-0' : 'max-h-none opacity-100'
-                }`}>
-                  <div className={cn(
-                    "pt-4",
-                    section.columns && "grid gap-x-4 items-start",
-                    section.columns && getGridColsClass(section.columns)
-                  )}>
-                    {section.fields.map((field, fIdx) => {
-                      return renderFormField(field, fIdx);
-                    })}
-                  </div>
-                </div>
-              </fieldset>
-            );
-          } else if (normalizedType === "divider") {
-            console.log(`Rendering divider: "${section.label}"`);
-            return <FieldComponents.divider key={idx} {...section} />;
-          } else {
-            // Handle individual fields at the top level
-            console.log(`Rendering top-level field of type: '${section.type}' (normalized: '${normalizedType}')`);
-            return renderFormField(section, idx);
-          }
-        })}
+        {actualFormDef.map((section, idx) => renderFormSection(section, idx))}
         
         <div className="flex gap-3 justify-end mt-6">
           {buttons && buttons.length > 0 ? (
