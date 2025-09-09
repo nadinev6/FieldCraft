@@ -200,12 +200,43 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
       <div className="absolute bottom-4 right-4 flex space-x-2 bg-white dark:bg-zinc-800 p-2 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700">
         <button
           onClick={() => {
-            if (activeCanvasMessageId) {
-              const url = `${window.location.origin}/canvas-only?messageId=${activeCanvasMessageId}`;
+            if (componentToRender) {
+              // Try to extract FormRenderer props if it's a FormRenderer component
+              let url = `${window.location.origin}/canvas-only`;
+              
+              // Check if the component is a FormRenderer by looking at its props
+              if (componentToRender && typeof componentToRender === 'object' && 'props' in componentToRender) {
+                const props = (componentToRender as any).props;
+                if (props && (props.formDef || props.buttons)) {
+                  try {
+                    const params = new URLSearchParams();
+                    if (props.formDef) {
+                      params.set('formDef', encodeURIComponent(JSON.stringify(props.formDef)));
+                    }
+                    if (props.buttons) {
+                      params.set('buttons', encodeURIComponent(JSON.stringify(props.buttons)));
+                    }
+                    url += `?${params.toString()}`;
+                  } catch (error) {
+                    console.error('Failed to serialize form data:', error);
+                    // Fallback to messageId approach
+                    if (activeCanvasMessageId) {
+                      url += `?messageId=${activeCanvasMessageId}`;
+                    }
+                  }
+                } else if (activeCanvasMessageId) {
+                  // Fallback to messageId approach for non-FormRenderer components
+                  url += `?messageId=${activeCanvasMessageId}`;
+                }
+              } else if (activeCanvasMessageId) {
+                // Fallback to messageId approach
+                url += `?messageId=${activeCanvasMessageId}`;
+              }
+              
               window.open(url, '_blank');
             }
           }}
-          disabled={!activeCanvasMessageId}
+          disabled={!componentToRender}
           className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Open in new tab"
         >
