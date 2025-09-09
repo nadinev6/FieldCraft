@@ -19,7 +19,8 @@ const fieldSchemas: Record<string, any> = {
   radio: radioFieldSchema,
   textarea: textareaFieldSchema,
   date: dateFieldSchema,
-  password: textFieldSchema, // You can create a passwordFieldSchema for stricter rules
+  password: textFieldSchema,
+  starRating: z.number() // You can create a passwordFieldSchema for stricter rules
 };
 
 // Build Zod schema for form data

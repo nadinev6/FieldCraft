@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; // Added useState here
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { exampleForm } from "@/lib/form-definitions";
 import { z } from "zod";
@@ -6,9 +6,11 @@ import { formFieldSchema } from "@/lib/form-field-schemas";
 import { ChevronDown, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Standard field styling
+// Base input styling
 const baseInputClass =
   "w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 dark:bg-zinc-800 dark:text-gray-100 dark:border-zinc-600 dark:focus:border-zinc-500";
+
+// Base label styling
 const baseLabelClass =
   "block mb-2 font-medium text-gray-700 dark:text-gray-200 text-sm";
 
@@ -129,7 +131,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
             {options?.map((option: any, idx: number) => (
               <div key={`${name}-${option.value}`} className="flex items-center">
                 <input
-                  type="radio"
+                  type="radio" 
                   id={`${name}-${option.value}`}
                   name={name}
                   value={option.value}
@@ -188,30 +190,29 @@ const FieldComponents: Record<string, React.FC<any>> = {
             
             return (
               <button
-                key={starValue}
-                type="button"
-                className="p-1 hover:scale-110 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
-                onClick={() => handleStarClick(starValue)}
-                onMouseEnter={() => handleStarHover(starValue)}
-                aria-label={`Rate ${starValue} out of ${maxRating} stars`}
-              >
-                <Star
-                  className={`w-6 h-6 transition-colors duration-150 ${
-                    fillType === 'full'
-                      ? 'fill-yellow-400 text-yellow-400'
-                      : fillType === 'half'
-                      ? 'fill-yellow-200 text-yellow-400'
-                      : 'fill-transparent text-gray-300 hover:text-yellow-400'
-                  }`}
-                />
-              </button>
+            key={starValue}
+            type="button"
+            className="p-1 hover:scale-110 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+            onClick={() => handleStarClick(starValue)}
+            onMouseEnter={() => handleStarHover(starValue)}
+            aria-label={`Rate ${starValue} out of ${maxRating} stars`}
+          >
+            <Star
+              className={`w-6 h-6 transition-colors duration-150 ${
+                fillType === 'full'
+                  ? 'fill-yellow-400 text-yellow-400'
+                  : fillType === 'half'
+                  ? 'fill-yellow-200 text-yellow-400'
+                  : 'fill-transparent text-gray-300 hover:text-yellow-400'
+              }`}
+            />
+          </button>
             );
           })}
           <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
             {rating > 0 ? `${rating}/${maxRating}` : 'No rating'}
           </span>
         </div>
-        {/* Hidden input for form submission */}
         <input
           type="hidden"
           name={name}
@@ -232,20 +233,11 @@ const FieldComponents: Record<string, React.FC<any>> = {
   ),
 };
 
-export const FormRenderer: React.FC<FormRendererProps> = ({
-  formDef, // Destructure directly
-  buttons,
-}) => {
-  // Use exampleForm as default if formDef is not provided or is explicitly undefined
+export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons }) => {
   const actualFormDef = formDef === undefined ? exampleForm : formDef;
-
-  console.log("FormRenderer is using this form definition:", actualFormDef);
-
   
-  // State to manage collapsed groups
   const [collapsedGroups, setCollapsedGroups] = useState<Record<number, boolean>>({});
   
-  // Initialize collapsed state for groups
   useEffect(() => {
     const initialCollapsedState: Record<number, boolean> = {};
     actualFormDef.forEach((section, idx) => {
@@ -263,43 +255,19 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     }));
   };
   
-  // Check if formDef is invalid or empty *after* applying the default
-  const isValidForm = Array.isArray(actualFormDef) && actualFormDef.length > 0;
-  
-  if (!isValidForm) {
-    return (
-      <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
-        <div className="text-center">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-            Invalid Form Definition
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Please provide a valid form configuration.
-          </p>
-        </div>
-      </div>
-    );
-  }
-  // Log form data for debugging
-  useEffect(() => {
-    console.log("FormRenderer received formDef:", formDef);
-    console.log("Using actualFormDef:", actualFormDef);
-  }, [formDef, actualFormDef]); // Add actualFormDef to dependency array
-  // ... (handleButtonClick and return statement remain the same) ...
-   const handleButtonClick = (button: z.infer<typeof buttonSchema>, event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleButtonClick = (button: z.infer<typeof buttonSchema>, event: React.MouseEvent<HTMLButtonElement>) => {
     if (button.action) {
-      // Emit a custom event with the action identifier
       const customEvent = new CustomEvent('formButtonClick', {
         detail: { action: button.action, button, event }
       });
       window.dispatchEvent(customEvent);
     }
     
-    // For submit buttons, let the default form submission behavior occur
     if (button.type !== 'submit') {
       event.preventDefault();
     }
   };
+
   return (
     <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
       <form>
@@ -312,13 +280,11 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             return null;
           }
           
-          // Normalize the type for robust matching
           let normalizedType = section.type;
           if (typeof section.type === 'string') {
             normalizedType = section.type.toLowerCase().trim();
-            // Map common AI variations to our component keys
             if (normalizedType === 'rating') {
-              normalizedType = 'starrating';
+              normalizedType = 'starRating';
             }
           }
           
@@ -345,10 +311,11 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
                       onClick={() => toggleGroupCollapse(idx)}
                       className="flex items-center gap-2 text-left font-medium text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
                     >
-                      <ChevronDown 
+                      <LucideIcon
                         className={`w-4 h-4 transition-transform duration-200 ${
                           isCollapsed ? '-rotate-90' : 'rotate-0'
                         }`}
+                        icon="ChevronDown"
                       />
                       {section.label}
                     </button>
@@ -366,12 +333,11 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
                     section.columns && getGridColsClass(section.columns)
                   )}>
                     {section.fields.map((field, fIdx) => {
-                      // Also normalize field types within groups
                       let fieldNormalizedType = field.type;
                       if (typeof field.type === 'string') {
                         fieldNormalizedType = field.type.toLowerCase().trim();
                         if (fieldNormalizedType === 'rating') {
-                          fieldNormalizedType = 'starrating';
+                          fieldNormalizedType = 'starRating';
                         }
                       }
                       
@@ -392,10 +358,8 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             return <FieldComponents.divider key={idx} {...section} />;
           }
           
-          // Check if it's an individual field type
           const Field = FieldComponents[normalizedType];
           if (Field) {
-            console.log(`Rendering individual field of normalized type: ${normalizedType}`);
             return <Field key={idx} {...section} />;
           }
           
@@ -403,7 +367,6 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
           return null;
         })}
         
-        {/* Custom buttons or default submit button */}
         <div className="flex gap-3 justify-end mt-6">
           {buttons && buttons.length > 0 ? (
             buttons.map((button, idx) => (
