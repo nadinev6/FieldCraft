@@ -196,6 +196,8 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                 console.log('Props has buttons?', props && 'buttons' in props);
                 
                 if (props && (props.formDef || props.buttons)) {
+                  try {
+                    const params = new URLSearchParams();
                     if (props.formDef) {
                       console.log('Adding formDef to URL:', props.formDef);
                       params.set('formDef', encodeURIComponent(JSON.stringify(props.formDef)));
@@ -214,16 +216,11 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                     }
                   }
                 } else if (activeCanvasMessageId) {
-                  url += `?messageId=${activeCanvasMessageId}`;
-                }
-              } else if (activeCanvasMessageId) {
-=======
                   console.log('FormRenderer found but no formDef/buttons props, using messageId approach:', activeCanvasMessageId);
                   url += `?messageId=${activeCanvasMessageId}`;
                 }
               } else if (activeCanvasMessageId) {
                 console.log('Not a FormRenderer or no props, using messageId approach:', activeCanvasMessageId);
->>>>>>> edc33c459d922e8cefccbc66ac1626aa7da6d4ff
                 url += `?messageId=${activeCanvasMessageId}`;
               }
               
