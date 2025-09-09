@@ -62,6 +62,16 @@ const normalizeFieldType = (type: string): string => {
   return type;
 };
 
+// Helper function to get button alignment classes
+const getButtonAlignmentClass = (alignment?: "left" | "center" | "right") => {
+  switch (alignment) {
+    case "left": return "justify-start";
+    case "center": return "justify-center";
+    case "right": return "justify-end";
+    default: return "justify-end"; // Default to right alignment
+  }
+};
+
 // Individual field components
 const FieldComponents: Record<string, React.FC<any>> = {
   text: ({ label, name, ...props }) => (
@@ -289,6 +299,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
 };
 
 export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons }) => {
+export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons, buttonsAlign }) => {
   const actualFormDef = formDef === undefined ? exampleForm : formDef;
   
   const [collapsedGroups, setCollapsedGroups] = useState<Record<number, boolean>>({});
