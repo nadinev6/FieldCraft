@@ -184,14 +184,6 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                 console.log('Is FormRenderer?', (componentToRender as any).type === FormRenderer);
               }
               
-<<<<<<< HEAD
-                console.log('componentToRender.props:', (componentToRender as any).props);
-                console.log('componentToRender.type:', (componentToRender as any).type);
-                console.log('componentToRender.type.name:', (componentToRender as any).type?.name);
-              
-              
-=======
->>>>>>> aacdc808a0dc04f58efa8b857e5316b66fe31193
               let url = `${window.location.origin}/canvas-only`;
               const params = new URLSearchParams();
               
@@ -226,25 +218,12 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                     }
                   }
                 } else if (activeCanvasMessageId) {
-<<<<<<< HEAD
-                  console.log('No FormRenderer props found, using messageId approach:', activeCanvasMessageId);
-                  console.log('No FormRenderer props found, using messageId approach:', activeCanvasMessageId);
-                  // Fallback to messageId approach for non-FormRenderer components
-                  url += `?messageId=${activeCanvasMessageId}`;
-                }
-              } else if (activeCanvasMessageId) {
-                console.log('Component has no props, using messageId approach:', activeCanvasMessageId);
-                console.log('Component has no props, using messageId approach:', activeCanvasMessageId);
-                // Fallback to messageId approach
-                url += `?messageId=${activeCanvasMessageId}`;
-=======
                   console.log('FormRenderer found but no formDef/buttons props, using messageId approach:', activeCanvasMessageId);
                   params.set('messageId', activeCanvasMessageId);
                 }
               } else if (activeCanvasMessageId) {
                 console.log('Not a FormRenderer or no props, using messageId approach:', activeCanvasMessageId);
                 params.set('messageId', activeCanvasMessageId);
->>>>>>> aacdc808a0dc04f58efa8b857e5316b66fe31193
               }
               
               // Construct final URL with all parameters
