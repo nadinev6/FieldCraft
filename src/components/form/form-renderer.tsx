@@ -213,23 +213,23 @@ const FieldComponents: Record<string, React.FC<any>> = {
             
             return (
               <button
-            key={starValue}
-            type="button"
-            className="p-1 hover:scale-110 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
-            onClick={() => handleStarClick(starValue)}
-            onMouseEnter={() => handleStarHover(starValue)}
-            aria-label={`Rate ${starValue} out of ${maxRating} stars`}
-          >
-            <Star
-              className={`w-6 h-6 transition-colors duration-150 ${
-                fillType === 'full'
-                  ? 'fill-yellow-400 text-yellow-400'
-                  : fillType === 'half'
-                  ? 'fill-yellow-200 text-yellow-400'
-                  : 'fill-transparent text-gray-300 hover:text-yellow-400'
-              }`}
-            />
-          </button>
+                key={starValue}
+                type="button"
+                className="p-1 hover:scale-110 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                onClick={() => handleStarClick(starValue)}
+                onMouseEnter={() => handleStarHover(starValue)}
+                aria-label={`Rate ${starValue} out of ${maxRating} stars`}
+              >
+                <Star
+                  className={`w-6 h-6 transition-colors duration-150 ${
+                    fillType === 'full'
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : fillType === 'half'
+                      ? 'fill-yellow-200 text-yellow-400'
+                      : 'fill-transparent text-gray-300 hover:text-yellow-400'
+                  }`}
+                />
+              </button>
             );
           })}
           <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
@@ -298,7 +298,6 @@ const FieldComponents: Record<string, React.FC<any>> = {
   },
 };
 
-export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons }) => {
 export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons, buttonsAlign }) => {
   const actualFormDef = formDef === undefined ? exampleForm : formDef;
   
@@ -431,6 +430,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons, bu
       return renderFormField(section, idx);
     }
   };
+  
   return (
     <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
       <form>
