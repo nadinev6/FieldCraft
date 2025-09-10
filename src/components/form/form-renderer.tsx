@@ -8,6 +8,34 @@ import { cn } from "@/lib/utils";
 
 import { Tooltip, TooltipProvider } from "@/components/tambo/suggestions-tooltip";
 
+// InfoPopover component for displaying disclaimer information
+const InfoPopover: React.FC<{
+  triggerLabel: string;
+  content: string;
+  side?: "top" | "right" | "bottom" | "left";
+  align?: "start" | "center" | "end";
+}> = ({ triggerLabel, content, side = "top", align = "center" }) => {
+  return (
+    <Tooltip
+      content={
+        <div className="max-w-xs p-2">
+          <p className="text-xs text-white leading-relaxed">{content}</p>
+        </div>
+      }
+      side={side}
+      align={align}
+    >
+      <button
+        type="button"
+        className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-400 hover:bg-gray-500 dark:bg-zinc-600 dark:hover:bg-zinc-500 transition-colors"
+        aria-label={triggerLabel}
+      >
+        <Info className="w-3 h-3 text-white" />
+      </button>
+    </Tooltip>
+  );
+};
+
 // Base input styling
 const baseInputClass =
   "w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 dark:bg-zinc-800 dark:text-gray-100 dark:border-zinc-600 dark:focus:border-zinc-500";
