@@ -36,7 +36,7 @@
 
 :root {
   /* Default Tailwind CSS Variables customized with tambo colors */
-  --background: linear-gradient(135deg, oklch(0.99 0.005 280) 0%, oklch(0.97 0.01 260) 100%);
+  --background: linear-gradient(135deg, oklch(0.99 0.005 150) 0%, oklch(0.97 0.02 150) 100%);
   --foreground: oklch(0.14 0 285);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.14 0 285);
@@ -62,7 +62,7 @@
 
   /* Tambo Specific Variables needed for tambo components */
   --container: oklch(0.98 0 0);
-  --backdrop: oklch(0.25 0.07 0 / 0.25);
+  --backdrop: oklch(88.5% 0.08 150 / 0.15);
   --muted-backdrop: oklch(0.25 0.07 0 / 0.1);
   
   /* Grid pattern color */

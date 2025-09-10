@@ -30,7 +30,7 @@ function ChatContent() {
   }, [messageIdFromUrl, thread?.messages]);
 
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex h-screen w-full bg-gradient-to-b from-[#7FFFC3]/8 via-transparent to-transparent dark:from-transparent dark:via-transparent dark:to-transparent">
       {/* Left panel: Chat (1/3) */}
       <MessageThreadPanel 
         contextKey="main-thread" 
