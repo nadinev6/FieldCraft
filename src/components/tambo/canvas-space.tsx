@@ -55,22 +55,6 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
     setActiveCanvasMessageId(null);
     setRenderedComponent(null);
   };
-  // Helper function to check if component is StylingPanel
-  const isStylingPanel = (component: React.ReactNode): boolean => {
-    if (React.isValidElement(component)) {
-      const componentType = component.type as any;
-      return componentType?.displayName === 'StylingPanel' || 
-             componentType?.name === 'StylingPanel' ||
-             (componentType?.render && componentType.render.displayName === 'StylingPanel');
-    }
-    return false;
-  };
-
-  // Function to close floating panel
-  const closeFloatingPanel = () => {
-    setActiveCanvasMessageId(null);
-    setRenderedComponent(null);
-  };
   // Log thread ID immediately when component renders
   useEffect(() => {
     console.log("=== CANVAS SPACE THREAD DEBUG ===");
