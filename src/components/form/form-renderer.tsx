@@ -403,12 +403,12 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
               <span className="font-medium text-gray-800 dark:text-gray-200 mr-2">{section.label}</span>
             )}
             {section.disclaimer && (
-              <Tooltip
+              <InfoPopover
+                triggerLabel="Additional Information"
                 content={section.disclaimer}
                 side="right"
-              >
-                <Info className="w-4 h-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-help ml-1" />
-              </Tooltip>
+                align="start"
+              />
             )}
           </legend>
           
@@ -474,10 +474,5 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
         </form>
       </div>
     </TooltipProvider>
-  );
-};
-        </div>
-      </form>
-    </div>
   );
 };
