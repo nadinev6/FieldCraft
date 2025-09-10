@@ -310,8 +310,23 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
 }) => {
   const actualFormDef = formDef === undefined ? exampleForm : formDef;
   
+  // DEBUG LOGS - Add comprehensive debugging
+  console.log("=== FormRenderer DEBUG ===");
+  console.log("formDef prop:", formDef);
+  console.log("actualFormDef:", actualFormDef);
+  console.log("multiStep prop:", multiStep);
+  console.log("backgroundColorClass:", backgroundColorClass);
+  console.log("backgroundGradientClass:", backgroundGradientClass);
+  console.log("textColorClass:", textColorClass);
+  console.log("buttons:", buttons);
+  console.log("buttonsAlign:", buttonsAlign);
+  
   const [collapsedGroups, setCollapsedGroups] = useState<Record<number, boolean>>({});
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  
+  // DEBUG: Log current step and sections
+  console.log("currentStepIndex:", currentStepIndex);
+  console.log("actualFormDef.length:", actualFormDef.length);
   
   useEffect(() => {
     const initialCollapsedState: Record<number, boolean> = {};
@@ -331,14 +346,18 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   };
   
   const handleNextStep = () => {
+    console.log("handleNextStep called, current:", currentStepIndex, "max:", actualFormDef.length - 1);
     if (currentStepIndex < actualFormDef.length - 1) {
       setCurrentStepIndex(prev => prev + 1);
+      console.log("Moving to step:", currentStepIndex + 1);
     }
   };
   
   const handlePreviousStep = () => {
+    console.log("handlePreviousStep called, current:", currentStepIndex);
     if (currentStepIndex > 0) {
       setCurrentStepIndex(prev => prev - 1);
+      console.log("Moving to step:", currentStepIndex - 1);
     }
   };
   
@@ -458,6 +477,10 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     ? [actualFormDef[currentStepIndex]].filter(Boolean)
     : actualFormDef;
   
+  // DEBUG: Log sections to render
+  console.log("sectionsToRender:", sectionsToRender);
+  console.log("sectionsToRender.length:", sectionsToRender.length);
+  
   // Adjust section index for collapsed groups state when in multiStep mode
   const getSectionIndex = (renderIndex: number) => {
     return multiStep ? currentStepIndex : renderIndex;
@@ -466,14 +489,24 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   const isFirstStep = currentStepIndex === 0;
   const isLastStep = currentStepIndex === actualFormDef.length - 1;
   
+  // DEBUG: Log step states
+  console.log("isFirstStep:", isFirstStep);
+  console.log("isLastStep:", isLastStep);
+  
+  // DEBUG: Log final styling classes
+  const finalBackgroundClass = backgroundGradientClass || backgroundColorClass || "bg-white dark:bg-zinc-900";
+  const finalTextClass = textColorClass || "text-gray-900 dark:text-gray-100";
+  console.log("finalBackgroundClass:", finalBackgroundClass);
+  console.log("finalTextClass:", finalTextClass);
+  
   return (
     <TooltipProvider>
       <div className={cn(
         "max-w-md mx-auto p-8 rounded-xl shadow-lg border border-gray-200 dark:border-zinc-700",
         // Apply background styling - gradient takes precedence over solid color
-        backgroundGradientClass || backgroundColorClass || "bg-white dark:bg-zinc-900",
+        finalBackgroundClass,
         // Apply text color styling
-        textColorClass || "text-gray-900 dark:text-gray-100"
+        finalTextClass
       )}>
         {/* Multi-step progress indicator */}
         {multiStep && (
@@ -498,6 +531,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
         <form>
           {sectionsToRender.map((section, renderIdx) => {
             const actualIdx = getSectionIndex(renderIdx);
+            console.log(`Rendering section at renderIdx: ${renderIdx}, actualIdx: ${actualIdx}`, section);
             return renderFormSection(section, actualIdx);
           })}
           
