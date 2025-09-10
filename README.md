@@ -92,6 +92,11 @@ FieldCraft leverages Tambo AI for intelligent form generation:
 - "Create a registration form for a work event"
 - "Build a contact form with validation"
 - "Generate an order form with multiple sections"
+- "Create a multi-step user registration form with account setup, personal info, preferences, and review steps"
+- "Build a product feedback form with multiple rating steps and recommendation section"
+- "Generate a multi-step event registration form with ticket selection and payment"
+- "Create a customer survey form with experience ratings and feedback collection"
+- "Make a multi-step form for collecting user preferences across different categories"
 
 ---
 
