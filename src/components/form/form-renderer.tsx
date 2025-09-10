@@ -614,7 +614,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       )}
       style={dynamicStyles}
       >
-            <div className="flex items-center justify-between mb-2">
+        {isMultiStep && (
               <span className="text-sm font-medium">
                 Step {stepIndex + 1} of {actualFormDef.length}
               </span>
@@ -638,7 +638,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             return renderFormSection(section, actualIdx);
           })}
           
-          {multiStep && (
+          {isMultiStep && (
             <div className="flex justify-between items-center mt-6">
               <button
                 type="button"
@@ -668,7 +668,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             </div>
           )}
           
-          {(!multiStep || isLastStep) && (
+          {(!isMultiStep || isLastStep) && (
             <div className={cn("flex gap-3 mt-6", getButtonAlignmentClass(currentButtonsAlign))}>
               {currentButtons && currentButtons.length > 0 ? (
                 currentButtons.map((button, idx) => (
