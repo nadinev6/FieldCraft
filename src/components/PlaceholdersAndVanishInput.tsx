@@ -160,9 +160,6 @@ export const PlaceholdersAndVanishInput = ({
   };
 
   const vanishAndSubmit = () => {
-    // Call onSubmit first to ensure navigation happens
-    onSubmit && onSubmit();
-    
     setAnimating(true);
     draw();
     const value = inputRef.current?.value || "";
@@ -173,6 +170,9 @@ export const PlaceholdersAndVanishInput = ({
       );
       animate(maxX);
     }
+    
+    // Call onSubmit after animation starts to ensure navigation happens
+    onSubmit && onSubmit();
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

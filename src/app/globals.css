@@ -79,23 +79,23 @@
 
 .dark {
   /* Dark Mode Tailwind CSS Variables customized with tambo colors */
-  --background: oklch(0.12 0.08 150);
-  --foreground: oklch(0.95 0.02 150);
-  --card: oklch(0.25 0.08 150);
-  --card-foreground: oklch(0.95 0.02 150);
-  --popover: oklch(0.25 0.08 150);
-  --popover-foreground: oklch(0.95 0.02 150);
+  --background: oklch(0.09 0 0); /* neutral-900 equivalent */
+  --foreground: oklch(1 0 0); /* white */
+  --card: oklch(0.15 0 0); /* neutral-800 equivalent */
+  --card-foreground: oklch(1 0 0); /* white */
+  --popover: oklch(0.15 0 0); /* neutral-800 equivalent */
+  --popover-foreground: oklch(1 0 0); /* white */
   --primary: oklch(0.85 0.15 150);
   --primary-foreground: oklch(0.12 0.08 150);
   --secondary: oklch(0.35 0.12 150);
   --secondary-foreground: oklch(0.95 0.02 150);
-  --muted: oklch(0.25 0.08 150);
-  --muted-foreground: oklch(0.65 0.05 150);
+  --muted: oklch(0.15 0 0); /* neutral-800 equivalent */
+  --muted-foreground: oklch(0.64 0 0); /* neutral-400 equivalent */
   --accent: oklch(0.85 0.15 150);
   --accent-foreground: oklch(0.12 0.08 150);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(0.25 0.08 150);
+  --border: oklch(0.15 0 0); /* neutral-800 equivalent */
+  --input: oklch(0.15 0 0); /* neutral-800 equivalent */
   --ring: oklch(0.556 0 0);
   --chart-1: oklch(0.72 0.15 60);
   --chart-2: oklch(0.62 0.2 6);
@@ -104,14 +104,14 @@
   --chart-5: oklch(0.62 0.2 313);
 
   /* Tambo Specific Variables needed for tambo components */
-  --container: oklch(0.25 0.08 150);
-  --backdrop: oklch(0.25 0.07 150 / 0.25);
-  --muted-backdrop: oklch(0.25 0.07 150 / 0.1);
-  --dot-color: oklch(88% 0.08 150 / 0.7);
+  --container: oklch(0.15 0 0); /* neutral-800 equivalent */
+  --backdrop: oklch(0.15 0 0 / 0.25);
+  --muted-backdrop: oklch(0.15 0 0 / 0.1);
+  --dot-color: oklch(0.64 0 0 / 0.7); /* neutral-400 equivalent */
   --message-border-dark: oklch(1 0 0 / 15%);
   --container-border-dark: oklch(1 0 0 / 10%);
   --user-message-bubble: oklch(88.5% 0.08 150);
-  --dark-gradient-background: linear-gradient(135deg, oklch(0.12 0.08 150) 0%, oklch(0.16 0.10 150) 100%);
+  --dark-gradient-background: linear-gradient(135deg, oklch(0.09 0 0) 0%, oklch(0.15 0 0) 100%);
   --radius: 0.5rem;
   --panel-left-width: 500px;
   --panel-right-width: 500px;
@@ -155,5 +155,5 @@ You can remove this if you don't want to use it.
 }
 
 .dark .canvas-grid {
-  background-color: oklch(0.12 0.02 280);
+  background-color: oklch(0.09 0 0); /* neutral-900 equivalent */
 }

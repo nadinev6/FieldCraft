@@ -2,8 +2,9 @@
 
 import { cn } from "@/lib/utils";
 import { FormRenderer } from "@/components/form/form-renderer";
+import { StylingPanel } from "@/app/interactables/components/styling-panel";
 import { useTamboThread } from "@tambo-ai/react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, X } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import * as React from "react";
 import type { TamboThreadMessage } from "@tambo-ai/react";
@@ -37,6 +38,22 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const previousThreadId = useRef<string | null>(null);
 
+  // Helper function to check if component is StylingPanel
+  const isStylingPanel = (component: React.ReactNode): boolean => {
+    if (React.isValidElement(component)) {
+      const componentType = component.type as any;
+      return componentType?.displayName === 'StylingPanel' || 
+             componentType?.name === 'StylingPanel' ||
+             (componentType?.render && componentType.render.displayName === 'StylingPanel');
+    }
+    return false;
+  };
+
+  // Function to close floating panel
+  const closeFloatingPanel = () => {
+    setActiveCanvasMessageId(null);
+    setRenderedComponent(null);
+  };
   // Log thread ID immediately when component renders
   useEffect(() => {
     console.log("=== CANVAS SPACE THREAD DEBUG ===");
@@ -199,6 +216,9 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
 
   const scrollContainerClasses = "w-full flex-1 overflow-y-auto overflow-x-auto [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:bg-gray-300";
 
+  // Check if current component is StylingPanel
+  const isCurrentComponentStylingPanel = componentToRender && isStylingPanel(componentToRender);
+
   return (
     <div 
       className={cn(
@@ -207,12 +227,31 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
       )}
       data-canvas-space="true"
     >
+      {/* Fixed Position Styling Panel */}
+      {isCurrentComponentStylingPanel && (
+        <div className="absolute top-4 right-4 z-50 bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-gray-200 dark:border-neutral-700 max-w-sm">
+          <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-neutral-700">
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white">Styling Panel</h3>
+            <button
+              onClick={closeFloatingPanel}
+              className="p-1 rounded-md text-gray-400 hover:text-gray-600 dark:text-neutral-400 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 transition-colors"
+              aria-label="Close styling panel"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="p-2">
+            {componentToRender}
+          </div>
+        </div>
+      )}
+
       <div 
         ref={scrollContainerRef}
         className={scrollContainerClasses}
       >
         <div className="p-8 h-full flex flex-col">
-          {componentToRender ? (
+          {componentToRender && !isCurrentComponentStylingPanel ? (
             <div className="h-full space-y-6 pb-8 flex flex-col items-center justify-center w-full">
               <div
                 className="mx-auto max-w-full transition-all duration-200 ease-out transform flex justify-center opacity-100"
@@ -224,7 +263,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                 {componentToRender}
               </div>
             </div>
-          ) : (
+          ) : !isCurrentComponentStylingPanel ? (
             <div className="flex-1 flex items-center justify-center text-center p-6">
               <div className="space-y-2">
                 <p className="text-gray-600 font-medium">Canvas is empty</p>
@@ -233,7 +272,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
                 </p>
               </div>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -241,7 +280,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
       <div className="absolute bottom-4 right-4 flex space-x-2 bg-white dark:bg-zinc-800 p-2 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700">
         <button
           onClick={() => {
-            if (componentToRender && thread?.id) {
+            if (componentToRender && thread?.id && !isCurrentComponentStylingPanel) {
               let url = `${window.location.origin}/canvas-only`;
               const params = new URLSearchParams();
               
@@ -258,7 +297,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
               window.open(url, '_blank');
             }
           }}
-          disabled={!componentToRender}
+          disabled={!componentToRender || isCurrentComponentStylingPanel}
           className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Open in new tab"
         >
@@ -267,6 +306,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
         
         <button
           onClick={handleZoomOut}
+          disabled={isCurrentComponentStylingPanel}
           className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
           aria-label="Zoom out"
         >
@@ -275,6 +315,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
         
         <button
           onClick={handleResetZoom}
+          disabled={isCurrentComponentStylingPanel}
           className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors text-sm font-medium"
           aria-label="Reset zoom"
         >
@@ -283,6 +324,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
         
         <button
           onClick={handleZoomIn}
+          disabled={isCurrentComponentStylingPanel}
           className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
           aria-label="Zoom in"
         >
