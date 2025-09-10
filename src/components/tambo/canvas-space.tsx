@@ -241,86 +241,21 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
       <div className="absolute bottom-4 right-4 flex space-x-2 bg-white dark:bg-zinc-800 p-2 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700">
         <button
           onClick={() => {
-            console.log('=== CANVAS LINK DEBUG ===');
-            console.log('Thread ID being used for URL:', thread?.id);
-            console.log('=== COMPONENT TO RENDER DEBUG ===');
-            console.log('componentToRender (full object):', componentToRender);
-            console.log('componentToRender type:', typeof componentToRender);
-            console.log('componentToRender is React element?', React.isValidElement(componentToRender));
-            
-            if (componentToRender) {
-              if (React.isValidElement(componentToRender)) {
-                const element = componentToRender as React.ReactElement;
-                console.log('Element type:', element.type);
-                console.log('Element type name:', (element.type as any)?.name || (element.type as any)?.displayName);
-                console.log('Element props:', element.props);
-                console.log('Props has formDef?', 'formDef' in element.props);
-                console.log('Props has buttons?', 'buttons' in element.props);
-                console.log('Direct type comparison with FormRenderer:', element.type === FormRenderer);
-              }
-              
+            if (componentToRender && thread?.id) {
               let url = `${window.location.origin}/canvas-only`;
               const params = new URLSearchParams();
               
-              // Always include threadId if available
-              if (thread?.id) {
-                params.set('threadId', thread.id);
-                console.log('Added threadId to URL:', thread.id);
-              } else {
-                console.log('WARNING: No thread.id available to add to URL');
-              }
+              // Always include threadId
+              params.set('threadId', thread.id);
               
-              // Extract form data from React element props
-              if (React.isValidElement(componentToRender)) {
-                const element = componentToRender as React.ReactElement;
-                const props = element.props;
-                
-                console.log('=== FORM DATA EXTRACTION ===');
-                console.log('Checking for formDef in props...');
-                console.log('formDef value:', props.formDef);
-                console.log('buttons value:', props.buttons);
-                
-                // Check if this looks like a FormRenderer (has formDef or buttons)
-                if (props.formDef || props.buttons) {
-                  console.log('Found form data in props, adding to URL...');
-                  try {
-                    if (props.formDef) {
-                      const serializedFormDef = JSON.stringify(props.formDef);
-                      console.log('Serialized formDef:', serializedFormDef);
-                      params.set('formDef', encodeURIComponent(serializedFormDef));
-                      console.log('Added formDef to URL parameters');
-                    }
-                    if (props.buttons) {
-                      const serializedButtons = JSON.stringify(props.buttons);
-                      console.log('Serialized buttons:', serializedButtons);
-                      params.set('buttons', encodeURIComponent(serializedButtons));
-                      console.log('Added buttons to URL parameters');
-                    }
-                  } catch (error) {
-                    console.error('Failed to serialize form data:', error);
-                    console.log('Falling back to messageId approach due to serialization error');
-                  }
-                } else {
-                  console.log('No form data found in props, using messageId approach');
-                }
-              }
-              
-              // Fallback to messageId if no form data was extracted
-              if (!params.has('formDef') && !params.has('buttons') && activeCanvasMessageId) {
-                console.log('Using messageId fallback:', activeCanvasMessageId);
+              // Include messageId if available (acts as the slug)
+              if (activeCanvasMessageId) {
                 params.set('messageId', activeCanvasMessageId);
               }
               
-              // Construct final URL with all parameters
-              console.log('=== FINAL URL CONSTRUCTION ===');
-              console.log('URL parameters:', Object.fromEntries(params.entries()));
-              if (params.toString()) {
-                url += `?${params.toString()}`;
-              }
-              console.log('Final URL being opened:', url);
+              // Construct final URL
+              url += `?${params.toString()}`;
               window.open(url, '_blank');
-            } else {
-              console.log('No componentToRender available');
             }
           }}
           disabled={!componentToRender}

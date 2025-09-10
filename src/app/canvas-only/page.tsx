@@ -11,8 +11,6 @@ import { useTamboThread } from "@tambo-ai/react";
 function CanvasOnlyContent() {
   const searchParams = useSearchParams();
   const messageIdFromUrl = searchParams.get('messageId');
-  const formDefParam = searchParams.get('formDef');
-  const buttonsParam = searchParams.get('buttons');
 
   // Add thread debugging
   const { thread } = useTamboThread();
@@ -53,37 +51,9 @@ function CanvasOnlyContent() {
     
     console.log("=== URL PARAMETERS ===");
     console.log("messageIdFromUrl:", messageIdFromUrl);
-    console.log("formDefParam:", formDefParam);
-    console.log("buttonsParam:", buttonsParam);
   }, [thread, messageIdFromUrl, formDefParam, buttonsParam]);
 
-  // Parse form data if available
-  if (formDefParam || buttonsParam) {
-    try {
-      const formDef = formDefParam ? JSON.parse(decodeURIComponent(formDefParam)) : undefined;
-      const buttons = buttonsParam ? JSON.parse(decodeURIComponent(buttonsParam)) : undefined;
-      
-      return (
-        <div className="min-h-screen bg-gray-50 dark:bg-zinc-900 flex items-center justify-center p-8">
-          <FormRenderer formDef={formDef} buttons={buttons} />
-        </div>
-      );
-    } catch (error) {
-      console.error('Failed to parse form data from URL:', error);
-      return (
-        <div className="min-h-screen bg-gray-50 dark:bg-zinc-900 flex items-center justify-center p-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              Error Loading Form
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              The form data in the URL appears to be corrupted or invalid.
-            </p>
-          </div>
-        </div>
-      );
-    }
-  }
+  }, [thread, messageIdFromUrl]);
 
   // State to track canvas readiness
   const [isReady, setIsReady] = useState(false);
