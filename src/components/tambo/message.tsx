@@ -201,6 +201,7 @@ const MessageContent = React.forwardRef<HTMLDivElement, MessageContentProps>(
         ref={ref}
         className={cn(
           "relative block rounded-3xl px-4 py-2 text-[15px] leading-relaxed transition-all duration-200 font-medium max-w-full [&_p]:py-1 [&_ul]:py-4 [&_ol]:py-4 [&_li]:list-item",
+          role === "assistant" && "font-normal", // Override font-medium for assistant messages
           role === "assistant" && "dark:border dark:border-[var(--message-border-dark)]",
           className,
         )}

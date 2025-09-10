@@ -39,18 +39,18 @@ const InfoPopover: React.FC<{
 
 // Base input styling
 const baseInputClass =
-  "w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-200 dark:bg-zinc-800 dark:text-gray-100 dark:border-zinc-600 dark:focus:border-zinc-500";
+  "w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200";
 
 // Base label styling
 const baseLabelClass =
-  "block mb-2 font-medium text-gray-700 dark:text-gray-200 text-sm";
+  "block mb-2 font-medium text-gray-700 text-sm";
 
 // Button styling variants
 const buttonVariants = {
-  primary: "px-6 py-3 rounded-lg bg-gray-900 text-white font-medium hover:bg-gray-800 transition-all duration-200 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200",
-  secondary: "px-6 py-3 rounded-lg bg-gray-200 text-gray-800 font-medium hover:bg-gray-300 transition-all duration-200 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600",
-  outline: "px-6 py-3 rounded-lg border border-gray-300 bg-transparent text-gray-700 font-medium hover:bg-gray-50 transition-all duration-200 dark:border-zinc-600 dark:text-gray-200 dark:hover:bg-zinc-800",
-  danger: "px-6 py-3 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-all duration-200 dark:bg-red-500 dark:hover:bg-red-600",
+  primary: "px-6 py-3 rounded-lg bg-gray-900 text-white font-medium hover:bg-gray-800 transition-all duration-200",
+  secondary: "px-6 py-3 rounded-lg bg-gray-200 text-gray-800 font-medium hover:bg-gray-300 transition-all duration-200",
+  outline: "px-6 py-3 rounded-lg border border-gray-300 bg-transparent text-gray-700 font-medium hover:bg-gray-50 transition-all duration-200",
+  danger: "px-6 py-3 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-all duration-200",
 };
 
 // Button schema for custom buttons
@@ -151,8 +151,8 @@ const FieldComponents: Record<string, React.FC<any>> = {
   checkbox: ({ label, name, ...props }) => (
     <div className="mb-4">
       <div className="flex items-center">
-        <input type="checkbox" id={name} name={name} className="mr-3 w-4 h-4 accent-green-600 dark:accent-green-500" {...props} />
-        <label htmlFor={name} className="text-sm font-medium text-gray-700 dark:text-gray-200">{label}</label>
+        <input type="checkbox" id={name} name={name} className="mr-3 w-4 h-4 accent-gray-600" {...props} />
+        <label htmlFor={name} className="text-sm font-medium text-gray-700">{label}</label>
       </div>
     </div>
   ),
