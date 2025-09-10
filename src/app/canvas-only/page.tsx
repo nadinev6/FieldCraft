@@ -13,7 +13,6 @@ function CanvasOnlyContent() {
   const messageIdFromUrl = searchParams.get('messageId');
   const formDefParam = searchParams.get('formDef');
   const buttonsParam = searchParams.get('buttons');
-  const testMode = searchParams.get('test');
 
   // Add thread debugging
   const { thread } = useTamboThread();
@@ -26,83 +25,8 @@ function CanvasOnlyContent() {
     console.log("messageIdFromUrl:", messageIdFromUrl);
     console.log("formDefParam:", formDefParam);
     console.log("buttonsParam:", buttonsParam);
-    console.log("testMode:", testMode);
   }, [thread, messageIdFromUrl, formDefParam, buttonsParam]);
 
-  // Direct test mode - hardcoded FormRenderer with multiStep and styling
-  if (testMode === 'multistep') {
-    const testFormDef = [
-      {
-        type: "group",
-        label: "Step 1: Personal Information",
-        fields: [
-          { type: "text", label: "Full Name", name: "fullName", required: true },
-          { type: "email", label: "Email Address", name: "email", required: true },
-          { type: "date", label: "Date of Birth", name: "dateOfBirth" }
-        ]
-      },
-      {
-        type: "group", 
-        label: "Step 2: Contact Details",
-        fields: [
-          { type: "text", label: "Phone Number", name: "phone" },
-          { type: "text", label: "Address", name: "address" },
-          { type: "text", label: "City", name: "city" }
-        ]
-      },
-      {
-        type: "group",
-        label: "Step 3: Preferences", 
-        fields: [
-          { 
-            type: "select", 
-            label: "Preferred Contact Method", 
-            name: "contactMethod",
-            options: [
-              { label: "Email", value: "email" },
-              { label: "Phone", value: "phone" },
-              { label: "SMS", value: "sms" }
-            ]
-          },
-          { type: "checkbox", label: "Subscribe to Newsletter", name: "newsletter" },
-          { 
-            type: "starRating", 
-            label: "Rate Your Experience", 
-            name: "rating",
-            maxRating: 5 
-          }
-        ]
-      }
-    ];
-
-    const testButtons = [
-      { label: "Save Draft", type: "button", variant: "secondary" },
-      { label: "Submit Form", type: "submit", variant: "primary" }
-    ];
-
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-zinc-900 flex items-center justify-center p-8">
-        <div className="w-full max-w-2xl">
-          <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-              Direct FormRenderer Test
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Testing multiStep=true with purple background and yellow text
-            </p>
-          </div>
-          <FormRenderer 
-            formDef={testFormDef}
-            buttons={testButtons}
-            multiStep={true}
-            backgroundColorClass="bg-purple-700"
-            textColorClass="text-yellow-300"
-            buttonsAlign="center"
-          />
-        </div>
-      </div>
-    );
-  }
   // Parse form data if available
   if (formDefParam || buttonsParam) {
     try {
