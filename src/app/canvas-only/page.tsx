@@ -1,82 +1,136 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { CanvasSpace } from "@/components/tambo/canvas-space";
-import { FormRenderer } from "@/components/form/form-renderer";
+import { useEffect, useState, useMemo } from "react";
+import { JSONSchemaFormViewer } from "@/components/form/json-schema-form-viewer";
+import { convertFormDefToJSONSchema, convertMultiStepFormToJSONSchema, extractFormDefFromComponent } from "@/lib/form-schema-converter";
 import { components, tools } from "@/lib/tambo";
 import { TamboProvider } from "@tambo-ai/react";
 import { useTamboThread } from "@tambo-ai/react";
+import { cn } from "@/lib/utils";
 
 
 function CanvasOnlyContent() {
   const searchParams = useSearchParams();
   const messageIdFromUrl = searchParams.get('messageId');
+  const [formData, setFormData] = useState({});
+  const [submittedData, setSubmittedData] = useState(null);
 
-  // Add thread debugging
   const { thread } = useTamboThread();
-  
-  useEffect(() => {
-    console.log("=== CANVAS-ONLY CONTENT THREAD DEBUG ===");
-    console.log("Thread from useTamboThread():", thread);
-    console.log("Thread ID from useTamboThread():", thread?.id);
-    console.log("Thread messages count:", thread?.messages?.length || 0);
-    console.log("Thread messages array:", thread?.messages);
-    
-    // Log each message in detail
-    if (thread?.messages && thread.messages.length > 0) {
-      console.log("=== DETAILED MESSAGE ANALYSIS ===");
-      thread.messages.forEach((message, index) => {
-        console.log(`Message ${index}:`, {
-          id: message.id,
-          role: message.role,
-          hasRenderedComponent: !!message.renderedComponent,
-          renderedComponentType: message.renderedComponent ? 
-            (React.isValidElement(message.renderedComponent) ? 
-              (message.renderedComponent.type as any)?.name || 
-              (message.renderedComponent.type as any)?.displayName || 
-              'Unknown React Element' : 
-              typeof message.renderedComponent) : 
-            'None'
-        });
-        
-        // If this message has a renderedComponent, log its props
-        if (message.renderedComponent && React.isValidElement(message.renderedComponent)) {
-          const element = message.renderedComponent as React.ReactElement;
-          console.log(`Message ${index} component props (stringified):`, JSON.stringify(element.props, null, 2));
-        }
-      });
-    } else {
-      console.log("No messages found in thread or thread is null/undefined");
-    }
-    
-    console.log("=== URL PARAMETERS ===");
-    console.log("messageIdFromUrl:", messageIdFromUrl);
-  }, [thread, messageIdFromUrl]);
 
-  // State to track canvas readiness
-  const [isReady, setIsReady] = useState(false);
+  // Find the target message and extract form definition
+  const targetMessage = useMemo(() => {
+    if (!thread?.messages || !messageIdFromUrl) return null;
+    return thread.messages.find(msg => msg.id === messageIdFromUrl);
+  }, [thread?.messages, messageIdFromUrl]);
 
-  useEffect(() => {
-    setIsReady(true);
-    
-    // Trigger event after canvas is ready
-    if (messageIdFromUrl && isReady) {
-      // Use requestAnimationFrame to ensure DOM is ready
-      requestAnimationFrame(() => {
-        window.dispatchEvent(
-          new CustomEvent("tambo:showComponent", {
-            detail: {
-              messageId: messageIdFromUrl,
-            },
-          })
-        );
-      });
+  // Convert form definition to JSON Schema
+  const { jsonSchema, uiSchema, isMultiStep, steps } = useMemo(() => {
+    if (!targetMessage?.renderedComponent) {
+      return { jsonSchema: null, uiSchema: null, isMultiStep: false, steps: [] };
     }
-  }, [messageIdFromUrl, isReady]);
+
+    const component = targetMessage.renderedComponent;
+    
+    // Extract form definition from component props
+    if (React.isValidElement(component) && component.props) {
+      const props = component.props;
+      
+      // Check for multi-step form
+      if (props.multiStep && props.multiStepFormDef) {
+        const result = convertMultiStepFormToJSONSchema(props.multiStepFormDef);
+        return {
+          jsonSchema: result.jsonSchema,
+          uiSchema: result.uiSchema,
+          isMultiStep: true,
+          steps: result.steps,
+        };
+      }
+      
+      // Check for regular form
+      if (props.formDef && Array.isArray(props.formDef)) {
+        const result = convertFormDefToJSONSchema(props.formDef);
+        return {
+          jsonSchema: result.jsonSchema,
+          uiSchema: result.uiSchema,
+          isMultiStep: false,
+          steps: [],
+        };
+      }
+    }
+
+    return { jsonSchema: null, uiSchema: null, isMultiStep: false, steps: [] };
+  }, [targetMessage]);
+
+  const handleFormSubmit = (data: any) => {
+    setSubmittedData(data);
+    console.log('Form submitted with data:', data);
+  };
+
+  const handleFormChange = (data: any) => {
+    setFormData(data);
+  };
+
+  if (!jsonSchema) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Form Not Found</h2>
+          <p className="text-gray-600">
+            {!targetMessage 
+              ? "No message found with the provided ID" 
+              : "This message doesn't contain a valid form"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (submittedData) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-gray-50">
+        <div className="max-w-2xl mx-auto p-8 bg-white rounded-xl shadow-lg">
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Form Submitted Successfully!</h2>
+            <p className="text-gray-600">Thank you for your submission.</p>
+          </div>
+          
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h3 className="font-semibold text-gray-900 mb-2">Submitted Data:</h3>
+            <pre className="text-sm text-gray-700 overflow-auto max-h-64">
+              {JSON.stringify(submittedData, null, 2)}
+            </pre>
+          </div>
+          
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => setSubmittedData(null)}
+              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Fill Out Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="h-screen w-full">
-      <CanvasSpace className="w-full h-full" />
+    <div className="min-h-screen w-full bg-gray-50 py-8">
+      <JSONSchemaFormViewer
+        jsonSchema={jsonSchema}
+        uiSchema={uiSchema}
+        formData={formData}
+        onSubmit={handleFormSubmit}
+        onChange={handleFormChange}
+        isMultiStep={isMultiStep}
+        steps={steps}
+        className="mx-auto"
+      />
     </div>
   );
 }

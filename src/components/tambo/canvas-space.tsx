@@ -281,20 +281,24 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
         <button
           onClick={() => {
             if (componentToRender && thread?.id && !isCurrentComponentStylingPanel) {
-              let url = `${window.location.origin}/canvas-only`;
-              const params = new URLSearchParams();
-              
-              // Always include threadId
-              params.set('threadId', thread.id);
-              
-              // Include messageId if available (acts as the slug)
-              if (activeCanvasMessageId) {
-                params.set('messageId', activeCanvasMessageId);
+              // Find the message ID for the current component
+              const messageId = activeCanvasMessageId || 
+                [...(thread.messages || [])].reverse().find(msg => msg.renderedComponent)?.id;
+                
+              if (messageId) {
+                let url = `${window.location.origin}/canvas-only`;
+                const params = new URLSearchParams();
+                
+                // Always include threadId and messageId
+                params.set('threadId', thread.id);
+                params.set('messageId', messageId);
+                
+                // Construct final URL
+                url += `?${params.toString()}`;
+                window.open(url, '_blank');
+              } else {
+                console.warn('No message ID found for current component');
               }
-              
-              // Construct final URL
-              url += `?${params.toString()}`;
-              window.open(url, '_blank');
             }
           }}
           disabled={!componentToRender || isCurrentComponentStylingPanel}
