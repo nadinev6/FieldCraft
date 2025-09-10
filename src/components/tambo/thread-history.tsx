@@ -533,7 +533,7 @@ const ThreadHistoryList = React.forwardRef<
                       day: "numeric",
                       hour: "numeric",
                       minute: "2-digit",
-                    })}
+                "p-2 rounded-md hover:bg-muted cursor-pointer group flex items-center justify-between",
                   </p>
                 </>
               )}
