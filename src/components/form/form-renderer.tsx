@@ -615,6 +615,8 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       style={dynamicStyles}
       >
         {isMultiStep && (
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">
                 Step {stepIndex + 1} of {actualFormDef.length}
               </span>
