@@ -3,7 +3,6 @@
 import { cn } from "@/lib/utils";
 import { FormRenderer } from "@/components/form/form-renderer";
 import { StylingPanel } from "@/app/interactables/components/styling-panel";
-import { StylingPanel } from "@/app/interactables/components/styling-panel";
 import { useTamboThread } from "@tambo-ai/react";
 import { ExternalLink, X } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
