@@ -8,6 +8,7 @@ This document outlines best practices for updating existing components, adding n
 *   **Leverage Tambo Hooks**: Utilize Tambo's provided React hooks (`useTamboComponentState`, `useTamboStreaming`, etc.) for managing component state that needs to be influenced or controlled by the AI. Avoid ad-hoc `useEffect` logic for syncing props when a dedicated Tambo hook is available.
 *   **Modularity**: Keep components and tools focused on a single responsibility.
 *   **Consistency**: Adhere to the existing file structure and coding conventions.
+*   **Prop Size Awareness**: Be mindful of the size of props passed to components. Large props (e.g., extensive lists or complex nested objects) can impact Tambo's response time and efficiency. If possible, consider having components fetch their own data using a tool rather than receiving very large arrays directly as props. For example, instead of passing a huge list of products, pass a product ID and let the component fetch details.
 
 ## 2. Updating and Adding Props to Existing Components
 
@@ -17,6 +18,7 @@ When modifying an existing component to accept new props or change how existing 
     *   Locate the component's `propsSchema` definition in `src/lib/tambo.ts`.
     *   Add or modify the properties in the Zod object to reflect the new or changed props.
     *   Ensure proper Zod types, optionality (`.optional()`), default values (`.default()`), and descriptions (`.describe()`).
+    *   **Optional Props Handling**: Remember that `.optional()` means Tambo may not generate a value for that prop at all. Components should always handle `undefined` gracefully for optional props. For instance, in `StylingPanel`, `backgroundColor` is optional, so the component should provide a fallback if it's not provided.
 
     ```typescript
     // Example in src/lib/tambo.ts for an existing component
@@ -33,20 +35,19 @@ When modifying an existing component to accept new props or change how existing 
 3.  **Sync Props with `useTamboComponentState`**:
     *   For any prop that needs to be dynamically updated by Tambo (e.g., `formDef`, `multiStep`, `buttonsAlign` in `FormRenderer`), use `useTamboComponentState` for *each individual prop*.
     *   This hook efficiently streams updates from Tambo to your component's internal state.
+    *   **Component State Granularity**: Explicitly avoid using a single object state (e.g., `internalState`) for all props with `useTamboComponentState`. Tambo tracks each value individually, so separate `useTamboComponentState` calls for each prop (like `stepIndex`, `isMultiStep`, `currentFormDef` in `FormRenderer`) is the recommended pattern.
 
     ```typescript
-    // Example in your component's .tsx file
+    // Example in your component's .tsx file (e.g., src/components/form/form-renderer.tsx)
     import { useTamboComponentState } from "@tambo-ai/react";
 
     export const MyComponent: React.FC<MyComponentProps> = ({
-      initialPropA, // Prop passed directly
-      initialPropB, // Prop passed directly
-      dynamicPropC, // Prop that Tambo might update
-      dynamicPropD, // Another dynamic prop
+      initialPropA,
+      dynamicPropC,
     }) => {
       // Use useTamboComponentState for props that Tambo can dynamically update
       const [propC, setPropC] = useTamboComponentState("propC", dynamicPropC);
-      const [propD, setPropD] = useTamboComponentState("propD", dynamicPropD);
+      // ... other individual state variables
 
       // For props that are not expected to change dynamically from Tambo,
       // you can use them directly or manage them with standard React state if needed.
@@ -61,7 +62,7 @@ When modifying an existing component to accept new props or change how existing 
     *   Ensure your `useEffect` dependencies are correctly specified to avoid infinite loops or stale closures.
 
     ```typescript
-    // Example: Clamping a step index after a multi-step form definition changes
+    // Example: Clamping a step index after a multi-step form definition changes in FormRenderer
     React.useEffect(() => {
       if (isMultiStep && currentMultiStepFormDef) {
         const maxSteps = currentMultiStepFormDef.steps.length;
@@ -80,6 +81,7 @@ To introduce a completely new UI component that Tambo AI can render:
     *   Develop your React component (e.g., `src/components/tambo/NewWidget.tsx`).
     *   Ensure it's a functional component and handles its own internal state and rendering.
     *   If the component needs to be interactable or receive dynamic updates from Tambo, consider using `withInteractable` or `useTamboComponentState` as appropriate.
+    *   **Interactable Components**: Components wrapped with `withInteractable` (like `SettingsPanel` in `src/app/interactables/components/settings-panel.tsx` or `StylingPanel` in `src/app/interactables/components/styling-panel.tsx`) allow Tambo to update their props in-place. This is particularly useful for user-driven UIs where the AI can modify the component's state based on user commands.
 
 2.  **Define its Zod `propsSchema`**:
     *   Create a Zod schema that precisely defines all the props your new component expects. This schema will be used by Tambo to understand how to generate and validate props for your component.
