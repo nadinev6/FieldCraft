@@ -24,11 +24,20 @@ function CanvasOnlyContent() {
       console.log('Switching to thread:', threadIdFromUrl);
       console.log('Current thread ID:', thread?.id);
       console.log('Target thread ID:', threadIdFromUrl);
-      try {
-        switchCurrentThread(threadIdFromUrl);
-      } catch (error) {
-        console.error('Error switching thread:', error);
-      }
+      
+      // Ensure TamboProvider is ready before switching threads
+      const switchThread = async () => {
+        try {
+          await switchCurrentThread(threadIdFromUrl);
+        } catch (error) {
+          console.error('Error switching thread:', error);
+        }
+      };
+      
+      // Defer thread switching to ensure registry is ready
+      setTimeout(() => {
+        void switchThread();
+      }, 100);
     }
   }, [threadIdFromUrl, thread?.id, switchCurrentThread]);
 
@@ -175,6 +184,7 @@ export default function CanvasOnlyPage() {
   // Get thread ID from URL parameters
   const searchParams = useSearchParams();
   const threadId = searchParams.get('threadId');
+  const [registryReady, setRegistryReady] = useState(false);
 
   useEffect(() => {
     console.log("=== CANVAS-ONLY PAGE INITIALIZATION DEBUG ===");
@@ -184,7 +194,21 @@ export default function CanvasOnlyPage() {
     console.log("Current URL:", window.location.href);
     console.log("Components registered:", components.map(c => c.name));
     console.log("FormRenderer in registry:", components.find(c => c.name === 'FormRenderer') ? 'YES' : 'NO');
+    
+    // Mark registry as ready after components are verified
+    setRegistryReady(true);
   }, [searchParams]);
+
+  if (!registryReady) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Initializing component registry...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <TamboProvider
