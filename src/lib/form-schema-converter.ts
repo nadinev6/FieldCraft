@@ -172,10 +172,7 @@ function convertFieldToUISchema(field: FormField): UISchemaProperty {
     case 'starRating':
       return {
         ...baseUIProperty,
-        'ui:widget': 'range',
-        'ui:options': {
-          step: field.allowHalf ? 0.5 : 1,
-        },
+        'ui:widget': 'StarRatingWidget',
       };
 
     default:

@@ -17,6 +17,18 @@ function CanvasOnlyContent() {
 
   const { thread } = useTamboThread();
 
+  // Show loading state while thread is loading
+  if (!thread) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading form...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Find the target message and extract form definition
   const targetMessage = useMemo(() => {
     if (!thread?.messages || !messageIdFromUrl) return null;

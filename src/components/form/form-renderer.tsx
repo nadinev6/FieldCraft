@@ -344,7 +344,16 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   buttons,
   buttonsAlign,
   multiStep = false,
-  multiStepFormDef
+  multiStepFormDef,
+  backgroundColor,
+  textColor,
+  fontSize,
+  fontFamily,
+  borderRadius,
+  padding,
+  margin,
+  borderWidth,
+  borderColor
 }) => {
   // Internal UI state (not controlled by Tambo)
   const [stepIndex, setStepIndex] = useState(0);
@@ -356,6 +365,17 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   const [currentButtonsAlign] = useTamboComponentState("buttonsAlign", buttonsAlign || "right");
   const [isMultiStep] = useTamboComponentState("multiStep", multiStep || false);
   const [currentMultiStepFormDef] = useTamboComponentState("multiStepFormDef", multiStepFormDef);
+  
+  // Tambo-controlled styling props
+  const [currentBackgroundColor] = useTamboComponentState("backgroundColor", backgroundColor);
+  const [currentTextColor] = useTamboComponentState("textColor", textColor);
+  const [currentFontSize] = useTamboComponentState("fontSize", fontSize);
+  const [currentFontFamily] = useTamboComponentState("fontFamily", fontFamily);
+  const [currentBorderRadius] = useTamboComponentState("borderRadius", borderRadius);
+  const [currentPadding] = useTamboComponentState("padding", padding);
+  const [currentMargin] = useTamboComponentState("margin", margin);
+  const [currentBorderWidth] = useTamboComponentState("borderWidth", borderWidth);
+  const [currentBorderColor] = useTamboComponentState("borderColor", borderColor);
 
   // Derive the actual form definition based on multiStep mode
   const actualFormDef = React.useMemo(() => {
@@ -556,15 +576,44 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     return null;
   }, [isMultiStep, currentMultiStepFormDef, stepIndex]);
 
+  // Generate dynamic styles from Tambo-controlled props
+  const dynamicStyles: React.CSSProperties = React.useMemo(() => {
+    const styles: React.CSSProperties = {};
+    
+    if (currentBackgroundColor) styles.backgroundColor = currentBackgroundColor;
+    if (currentTextColor) styles.color = currentTextColor;
+    if (currentFontSize) styles.fontSize = `${currentFontSize}px`;
+    if (currentFontFamily) styles.fontFamily = currentFontFamily;
+    if (currentBorderRadius) styles.borderRadius = `${currentBorderRadius}px`;
+    if (currentPadding) styles.padding = `${currentPadding}px`;
+    if (currentMargin) styles.margin = `${currentMargin}px`;
+    if (currentBorderWidth) {
+      styles.borderWidth = `${currentBorderWidth}px`;
+      styles.borderStyle = 'solid';
+    }
+    if (currentBorderColor) styles.borderColor = currentBorderColor;
+    
+    return styles;
+  }, [
+    currentBackgroundColor,
+    currentTextColor,
+    currentFontSize,
+    currentFontFamily,
+    currentBorderRadius,
+    currentPadding,
+    currentMargin,
+    currentBorderWidth,
+    currentBorderColor
+  ]);
   return (
     <TooltipProvider>
       <div className={cn(
         "max-w-md mx-auto p-8 rounded-xl shadow-lg border border-gray-200",
         "bg-white", // Always white background for forms
         "text-gray-900"
-      )}>
-        {multiStep && (
-          <div className="mb-6">
+      )}
+      style={dynamicStyles}
+      >
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">
                 Step {stepIndex + 1} of {actualFormDef.length}

@@ -10,7 +10,6 @@ import { TamboProvider, useTamboThread } from "@tambo-ai/react";
 function ChatContent() {
   const searchParams = useSearchParams();
   const messageIdFromUrl = searchParams.get('messageId');
-  const [canvasBgClass, setCanvasBgClass] = useState("bg-white/50 backdrop-blur-sm");
   const { thread } = useTamboThread();
 
   useEffect(() => {
@@ -36,14 +35,12 @@ function ChatContent() {
       <MessageThreadPanel 
         contextKey="main-thread" 
         className="h-full shadow-2xl"
-        onCanvasBgChange={setCanvasBgClass}
       />
 
       {/* Right panel: Canvas (2/3) */}
       <div className="flex-1 min-w-0 h-full shadow-2xl">
         <CanvasSpace 
           className="w-full h-full flex-1"
-          backgroundColorClass={canvasBgClass}
         />
       </div>
     </div>

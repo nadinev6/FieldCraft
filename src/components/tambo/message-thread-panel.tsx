@@ -1,6 +1,5 @@
 "use client";
 
-import { CanvasStylingMenu } from "@/components/tambo/canvas-styling-menu";
 import {
   MessageInput,
   MessageInputTextarea,
@@ -58,8 +57,6 @@ export interface MessageThreadPanelProps
    * @example variant="compact"
    */
   variant?: VariantProps<typeof messageVariants>["variant"];
-  /** Optional callback for canvas background color changes */
-  onCanvasBgChange?: (backgroundClass: string) => void;
 }
 
 /**
@@ -192,7 +189,7 @@ ResizablePanel.displayName = "ResizablePanel";
 export const MessageThreadPanel = React.forwardRef<
   HTMLDivElement,
   MessageThreadPanelProps
->(({ className, contextKey, variant, onCanvasBgChange, ...props }, ref) => {
+>(({ className, contextKey, variant, ...props }, ref) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const { hasCanvasSpace, canvasIsOnLeft } = useCanvasDetection(panelRef);
   const { isLeftPanel, historyPosition } = usePositioning(
@@ -251,11 +248,6 @@ export const MessageThreadPanel = React.forwardRef<
         )}
 
         <div className="flex flex-col h-full flex-grow transition-all duration-300 ease-in-out">
-          {/* Canvas Styling Menu */}
-          <div className="flex justify-end p-2 border-b border-gray-200 dark:border-zinc-700">
-            <CanvasStylingMenu onBackgroundChange={onCanvasBgChange} />
-          </div>
-
           {/* Message thread content */}
           <ScrollableMessageContainer className="p-4">
             <ThreadContent variant={variant}>

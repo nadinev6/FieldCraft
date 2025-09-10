@@ -16,8 +16,6 @@ import type { TamboThreadMessage } from "@tambo-ai/react";
 interface CanvasSpaceProps {
   /** Optional CSS class name for custom styling */
   className?: string;
-  /** Optional background color class for the canvas */
-  backgroundColorClass?: string;
 }
 
 /**
@@ -32,7 +30,7 @@ interface CanvasSpaceProps {
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 2.0;
 
-export function CanvasSpace({ className, backgroundColorClass = "bg-white/50 backdrop-blur-sm" }: CanvasSpaceProps) {
+export function CanvasSpace({ className }: CanvasSpaceProps) {
   const { thread } = useTamboThread();
   const [zoomLevel, setZoomLevel] = useState(1.0);
   const [activeCanvasMessageId, setActiveCanvasMessageId] = useState<string | null>(null);
@@ -225,7 +223,7 @@ export function CanvasSpace({ className, backgroundColorClass = "bg-white/50 bac
     <div 
       className={cn(
         "h-screen flex-1 flex flex-col overflow-hidden border-l border-flat canvas-grid",
-        backgroundColorClass,
+        "bg-white/50 backdrop-blur-sm",
         className,
       )}
       data-canvas-space="true"
