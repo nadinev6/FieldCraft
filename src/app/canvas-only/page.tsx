@@ -51,8 +51,6 @@ function CanvasOnlyContent() {
     
     console.log("=== URL PARAMETERS ===");
     console.log("messageIdFromUrl:", messageIdFromUrl);
-  }, [thread, messageIdFromUrl, formDefParam, buttonsParam]);
-
   }, [thread, messageIdFromUrl]);
 
   // State to track canvas readiness
