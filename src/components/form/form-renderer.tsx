@@ -600,20 +600,32 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
         "bg-white dark:bg-zinc-900",
         "text-gray-900 dark:text-gray-100"
       )}>
-        {multiStep && (
+        {internalState.multiStep && (
           <div className="mb-6">
+            {currentStepInfo && (
+              <div className="mb-4 text-center">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                  {currentStepInfo.title}
+                </h2>
+                {currentStepInfo.description && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {currentStepInfo.description}
+                  </p>
+                )}
+              </div>
+            )}
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">
-                Step {internalState.stepIndex + 1} of {actualFormDef.length}
+                Step {currentStep} of {totalSteps}
               </span>
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                {Math.round(((internalState.stepIndex + 1) / actualFormDef.length) * 100)}%
+                {Math.round((currentStep / totalSteps) * 100)}%
               </span>
             </div>
             <div className="w-full bg-gray-200 dark:bg-zinc-700 rounded-full h-2">
               <div 
                 className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-in-out"
-                style={{ width: `${((internalState.stepIndex + 1) / actualFormDef.length) * 100}%` }}
+                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
               />
             </div>
           </div>
@@ -626,7 +638,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             return renderFormSection(section, actualIdx);
           })}
           
-          {multiStep && (
+          {internalState.multiStep && (
             <div className="flex justify-between items-center mt-6">
               <button
                 type="button"
@@ -656,10 +668,10 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             </div>
           )}
           
-          {(!multiStep || isLastStep) && (
-            <div className={cn("flex gap-3 mt-6", getButtonAlignmentClass(buttonsAlign))}>
-              {buttons && buttons.length > 0 ? (
-                buttons.map((button, idx) => (
+          {(!internalState.multiStep || isLastStep) && (
+            <div className={cn("flex gap-3 mt-6", getButtonAlignmentClass(internalState.buttonsAlign))}>
+              {internalState.buttons && internalState.buttons.length > 0 ? (
+                internalState.buttons.map((button, idx) => (
                   <button
                     key={idx}
                     type={button.type}
