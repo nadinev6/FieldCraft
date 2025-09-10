@@ -184,6 +184,7 @@ export const formRendererPropsSchema = z.object({
   backgroundColorClass: z.string().optional().describe("Tailwind CSS background color class (e.g., 'bg-purple-700')"),
   backgroundGradientClass: z.string().optional().describe("Tailwind CSS gradient class (e.g., 'bg-gradient-to-r from-purple-500 to-indigo-500')"),
   textColorClass: z.string().optional().describe("Tailwind CSS text color class (e.g., 'text-white')"),
+  multiStep: z.boolean().optional().default(false).describe("Enable multi-step form navigation where only one section is visible at a time"),
 });
 
 export type FormField = z.infer<typeof formFieldSchema>;

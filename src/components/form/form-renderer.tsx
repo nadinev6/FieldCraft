@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { exampleForm } from "@/lib/form-definitions";
 import { z } from "zod";
 import { formFieldSchema } from "@/lib/form-field-schemas";
-import { ChevronDown, Star, Info } from "lucide-react";
+import { ChevronDown, Star, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { Tooltip, TooltipProvider } from "@/components/tambo/suggestions-tooltip";
@@ -305,11 +305,13 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   buttonsAlign,
   backgroundColorClass,
   backgroundGradientClass,
-  textColorClass 
+  textColorClass,
+  multiStep = false
 }) => {
   const actualFormDef = formDef === undefined ? exampleForm : formDef;
   
   const [collapsedGroups, setCollapsedGroups] = useState<Record<number, boolean>>({});
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   
   useEffect(() => {
     const initialCollapsedState: Record<number, boolean> = {};
@@ -326,6 +328,18 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       ...prev,
       [groupIndex]: !prev[groupIndex]
     }));
+  };
+  
+  const handleNextStep = () => {
+    if (currentStepIndex < actualFormDef.length - 1) {
+      setCurrentStepIndex(prev => prev + 1);
+    }
+  };
+  
+  const handlePreviousStep = () => {
+    if (currentStepIndex > 0) {
+      setCurrentStepIndex(prev => prev - 1);
+    }
   };
   
   const handleButtonClick = (button: z.infer<typeof buttonSchema>, event: React.MouseEvent<HTMLButtonElement>) => {
@@ -439,6 +453,19 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     }
   };
   
+  // Determine which sections to render based on multiStep mode
+  const sectionsToRender = multiStep 
+    ? [actualFormDef[currentStepIndex]].filter(Boolean)
+    : actualFormDef;
+  
+  // Adjust section index for collapsed groups state when in multiStep mode
+  const getSectionIndex = (renderIndex: number) => {
+    return multiStep ? currentStepIndex : renderIndex;
+  };
+  
+  const isFirstStep = currentStepIndex === 0;
+  const isLastStep = currentStepIndex === actualFormDef.length - 1;
+  
   return (
     <TooltipProvider>
       <div className={cn(
@@ -448,10 +475,66 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
         // Apply text color styling
         textColorClass || "text-gray-900 dark:text-gray-100"
       )}>
+        {/* Multi-step progress indicator */}
+        {multiStep && (
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium">
+                Step {currentStepIndex + 1} of {actualFormDef.length}
+              </span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {Math.round(((currentStepIndex + 1) / actualFormDef.length) * 100)}%
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 dark:bg-zinc-700 rounded-full h-2">
+              <div 
+                className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-in-out"
+                style={{ width: `${((currentStepIndex + 1) / actualFormDef.length) * 100}%` }}
+              />
+            </div>
+          </div>
+        )}
+        
         <form>
-          {actualFormDef.map((section, idx) => renderFormSection(section, idx))}
+          {sectionsToRender.map((section, renderIdx) => {
+            const actualIdx = getSectionIndex(renderIdx);
+            return renderFormSection(section, actualIdx);
+          })}
           
-          <div className={cn("flex gap-3 mt-6", getButtonAlignmentClass(buttonsAlign))}>
+          {/* Multi-step navigation buttons */}
+          {multiStep && (
+            <div className="flex justify-between items-center mt-6">
+              <button
+                type="button"
+                onClick={handlePreviousStep}
+                disabled={isFirstStep}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200",
+                  isFirstStep 
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-zinc-800 dark:text-zinc-600" 
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600"
+                )}
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Previous
+              </button>
+              
+              {!isLastStep ? (
+                <button
+                  type="button"
+                  onClick={handleNextStep}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all duration-200 dark:bg-blue-500 dark:hover:bg-blue-600"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              ) : null}
+            </div>
+          )}
+          
+          {/* Submit/Custom buttons - only show on last step in multiStep mode or always in regular mode */}
+          {(!multiStep || isLastStep) && (
+            <div className={cn("flex gap-3 mt-6", getButtonAlignmentClass(buttonsAlign))}>
             {buttons && buttons.length > 0 ? (
               buttons.map((button, idx) => (
                 <button
@@ -470,7 +553,8 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
                 Submit
               </button>
             )}
-          </div>
+            </div>
+          )}
         </form>
       </div>
     </TooltipProvider>
