@@ -179,10 +179,10 @@ const buttonSchema = z.object({
 // Zod schema for FormRenderer props
 export const formRendererPropsSchema = z.object({
   formDef: z.array(formFieldSchema).optional().describe("Array of form field definitions that define the structure and fields of the form to render"),
-  multiStepFormDef: z.lazy(() => multiStepFormSchema).optional().describe("Multi-step form definition with steps containing fields"),
   buttons: z.array(buttonSchema).optional().describe("Optional array of custom buttons to render at the bottom of the form"),
   buttonsAlign: z.enum(["left", "center", "right"]).optional().default("right").describe("Global alignment for all form buttons"),
   multiStep: z.boolean().optional().default(false).describe("Enable multi-step form navigation where only one section is visible at a time"),
+  multiStepFormDef: z.lazy(() => multiStepFormSchema).optional().describe("Multi-step form definition with steps containing fields"),
 });
 
 // Form step schema for multi-step forms
