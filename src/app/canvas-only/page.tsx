@@ -18,10 +18,40 @@ function CanvasOnlyContent() {
   const { thread } = useTamboThread();
   
   useEffect(() => {
-    console.log("=== CANVAS-ONLY CONTENT DEBUG ===");
+    console.log("=== CANVAS-ONLY CONTENT THREAD DEBUG ===");
     console.log("Thread from useTamboThread():", thread);
     console.log("Thread ID from useTamboThread():", thread?.id);
     console.log("Thread messages count:", thread?.messages?.length || 0);
+    console.log("Thread messages array:", thread?.messages);
+    
+    // Log each message in detail
+    if (thread?.messages && thread.messages.length > 0) {
+      console.log("=== DETAILED MESSAGE ANALYSIS ===");
+      thread.messages.forEach((message, index) => {
+        console.log(`Message ${index}:`, {
+          id: message.id,
+          role: message.role,
+          hasRenderedComponent: !!message.renderedComponent,
+          renderedComponentType: message.renderedComponent ? 
+            (React.isValidElement(message.renderedComponent) ? 
+              (message.renderedComponent.type as any)?.name || 
+              (message.renderedComponent.type as any)?.displayName || 
+              'Unknown React Element' : 
+              typeof message.renderedComponent) : 
+            'None'
+        });
+        
+        // If this message has a renderedComponent, log its props
+        if (message.renderedComponent && React.isValidElement(message.renderedComponent)) {
+          const element = message.renderedComponent as React.ReactElement;
+          console.log(`Message ${index} component props (stringified):`, JSON.stringify(element.props, null, 2));
+        }
+      });
+    } else {
+      console.log("No messages found in thread or thread is null/undefined");
+    }
+    
+    console.log("=== URL PARAMETERS ===");
     console.log("messageIdFromUrl:", messageIdFromUrl);
     console.log("formDefParam:", formDefParam);
     console.log("buttonsParam:", buttonsParam);
@@ -88,11 +118,16 @@ export default function CanvasOnlyPage() {
   const searchParams = useSearchParams();
   const threadId = searchParams.get('threadId') || 'default-thread';
 
-  console.log("=== CANVAS-ONLY PAGE DEBUG ===");
-  console.log("Raw threadId from URL:", searchParams.get('threadId'));
-  console.log("Final threadId being used:", threadId);
-  console.log("ThreadId type:", typeof threadId);
-  console.log("All URL search params:", Object.fromEntries(searchParams.entries()));
+  useEffect(() => {
+    console.log("=== CANVAS-ONLY PAGE INITIALIZATION DEBUG ===");
+    console.log("Raw threadId from URL:", searchParams.get('threadId'));
+    console.log("Final threadId being used:", threadId);
+    console.log("ThreadId type:", typeof threadId);
+    console.log("ThreadId length:", threadId.length);
+    console.log("Is threadId placeholder?", threadId === 'default-thread');
+    console.log("All URL search params:", Object.fromEntries(searchParams.entries()));
+    console.log("Current URL:", window.location.href);
+  }, [threadId, searchParams]);
 
   return (
     <TamboProvider
