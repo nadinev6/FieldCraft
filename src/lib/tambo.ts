@@ -13,6 +13,7 @@ import { DataCard, dataCardSchema } from "@/components/ui/card-data";
 import { FormRenderer, formRendererPropsSchema } from "@/components/form/form-renderer";
 import { ThemeSwitcher, themeSwitcherSchema } from "@/components/theme-switcher";
 import { Logo, logoSchema } from "@/components/tambo/logo";
+import { StylingPanel, stylingPanelSchema } from "@/app/interactables/components/styling-panel";
 import {
   getCountryPopulations,
   getGlobalPopulationTrend,
@@ -134,6 +135,12 @@ export const components: TamboComponent[] = [
     description: "A component for displaying logos or images with customizable shape (rounded, square, circle), alignment (left, center, right), and size. Includes loading states and error handling.",
     component: Logo,
     propsSchema: logoSchema,
+  },
+  {
+    name: "StylingPanel",
+    description: "An interactive styling panel for customizing colors, typography, and layout properties. Allows users to adjust background color, text color, font size, font family, border radius, padding, margin, and border styling with live preview.",
+    component: StylingPanel,
+    propsSchema: stylingPanelSchema,
   },
   // Add more components here
 ];
