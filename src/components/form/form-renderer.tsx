@@ -519,7 +519,6 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     }
   };
 
-  const sectionsToRender = internalState.multiStep 
   const sectionsToRender = isMultiStep 
     ? [actualFormDef[stepIndex]].filter(Boolean)
     : actualFormDef;
