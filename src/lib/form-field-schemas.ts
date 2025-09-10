@@ -179,9 +179,24 @@ const buttonSchema = z.object({
 // Zod schema for FormRenderer props
 export const formRendererPropsSchema = z.object({
   formDef: z.array(formFieldSchema).optional().describe("Array of form field definitions that define the structure and fields of the form to render"),
+  multiStepFormDef: z.lazy(() => multiStepFormSchema).optional().describe("Multi-step form definition with steps containing fields"),
   buttons: z.array(buttonSchema).optional().describe("Optional array of custom buttons to render at the bottom of the form"),
   buttonsAlign: z.enum(["left", "center", "right"]).optional().default("right").describe("Global alignment for all form buttons"),
   multiStep: z.boolean().optional().default(false).describe("Enable multi-step form navigation where only one section is visible at a time"),
+});
+
+// Form step schema for multi-step forms
+export const formStepSchema = z.object({
+  title: z.string().describe("Title of the form step"),
+  description: z.string().optional().describe("Optional description for the step"),
+  fields: z.array(formFieldSchema).describe("Array of form fields for this step"),
+});
+
+// Multi-step form schema
+export const multiStepFormSchema = z.object({
+  steps: z.array(formStepSchema).min(1).describe("Array of form steps, each containing fields"),
+  allowStepSkipping: z.boolean().optional().default(false).describe("Whether users can skip steps or must complete them in order"),
+  showStepNumbers: z.boolean().optional().default(true).describe("Whether to show step numbers in the progress indicator"),
 });
 
 export type FormField = z.infer<typeof formFieldSchema>;
