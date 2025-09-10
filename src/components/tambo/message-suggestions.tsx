@@ -342,7 +342,7 @@ const MessageSuggestionsList = React.forwardRef<
                   isGenerating
                     ? "opacity-60 cursor-not-allowed"
                     : selectedSuggestionId === suggestion.id
-                      ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                      ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
                       : "hover:bg-gray-50 dark:hover:bg-gray-700 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] dark:active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] active:translate-y-[0.5px]",
                 )}
                 onClick={async () =>
