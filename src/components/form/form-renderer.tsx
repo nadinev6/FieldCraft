@@ -43,7 +43,7 @@ const baseInputClass =
 
 // Base label styling
 const baseLabelClass =
-  "block mb-2 font-medium text-gray-700 text-sm";
+  "block mb-2 font-medium text-gray-700 dark:text-gray-200 text-sm";
 
 // Button styling variants
 const buttonVariants = {
@@ -312,7 +312,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
         className={cn(
           levelClasses[level],
           alignmentClass,
-          "text-gray-900 dark:text-gray-100",
+          "text-gray-900 dark:text-gray-200",
           className
         )}
         {...props}
@@ -327,7 +327,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
     return (
       <p 
         className={cn(
-          "mb-4 text-gray-700 dark:text-gray-300 leading-relaxed",
+          "mb-4 text-gray-700 dark:text-gray-200 leading-relaxed",
           alignmentClass,
           className
         )}

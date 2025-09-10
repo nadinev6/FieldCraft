@@ -39,13 +39,13 @@ const FieldTemplate: React.FC<any> = (props) => {
   return (
     <div className={cn("mb-4", classNames)}>
       {label && (
-        <label htmlFor={id} className="block mb-2 font-medium text-gray-700 text-sm">
+        <label htmlFor={id} className="block mb-2 font-medium text-gray-700 dark:text-gray-200 text-sm">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
       {description && (
-        <p className="text-sm text-gray-600 mb-2">{description}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{description}</p>
       )}
       {children}
       {errors && (
@@ -56,7 +56,7 @@ const FieldTemplate: React.FC<any> = (props) => {
         </div>
       )}
       {help && (
-        <p className="text-sm text-gray-500 mt-1">{help}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{help}</p>
       )}
     </div>
   );
@@ -69,10 +69,10 @@ const ObjectFieldTemplate: React.FC<any> = (props) => {
   return (
     <div className="space-y-4">
       {title && (
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">{title}</h3>
       )}
       {description && (
-        <p className="text-gray-600 mb-4">{description}</p>
+        <p className="text-gray-600 dark:text-gray-300 mb-4">{description}</p>
       )}
       <div className="grid grid-cols-1 gap-4">
         {properties.map((element: any) => (
@@ -133,7 +133,7 @@ const customWidgets = {
         type="checkbox"
         className="mr-3 w-4 h-4 accent-gray-600"
       />
-      <label className="text-sm font-medium text-gray-700">{props.label}</label>
+      <label className="text-sm font-medium text-gray-700 dark:text-gray-200">{props.label}</label>
     </div>
   ),
   RadioWidget: (props: any) => (
@@ -149,7 +149,7 @@ const customWidgets = {
             onChange={() => props.onChange(option.value)}
             className="mr-3 w-4 h-4 accent-gray-600"
           />
-          <label htmlFor={`${props.id}-${index}`} className="text-sm text-gray-700">
+          <label htmlFor={`${props.id}-${index}`} className="text-sm text-gray-700 dark:text-gray-200">
             {option.label}
           </label>
         </div>
@@ -164,7 +164,7 @@ const customWidgets = {
         className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
       />
       <div className="text-sm text-gray-600 text-center">
-        {props.value} / {props.schema.maximum || 5}
+        <span className="dark:text-gray-300">{props.value} / {props.schema.maximum || 5}</span>
       </div>
     </div>
   ),
@@ -188,6 +188,22 @@ export const JSONSchemaFormViewer: React.FC<JSONSchemaFormViewerProps> = ({
 }) => {
   const [internalFormData, setInternalFormData] = useState(formData);
   const [currentStepIndex, setCurrentStepIndex] = useState(currentStep);
+
+  // Reset step index when form changes to prevent corruption
+  useEffect(() => {
+    setCurrentStepIndex(0);
+  }, [jsonSchema, steps]);
+
+  // Clamp step index to valid range
+  useEffect(() => {
+    if (isMultiStep && steps.length > 0) {
+      if (currentStepIndex >= steps.length) {
+        setCurrentStepIndex(steps.length - 1);
+      } else if (currentStepIndex < 0) {
+        setCurrentStepIndex(0);
+      }
+    }
+  }, [currentStepIndex, steps.length, isMultiStep]);
 
   const handleFormChange = (data: any) => {
     setInternalFormData(data.formData);
@@ -268,11 +284,11 @@ export const JSONSchemaFormViewer: React.FC<JSONSchemaFormViewerProps> = ({
       className
     )}>
       {title && !isMultiStep && (
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">{title}</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-4">{title}</h2>
       )}
       
       {description && !isMultiStep && (
-        <p className="text-gray-600 mb-6">{description}</p>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">{description}</p>
       )}
 
       {isMultiStep && (
