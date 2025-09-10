@@ -3,9 +3,10 @@ import { useRouter } from 'next/navigation';
 import { exampleForm } from "@/lib/form-definitions";
 import { z } from "zod";
 import { formFieldSchema } from "@/lib/form-field-schemas";
-import { ChevronDown, Star } from "lucide-react";
+import { ChevronDown, Star, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { InfoPopover } from "@/components/ui/info-popover";
+
+import { Tooltip, TooltipProvider } from "@/components/tambo/suggestions-tooltip";
 
 // Base input styling
 const baseInputClass =
@@ -298,7 +299,14 @@ const FieldComponents: Record<string, React.FC<any>> = {
   },
 };
 
-export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons, buttonsAlign }) => {
+export const FormRenderer: React.FC<FormRendererProps> = ({ 
+  formDef, 
+  buttons, 
+  buttonsAlign,
+  backgroundColorClass,
+  backgroundGradientClass,
+  textColorClass 
+}) => {
   const actualFormDef = formDef === undefined ? exampleForm : formDef;
   
   const [collapsedGroups, setCollapsedGroups] = useState<Record<number, boolean>>({});
@@ -395,12 +403,12 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons, bu
               <span className="font-medium text-gray-800 dark:text-gray-200 mr-2">{section.label}</span>
             )}
             {section.disclaimer && (
-              <InfoPopover
-                triggerLabel="Additional Information"
+              <Tooltip
                 content={section.disclaimer}
                 side="right"
-                align="start"
-              />
+              >
+                <Info className="w-4 h-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-help ml-1" />
+              </Tooltip>
             )}
           </legend>
           
@@ -432,29 +440,42 @@ export const FormRenderer: React.FC<FormRendererProps> = ({ formDef, buttons, bu
   };
   
   return (
-    <div className="max-w-md mx-auto p-8 rounded-xl shadow-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700">
-      <form>
-        {actualFormDef.map((section, idx) => renderFormSection(section, idx))}
-        
-        <div className={cn("flex gap-3 mt-6", getButtonAlignmentClass(buttonsAlign))}>
-          {buttons && buttons.length > 0 ? (
-            buttons.map((button, idx) => (
-              <button
-                key={idx}
-                type={button.type}
-                className={cn(
-                  button.colorClass || buttonVariants[button.variant || "primary"]
-                )}
-                onClick={(e) => handleButtonClick(button, e)}
-              >
-                {button.label}
+    <TooltipProvider>
+      <div className={cn(
+        "max-w-md mx-auto p-8 rounded-xl shadow-lg border border-gray-200 dark:border-zinc-700",
+        // Apply background styling - gradient takes precedence over solid color
+        backgroundGradientClass || backgroundColorClass || "bg-white dark:bg-zinc-900",
+        // Apply text color styling
+        textColorClass || "text-gray-900 dark:text-gray-100"
+      )}>
+        <form>
+          {actualFormDef.map((section, idx) => renderFormSection(section, idx))}
+          
+          <div className={cn("flex gap-3 mt-6", getButtonAlignmentClass(buttonsAlign))}>
+            {buttons && buttons.length > 0 ? (
+              buttons.map((button, idx) => (
+                <button
+                  key={idx}
+                  type={button.type}
+                  className={cn(
+                    button.colorClass || buttonVariants[button.variant || "primary"]
+                  )}
+                  onClick={(e) => handleButtonClick(button, e)}
+                >
+                  {button.label}
+                </button>
+              ))
+            ) : (
+              <button type="submit" className={buttonVariants.primary}>
+                Submit
               </button>
-            ))
-          ) : (
-            <button type="submit" className={buttonVariants.primary}>
-              Submit
-            </button>
-          )}
+            )}
+          </div>
+        </form>
+      </div>
+    </TooltipProvider>
+  );
+};
         </div>
       </form>
     </div>
