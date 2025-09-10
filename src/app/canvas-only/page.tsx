@@ -1,21 +1,30 @@
 "use client";
+import React from "react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
 import { JSONSchemaFormViewer } from "@/components/form/json-schema-form-viewer";
 import { convertFormDefToJSONSchema, convertMultiStepFormToJSONSchema, extractFormDefFromComponent } from "@/lib/form-schema-converter";
 import { components, tools } from "@/lib/tambo";
-import { TamboProvider } from "@tambo-ai/react";
-import { useTamboThread } from "@tambo-ai/react";
+import { TamboProvider, useTamboThread } from "@tambo-ai/react";
 import { cn } from "@/lib/utils";
 
 
 function CanvasOnlyContent() {
   const searchParams = useSearchParams();
   const messageIdFromUrl = searchParams.get('messageId');
+  const threadIdFromUrl = searchParams.get('threadId');
   const [formData, setFormData] = useState({});
   const [submittedData, setSubmittedData] = useState(null);
 
-  const { thread } = useTamboThread();
+  const { thread, switchCurrentThread } = useTamboThread();
+
+  // Switch to the correct thread when component mounts
+  useEffect(() => {
+    if (threadIdFromUrl && threadIdFromUrl !== thread?.id) {
+      console.log('Switching to thread:', threadIdFromUrl);
+      switchCurrentThread(threadIdFromUrl);
+    }
+  }, [threadIdFromUrl, thread?.id, switchCurrentThread]);
 
   // Show loading state while thread is loading
   if (!thread) {
@@ -45,7 +54,7 @@ function CanvasOnlyContent() {
     
     // Extract form definition from component props
     if (React.isValidElement(component) && component.props) {
-      const props = component.props;
+      const props = component.props as any;
       
       // Check for multi-step form
       if (props.multiStep && props.multiStepFormDef) {
@@ -134,7 +143,7 @@ function CanvasOnlyContent() {
   return (
     <div className="min-h-screen w-full bg-gray-50 py-8">
       <JSONSchemaFormViewer
-        jsonSchema={jsonSchema}
+        jsonSchema={jsonSchema as any}
         uiSchema={uiSchema}
         formData={formData}
         onSubmit={handleFormSubmit}
@@ -150,25 +159,21 @@ function CanvasOnlyContent() {
 export default function CanvasOnlyPage() {
   // Get thread ID from URL parameters
   const searchParams = useSearchParams();
-  const threadId = searchParams.get('threadId') || 'default-thread';
+  const threadId = searchParams.get('threadId');
 
   useEffect(() => {
     console.log("=== CANVAS-ONLY PAGE INITIALIZATION DEBUG ===");
     console.log("Raw threadId from URL:", searchParams.get('threadId'));
-    console.log("Final threadId being used:", threadId);
-    console.log("ThreadId type:", typeof threadId);
-    console.log("ThreadId length:", threadId.length);
-    console.log("Is threadId placeholder?", threadId === 'default-thread');
+    console.log("messageId from URL:", searchParams.get('messageId'));
     console.log("All URL search params:", Object.fromEntries(searchParams.entries()));
     console.log("Current URL:", window.location.href);
-  }, [threadId, searchParams]);
+  }, [searchParams]);
 
   return (
     <TamboProvider
       apiKey={process.env.NEXT_PUBLIC_TAMBO_API_KEY!}
       components={components}
       tools={tools}
-      threadId={threadId} // Pass thread ID explicitly
     >
       <CanvasOnlyContent />
     </TamboProvider>
