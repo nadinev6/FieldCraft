@@ -339,17 +339,6 @@ const FieldComponents: Record<string, React.FC<any>> = {
   },
 };
 
-// Internal state interface for FormRenderer
-interface FormRendererState {
-  stepIndex: number;
-  collapsedGroups: Record<number, boolean>;
-  formDef?: z.infer<typeof formFieldSchema>[];
-  buttons?: z.infer<typeof buttonSchema>[];
-  buttonsAlign?: "left" | "center" | "right";
-  multiStep?: boolean;
-  multiStepFormDef?: MultiStepForm;
-}
-
 export const FormRenderer: React.FC<FormRendererProps> = ({
   formDef,
   buttons,
@@ -357,46 +346,35 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   multiStep = false,
   multiStepFormDef
 }) => {
-  // Initialize internal state
-  const [internalState, setInternalState] = useState<FormRendererState>({
-    stepIndex: 0,
-    collapsedGroups: {},
-  });
+  // Internal UI state (not controlled by Tambo)
+  const [stepIndex, setStepIndex] = useState(0);
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<number, boolean>>({});
 
-  // Use Tambo streaming props to sync incoming props with internal state
-  useTamboComponentState(
-    internalState,
-    setInternalState,
-    {
-      formDef: formDef || exampleForm,
-      buttons,
-      buttonsAlign: buttonsAlign || "right",
-      multiStep: multiStep || false,
-      multiStepFormDef,
-    }
-  );
+  // Tambo-controlled props (each managed individually)
+  const [currentFormDef] = useTamboComponentState("formDef", formDef || exampleForm);
+  const [currentButtons] = useTamboComponentState("buttons", buttons);
+  const [currentButtonsAlign] = useTamboComponentState("buttonsAlign", buttonsAlign || "right");
+  const [isMultiStep] = useTamboComponentState("multiStep", multiStep || false);
+  const [currentMultiStepFormDef] = useTamboComponentState("multiStepFormDef", multiStepFormDef);
 
   // Derive the actual form definition based on multiStep mode
   const actualFormDef = React.useMemo(() => {
-    if (internalState.multiStep && internalState.multiStepFormDef) {
-      const currentStep = internalState.multiStepFormDef.steps[internalState.stepIndex];
+    if (isMultiStep && currentMultiStepFormDef) {
+      const currentStep = currentMultiStepFormDef.steps[stepIndex];
       return currentStep?.fields || [];
     }
-    return internalState.formDef || exampleForm;
-  }, [internalState.multiStep, internalState.multiStepFormDef, internalState.stepIndex, internalState.formDef]);
+    return currentFormDef || exampleForm;
+  }, [isMultiStep, currentMultiStepFormDef, stepIndex, currentFormDef]);
 
   // Clamp step index within valid range when form definition changes
   useEffect(() => {
-    if (internalState.multiStep && internalState.multiStepFormDef) {
-      const maxSteps = internalState.multiStepFormDef.steps.length;
-      if (internalState.stepIndex >= maxSteps) {
-        setInternalState(prev => ({ 
-          ...prev, 
-          stepIndex: Math.max(0, maxSteps - 1) 
-        }));
+    if (isMultiStep && currentMultiStepFormDef) {
+      const maxSteps = currentMultiStepFormDef.steps.length;
+      if (stepIndex >= maxSteps) {
+        setStepIndex(Math.max(0, maxSteps - 1));
       }
     }
-  }, [internalState.multiStep, internalState.multiStepFormDef?.steps.length, internalState.stepIndex]);
+  }, [isMultiStep, currentMultiStepFormDef?.steps.length, stepIndex]);
 
   // Initialize collapsed groups when form definition changes
   useEffect(() => {
@@ -406,47 +384,32 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
         initialCollapsedState[idx] = section.defaultCollapsed || false;
       }
     });
-    setInternalState(prev => ({ 
-      ...prev, 
-      collapsedGroups: initialCollapsedState 
-    }));
+    setCollapsedGroups(initialCollapsedState);
   }, [actualFormDef]);
 
   const toggleGroupCollapse = (groupIndex: number) => {
-    setInternalState(prev => ({
+    setCollapsedGroups(prev => ({
       ...prev,
-      collapsedGroups: {
-        ...prev.collapsedGroups,
-        [groupIndex]: !prev.collapsedGroups[groupIndex]
-      }
+      [groupIndex]: !prev[groupIndex]
     }));
   };
 
   const handleNextStep = () => {
-    if (internalState.multiStep && internalState.multiStepFormDef) {
-      const maxSteps = internalState.multiStepFormDef.steps.length;
-      if (internalState.stepIndex < maxSteps - 1) {
-        setInternalState(prev => ({ 
-          ...prev, 
-          stepIndex: prev.stepIndex + 1 
-        }));
+    if (isMultiStep && currentMultiStepFormDef) {
+      const maxSteps = currentMultiStepFormDef.steps.length;
+      if (stepIndex < maxSteps - 1) {
+        setStepIndex(prev => prev + 1);
       }
     } else {
-      if (internalState.stepIndex < actualFormDef.length - 1) {
-        setInternalState(prev => ({ 
-          ...prev, 
-          stepIndex: prev.stepIndex + 1 
-        }));
+      if (stepIndex < actualFormDef.length - 1) {
+        setStepIndex(prev => prev + 1);
       }
     }
   };
 
   const handlePreviousStep = () => {
-    if (internalState.stepIndex > 0) {
-      setInternalState(prev => ({ 
-        ...prev, 
-        stepIndex: prev.stepIndex - 1 
-      }));
+    if (stepIndex > 0) {
+      setStepIndex(prev => prev - 1);
     }
   };
 
@@ -498,7 +461,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
         return null;
       }
       
-      const isCollapsed = internalState.collapsedGroups[idx] || false;
+      const isCollapsed = collapsedGroups[idx] || false;
       const isCollapsible = section.collapsible || false;
       
       console.log(`Rendering group "${section.label}" with ${section.fields.length} fields, columns: ${section.columns}`);
@@ -557,41 +520,42 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   };
 
   const sectionsToRender = internalState.multiStep 
-    ? [actualFormDef[internalState.stepIndex]].filter(Boolean)
+  const sectionsToRender = isMultiStep 
+    ? [actualFormDef[stepIndex]].filter(Boolean)
     : actualFormDef;
 
   const getSectionIndex = (renderIndex: number) => {
-    return internalState.multiStep ? internalState.stepIndex : renderIndex;
+    return isMultiStep ? stepIndex : renderIndex;
   };
 
   // Calculate step boundaries based on multiStep mode
   const { isFirstStep, isLastStep, totalSteps, currentStep } = React.useMemo(() => {
-    if (internalState.multiStep && internalState.multiStepFormDef) {
-      const total = internalState.multiStepFormDef.steps.length;
+    if (isMultiStep && currentMultiStepFormDef) {
+      const total = currentMultiStepFormDef.steps.length;
       return {
-        isFirstStep: internalState.stepIndex === 0,
-        isLastStep: internalState.stepIndex === total - 1,
+        isFirstStep: stepIndex === 0,
+        isLastStep: stepIndex === total - 1,
         totalSteps: total,
-        currentStep: internalState.stepIndex + 1
+        currentStep: stepIndex + 1
       };
     } else {
       const total = actualFormDef.length;
       return {
-        isFirstStep: internalState.stepIndex === 0,
-        isLastStep: internalState.stepIndex === total - 1,
+        isFirstStep: stepIndex === 0,
+        isLastStep: stepIndex === total - 1,
         totalSteps: total,
-        currentStep: internalState.stepIndex + 1
+        currentStep: stepIndex + 1
       };
     }
-  }, [internalState.multiStep, internalState.multiStepFormDef, internalState.stepIndex, actualFormDef.length]);
+  }, [isMultiStep, currentMultiStepFormDef, stepIndex, actualFormDef.length]);
 
   // Get current step info for multi-step forms
   const currentStepInfo = React.useMemo(() => {
-    if (internalState.multiStep && internalState.multiStepFormDef) {
-      return internalState.multiStepFormDef.steps[internalState.stepIndex];
+    if (isMultiStep && currentMultiStepFormDef) {
+      return currentMultiStepFormDef.steps[stepIndex];
     }
     return null;
-  }, [internalState.multiStep, internalState.multiStepFormDef, internalState.stepIndex]);
+  }, [isMultiStep, currentMultiStepFormDef, stepIndex]);
 
   return (
     <TooltipProvider>
@@ -604,16 +568,16 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">
-                Step {internalState.stepIndex + 1} of {actualFormDef.length}
+                Step {stepIndex + 1} of {actualFormDef.length}
               </span>
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                {Math.round(((internalState.stepIndex + 1) / actualFormDef.length) * 100)}%
+                {Math.round(((stepIndex + 1) / actualFormDef.length) * 100)}%
               </span>
             </div>
             <div className="w-full bg-gray-200 dark:bg-zinc-700 rounded-full h-2">
               <div 
                 className="bg-green-600 h-2 rounded-full transition-all duration-300 ease-in-out"
-                style={{ width: `${((internalState.stepIndex + 1) / actualFormDef.length) * 100}%` }}
+                style={{ width: `${((stepIndex + 1) / actualFormDef.length) * 100}%` }}
               />
             </div>
           </div>
@@ -657,9 +621,9 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
           )}
           
           {(!multiStep || isLastStep) && (
-            <div className={cn("flex gap-3 mt-6", getButtonAlignmentClass(buttonsAlign))}>
-              {buttons && buttons.length > 0 ? (
-                buttons.map((button, idx) => (
+            <div className={cn("flex gap-3 mt-6", getButtonAlignmentClass(currentButtonsAlign))}>
+              {currentButtons && currentButtons.length > 0 ? (
+                currentButtons.map((button, idx) => (
                   <button
                     key={idx}
                     type={button.type}
