@@ -331,9 +331,6 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   formDef, 
   buttons, 
   buttonsAlign,
-  backgroundColorClass,
-  backgroundGradientClass,
-  textColorClass,
   multiStep = false
 }) => {
   // Use standard React state instead of Tambo hook
@@ -508,15 +505,12 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   const isFirstStep = currentStepIndex === 0;
   const isLastStep = currentStepIndex === actualFormDef.length - 1;
 
-  const finalBackgroundClass = backgroundGradientClass || backgroundColorClass || "bg-white dark:bg-zinc-900";
-  const finalTextClass = textColorClass || "text-gray-900 dark:text-gray-100";
-
   return (
     <TooltipProvider>
       <div className={cn(
         "max-w-md mx-auto p-8 rounded-xl shadow-lg border border-gray-200 dark:border-zinc-700",
-        finalBackgroundClass,
-        finalTextClass
+        "bg-white dark:bg-zinc-900",
+        "text-gray-900 dark:text-gray-100"
       )}>
         {multiStep && (
           <div className="mb-6">

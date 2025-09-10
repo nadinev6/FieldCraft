@@ -181,9 +181,6 @@ export const formRendererPropsSchema = z.object({
   formDef: z.array(formFieldSchema).optional().describe("Array of form field definitions that define the structure and fields of the form to render"),
   buttons: z.array(buttonSchema).optional().describe("Optional array of custom buttons to render at the bottom of the form"),
   buttonsAlign: z.enum(["left", "center", "right"]).optional().default("right").describe("Global alignment for all form buttons"),
-  backgroundColorClass: z.string().optional().describe("Tailwind CSS background color class (e.g., 'bg-purple-700')"),
-  backgroundGradientClass: z.string().optional().describe("Tailwind CSS gradient class (e.g., 'bg-gradient-to-r from-purple-500 to-indigo-500')"),
-  textColorClass: z.string().optional().describe("Tailwind CSS text color class (e.g., 'text-white')"),
   multiStep: z.boolean().optional().default(false).describe("Enable multi-step form navigation where only one section is visible at a time"),
 });
 
