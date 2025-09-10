@@ -95,27 +95,90 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
 
   // Determine component to render
   const componentToRender = React.useMemo(() => {
+    console.log("=== COMPONENT TO RENDER CALCULATION ===");
     if (!thread?.messages) {
       console.log("No thread messages available");
       return null;
     }
 
+    console.log("Thread messages count:", thread.messages.length);
+    console.log("Active canvas message ID:", activeCanvasMessageId);
+    
+    // Log all messages with their renderedComponent status
+    thread.messages.forEach((msg, index) => {
+      console.log(`Message ${index}:`, {
+        id: msg.id,
+        role: msg.role,
+        hasRenderedComponent: !!msg.renderedComponent,
+        renderedComponentType: msg.renderedComponent ? 
+          (React.isValidElement(msg.renderedComponent) ? 
+            (msg.renderedComponent.type as any)?.name || 
+            (msg.renderedComponent.type as any)?.displayName || 
+            'Unknown React Element' : 
+            typeof msg.renderedComponent) : 
+          'None'
+      });
+      
+      // If this message has a renderedComponent, log its props
+      if (msg.renderedComponent && React.isValidElement(msg.renderedComponent)) {
+        const element = msg.renderedComponent as React.ReactElement;
+        console.log(`Message ${index} component props:`, element.props);
+        
+        // Specifically check for FormRenderer props
+        if (element.props.formDef) {
+          console.log(`Message ${index} formDef:`, element.props.formDef);
+        }
+        if (element.props.buttons) {
+          console.log(`Message ${index} buttons:`, element.props.buttons);
+        }
+        if (element.props.multiStep !== undefined) {
+          console.log(`Message ${index} multiStep:`, element.props.multiStep);
+        }
+        if (element.props.backgroundColorClass) {
+          console.log(`Message ${index} backgroundColorClass:`, element.props.backgroundColorClass);
+        }
+        if (element.props.backgroundGradientClass) {
+          console.log(`Message ${index} backgroundGradientClass:`, element.props.backgroundGradientClass);
+        }
+        if (element.props.textColorClass) {
+          console.log(`Message ${index} textColorClass:`, element.props.textColorClass);
+        }
+      }
+    });
+
     if (activeCanvasMessageId) {
       const activeMessage = thread.messages.find(msg => msg.id === activeCanvasMessageId);
       if (activeMessage?.renderedComponent) {
         console.log("Rendering active message component:", activeCanvasMessageId);
+        console.log("Active message component details:", {
+          isReactElement: React.isValidElement(activeMessage.renderedComponent),
+          componentType: React.isValidElement(activeMessage.renderedComponent) ? 
+            (activeMessage.renderedComponent.type as any)?.name || 
+            (activeMessage.renderedComponent.type as any)?.displayName : 
+            typeof activeMessage.renderedComponent
+        });
         return activeMessage.renderedComponent;
       }
     }
 
     // Find latest message with a component
-    const latestComponent = [...thread.messages]
+    const latestMessage = [...thread.messages]
       .reverse()
-      .find(msg => msg.renderedComponent)?.renderedComponent;
+      .find(msg => msg.renderedComponent);
 
-    if (latestComponent) {
-      console.log("Rendering latest component");
-      return latestComponent;
+    if (latestMessage?.renderedComponent) {
+      console.log("Rendering latest component from message:", latestMessage.id);
+      console.log("Latest component details:", {
+        isReactElement: React.isValidElement(latestMessage.renderedComponent),
+        componentType: React.isValidElement(latestMessage.renderedComponent) ? 
+          (latestMessage.renderedComponent.type as any)?.name || 
+          (latestMessage.renderedComponent.type as any)?.displayName : 
+          typeof latestMessage.renderedComponent
+      });
+      
+      // Log the actual component being returned
+      console.log("Component being returned:", latestMessage.renderedComponent);
+      return latestMessage.renderedComponent;
     }
 
     console.log("No components found in thread messages");
