@@ -5,8 +5,8 @@ import { z } from "zod";
 import { formFieldSchema } from "@/lib/form-field-schemas";
 import { ChevronDown, Star, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-
 import { Tooltip, TooltipProvider } from "@/components/tambo/suggestions-tooltip";
+import { multiStepForms } from '@/lib/multistep-form-definitions';
 
 // InfoPopover component for displaying disclaimer information
 const InfoPopover: React.FC<{
@@ -327,7 +327,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
   },
 };
 
-export const FormRenderer: React.FC<FormRendererProps> = ({ 
+export const FormRenderer: React.FC<FormRendererProps> = ({
   formDef, 
   buttons, 
   buttonsAlign,
@@ -336,26 +336,25 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   textColorClass,
   multiStep = false
 }) => {
-  const actualFormDef = formDef === undefined ? exampleForm : formDef;
-  
-  // DEBUG LOGS - Add comprehensive debugging
-  console.log("=== FormRenderer DEBUG ===");
-  console.log("formDef prop:", formDef);
-  console.log("actualFormDef:", actualFormDef);
-  console.log("multiStep prop:", multiStep);
-  console.log("backgroundColorClass:", backgroundColorClass);
-  console.log("backgroundGradientClass:", backgroundGradientClass);
-  console.log("textColorClass:", textColorClass);
-  console.log("buttons:", buttons);
-  console.log("buttonsAlign:", buttonsAlign);
-  
-  const [collapsedGroups, setCollapsedGroups] = useState<Record<number, boolean>>({});
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  
-  // DEBUG: Log current step and sections
-  console.log("currentStepIndex:", currentStepIndex);
-  console.log("actualFormDef.length:", actualFormDef.length);
-  
+  // Use standard React state instead of Tambo hook
+  const [state, setState] = useState({
+    stepIndex: 0,
+    collapsedGroups: {},
+    formDef: formDef === undefined ? exampleForm : formDef
+  });
+
+  const actualFormDef = state.formDef;
+
+  // Effect to clamp step index within valid range
+  useEffect(() => {
+    if (multiStep && actualFormDef.length > 0) {
+      if (state.stepIndex >= actualFormDef.length) {
+        setState(prev => ({ ...prev, stepIndex: actualFormDef.length - 1 }));
+      }
+    }
+  }, [multiStep, actualFormDef.length, state.stepIndex]);
+
+  // Initialize collapsed groups when form definition changes
   useEffect(() => {
     const initialCollapsedState: Record<number, boolean> = {};
     actualFormDef.forEach((section, idx) => {
@@ -363,16 +362,19 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
         initialCollapsedState[idx] = section.defaultCollapsed || false;
       }
     });
-    setCollapsedGroups(initialCollapsedState);
+    setState(prev => ({ ...prev, collapsedGroups: initialCollapsedState }));
   }, [actualFormDef]);
-  
+
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<number, boolean>>({});
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+
   const toggleGroupCollapse = (groupIndex: number) => {
     setCollapsedGroups(prev => ({
       ...prev,
       [groupIndex]: !prev[groupIndex]
     }));
   };
-  
+
   const handleNextStep = () => {
     console.log("handleNextStep called, current:", currentStepIndex, "max:", actualFormDef.length - 1);
     if (currentStepIndex < actualFormDef.length - 1) {
@@ -380,7 +382,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       console.log("Moving to step:", currentStepIndex + 1);
     }
   };
-  
+
   const handlePreviousStep = () => {
     console.log("handlePreviousStep called, current:", currentStepIndex);
     if (currentStepIndex > 0) {
@@ -388,7 +390,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       console.log("Moving to step:", currentStepIndex - 1);
     }
   };
-  
+
   const handleButtonClick = (button: z.infer<typeof buttonSchema>, event: React.MouseEvent<HTMLButtonElement>) => {
     if (button.action) {
       const customEvent = new CustomEvent('formButtonClick', {
@@ -402,7 +404,6 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     }
   };
 
-  // Helper function to render individual form fields (input components only)
   const renderFormField = (field: any, key: string | number) => {
     const normalizedType = normalizeFieldType(field.type);
     
@@ -417,7 +418,6 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     return <Field key={key} {...field} />;
   };
 
-  // Recursive function to render form sections (groups, dividers, or individual fields)
   const renderFormSection = (section: any, idx: number): React.ReactNode => {
     console.log(`Processing section ${idx}:`, section);
     console.log(`Section type: '${section?.type}' (typeof: ${typeof section?.type})`);
@@ -482,8 +482,6 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
               section.columns && getGridColsClass(section.columns)
             )}>
               {section.fields.map((field, fIdx) => {
-                // Recursively render each field in the group
-                // This handles nested groups, dividers, and individual fields
                 return renderFormSection(field, fIdx);
               })}
             </div>
@@ -494,49 +492,32 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       console.log(`Rendering divider: "${section.label}"`);
       return <FieldComponents.divider key={idx} {...section} />;
     } else {
-      // Handle individual fields (text, number, starRating, etc.)
       console.log(`Rendering individual field of type: '${section.type}' (normalized: '${normalizedType}')`);
       return renderFormField(section, idx);
     }
   };
-  
-  // Determine which sections to render based on multiStep mode
+
   const sectionsToRender = multiStep 
     ? [actualFormDef[currentStepIndex]].filter(Boolean)
     : actualFormDef;
-  
-  // DEBUG: Log sections to render
-  console.log("sectionsToRender:", sectionsToRender);
-  console.log("sectionsToRender.length:", sectionsToRender.length);
-  
-  // Adjust section index for collapsed groups state when in multiStep mode
+
   const getSectionIndex = (renderIndex: number) => {
     return multiStep ? currentStepIndex : renderIndex;
   };
-  
+
   const isFirstStep = currentStepIndex === 0;
   const isLastStep = currentStepIndex === actualFormDef.length - 1;
-  
-  // DEBUG: Log step states
-  console.log("isFirstStep:", isFirstStep);
-  console.log("isLastStep:", isLastStep);
-  
-  // DEBUG: Log final styling classes
+
   const finalBackgroundClass = backgroundGradientClass || backgroundColorClass || "bg-white dark:bg-zinc-900";
   const finalTextClass = textColorClass || "text-gray-900 dark:text-gray-100";
-  console.log("finalBackgroundClass:", finalBackgroundClass);
-  console.log("finalTextClass:", finalTextClass);
-  
+
   return (
     <TooltipProvider>
       <div className={cn(
         "max-w-md mx-auto p-8 rounded-xl shadow-lg border border-gray-200 dark:border-zinc-700",
-        // Apply background styling - gradient takes precedence over solid color
         finalBackgroundClass,
-        // Apply text color styling
         finalTextClass
       )}>
-        {/* Multi-step progress indicator */}
         {multiStep && (
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
@@ -555,7 +536,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             </div>
           </div>
         )}
-        
+
         <form>
           {sectionsToRender.map((section, renderIdx) => {
             const actualIdx = getSectionIndex(renderIdx);
@@ -563,7 +544,6 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             return renderFormSection(section, actualIdx);
           })}
           
-          {/* Multi-step navigation buttons */}
           {multiStep && (
             <div className="flex justify-between items-center mt-6">
               <button
@@ -594,27 +574,26 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             </div>
           )}
           
-          {/* Submit/Custom buttons - only show on last step in multiStep mode or always in regular mode */}
           {(!multiStep || isLastStep) && (
             <div className={cn("flex gap-3 mt-6", getButtonAlignmentClass(buttonsAlign))}>
-            {buttons && buttons.length > 0 ? (
-              buttons.map((button, idx) => (
-                <button
-                  key={idx}
-                  type={button.type}
-                  className={cn(
-                    button.colorClass || buttonVariants[button.variant || "primary"]
-                  )}
-                  onClick={(e) => handleButtonClick(button, e)}
-                >
-                  {button.label}
+              {buttons && buttons.length > 0 ? (
+                buttons.map((button, idx) => (
+                  <button
+                    key={idx}
+                    type={button.type}
+                    className={cn(
+                      button.colorClass || buttonVariants[button.variant || "primary"]
+                    )}
+                    onClick={(e) => handleButtonClick(button, e)}
+                  >
+                    {button.label}
+                  </button>
+                ))
+              ) : (
+                <button type="submit" className={buttonVariants.primary}>
+                  Submit
                 </button>
-              ))
-            ) : (
-              <button type="submit" className={buttonVariants.primary}>
-                Submit
-              </button>
-            )}
+              )}
             </div>
           )}
         </form>

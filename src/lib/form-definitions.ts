@@ -73,4 +73,5 @@ export const exampleForm = [
       { type: "text", label: "Field 3", name: "field3" }
     ]
   }
+  
 ];
