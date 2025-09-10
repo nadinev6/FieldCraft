@@ -157,9 +157,6 @@ export const PlaceholdersAndVanishInput = ({
     if (e.key === "Enter" && !animating) {
       vanishAndSubmit();
     }
-  };
-
-  const vanishAndSubmit = () => {
     setAnimating(true);
     draw();
     const value = inputRef.current?.value || "";
@@ -170,6 +167,9 @@ export const PlaceholdersAndVanishInput = ({
       );
       animate(maxX);
     }
+    
+    // Call onSubmit after animation starts to ensure navigation happens
+    onSubmit && onSubmit();
     
     // Call onSubmit after animation starts to ensure navigation happens
     onSubmit && onSubmit();

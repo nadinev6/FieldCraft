@@ -9,6 +9,7 @@ export default function Home() {
 
   const handleSubmit = () => {
     console.log("handleSubmit called - navigating to /chat");
+    console.log("handleSubmit called - navigating to /chat");
     router.push("/chat");
   };
 

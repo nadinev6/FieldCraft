@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { FormRenderer } from "@/components/form/form-renderer";
 import { StylingPanel } from "@/app/interactables/components/styling-panel";
+import { StylingPanel } from "@/app/interactables/components/styling-panel";
 import { useTamboThread } from "@tambo-ai/react";
 import { ExternalLink, X } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -38,6 +39,22 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const previousThreadId = useRef<string | null>(null);
 
+  // Helper function to check if component is StylingPanel
+  const isStylingPanel = (component: React.ReactNode): boolean => {
+    if (React.isValidElement(component)) {
+      const componentType = component.type as any;
+      return componentType?.displayName === 'StylingPanel' || 
+             componentType?.name === 'StylingPanel' ||
+             (componentType?.render && componentType.render.displayName === 'StylingPanel');
+    }
+    return false;
+  };
+
+  // Function to close floating panel
+  const closeFloatingPanel = () => {
+    setActiveCanvasMessageId(null);
+    setRenderedComponent(null);
+  };
   // Helper function to check if component is StylingPanel
   const isStylingPanel = (component: React.ReactNode): boolean => {
     if (React.isValidElement(component)) {
@@ -219,6 +236,9 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
   // Check if current component is StylingPanel
   const isCurrentComponentStylingPanel = componentToRender && isStylingPanel(componentToRender);
 
+  // Check if current component is StylingPanel
+  const isCurrentComponentStylingPanel = componentToRender && isStylingPanel(componentToRender);
+
   return (
     <div 
       className={cn(
@@ -227,6 +247,25 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
       )}
       data-canvas-space="true"
     >
+      {/* Fixed Position Styling Panel */}
+      {isCurrentComponentStylingPanel && (
+        <div className="absolute top-4 right-4 z-50 bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-gray-200 dark:border-neutral-700 max-w-sm">
+          <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-neutral-700">
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white">Styling Panel</h3>
+            <button
+              onClick={closeFloatingPanel}
+              className="p-1 rounded-md text-gray-400 hover:text-gray-600 dark:text-neutral-400 dark:hover:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-700 transition-colors"
+              aria-label="Close styling panel"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="p-2">
+            {componentToRender}
+          </div>
+        </div>
+      )}
+
       {/* Fixed Position Styling Panel */}
       {isCurrentComponentStylingPanel && (
         <div className="absolute top-4 right-4 z-50 bg-white dark:bg-neutral-800 rounded-lg shadow-xl border border-gray-200 dark:border-neutral-700 max-w-sm">
@@ -307,6 +346,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
         <button
           onClick={handleZoomOut}
           disabled={isCurrentComponentStylingPanel}
+          disabled={isCurrentComponentStylingPanel}
           className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
           aria-label="Zoom out"
         >
@@ -316,6 +356,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
         <button
           onClick={handleResetZoom}
           disabled={isCurrentComponentStylingPanel}
+          disabled={isCurrentComponentStylingPanel}
           className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors text-sm font-medium"
           aria-label="Reset zoom"
         >
@@ -324,6 +365,7 @@ export function CanvasSpace({ className }: CanvasSpaceProps) {
         
         <button
           onClick={handleZoomIn}
+          disabled={isCurrentComponentStylingPanel}
           disabled={isCurrentComponentStylingPanel}
           className="p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
           aria-label="Zoom in"
