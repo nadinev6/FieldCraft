@@ -22,7 +22,13 @@ function CanvasOnlyContent() {
   useEffect(() => {
     if (threadIdFromUrl && threadIdFromUrl !== thread?.id) {
       console.log('Switching to thread:', threadIdFromUrl);
-      switchCurrentThread(threadIdFromUrl);
+      console.log('Current thread ID:', thread?.id);
+      console.log('Target thread ID:', threadIdFromUrl);
+      try {
+        switchCurrentThread(threadIdFromUrl);
+      } catch (error) {
+        console.error('Error switching thread:', error);
+      }
     }
   }, [threadIdFromUrl, thread?.id, switchCurrentThread]);
 
@@ -40,8 +46,17 @@ function CanvasOnlyContent() {
 
   // Find the target message and extract form definition
   const targetMessage = useMemo(() => {
-    if (!thread?.messages || !messageIdFromUrl) return null;
-    return thread.messages.find(msg => msg.id === messageIdFromUrl);
+    if (!thread?.messages || !messageIdFromUrl) {
+      console.log('No thread messages or messageId:', { 
+        hasMessages: !!thread?.messages, 
+        messageCount: thread?.messages?.length || 0,
+        messageIdFromUrl 
+      });
+      return null;
+    }
+    const message = thread.messages.find(msg => msg.id === messageIdFromUrl);
+    console.log('Target message found:', !!message, 'Component type:', typeof message?.renderedComponent?.type === 'function' ? message?.renderedComponent?.type?.name : 'unknown');
+    return message;
   }, [thread?.messages, messageIdFromUrl]);
 
   // Convert form definition to JSON Schema
@@ -167,6 +182,8 @@ export default function CanvasOnlyPage() {
     console.log("messageId from URL:", searchParams.get('messageId'));
     console.log("All URL search params:", Object.fromEntries(searchParams.entries()));
     console.log("Current URL:", window.location.href);
+    console.log("Components registered:", components.map(c => c.name));
+    console.log("FormRenderer in registry:", components.find(c => c.name === 'FormRenderer') ? 'YES' : 'NO');
   }, [searchParams]);
 
   return (
