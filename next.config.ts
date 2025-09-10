@@ -8,12 +8,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: false,
   },
-  // Development server configuration
-  ...(process.env.NODE_ENV === 'development' && {
-    devIndicators: {
-      buildActivity: false,
-    },
-  }),
+  // Development server configuration removed - devIndicators.buildActivity is deprecated
 };
 
 export default nextConfig;
