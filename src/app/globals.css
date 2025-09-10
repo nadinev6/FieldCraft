@@ -107,10 +107,10 @@
   --container: oklch(0.15 0 0); /* neutral-800 equivalent */
   --backdrop: oklch(0.15 0 0 / 0.25);
   --muted-backdrop: oklch(0.15 0 0 / 0.1);
-  --dot-color: oklch(0.64 0 0 / 0.7); /* neutral-400 equivalent */
+  --dot-color: oklch(0.6 0.08 150 / 0.7); /* green dots for canvas */
   --message-border-dark: oklch(1 0 0 / 15%);
   --container-border-dark: oklch(1 0 0 / 10%);
-  --user-message-bubble: oklch(0.25 0 0); /* neutral-700 equivalent */
+  --user-message-bubble: oklch(88.5% 0.08 150); /* mint green user messages */
   --dark-gradient-background: linear-gradient(135deg, oklch(0.09 0 0) 0%, oklch(0.15 0 0) 100%);
   --radius: 0.5rem;
   --panel-left-width: 500px;

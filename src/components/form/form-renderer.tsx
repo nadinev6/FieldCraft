@@ -560,7 +560,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     <TooltipProvider>
       <div className={cn(
         "max-w-md mx-auto p-8 rounded-xl shadow-lg border border-gray-200 dark:border-zinc-700",
-        "bg-white dark:bg-zinc-900",
+        "bg-white", // Always white background for forms
         "text-gray-900 dark:text-gray-100"
       )}>
         {multiStep && (
