@@ -151,7 +151,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
   checkbox: ({ label, name, ...props }) => (
     <div className="mb-4">
       <div className="flex items-center">
-        <input type="checkbox" id={name} name={name} className="mr-3 w-4 h-4 accent-blue-600 dark:accent-blue-500" {...props} />
+        <input type="checkbox" id={name} name={name} className="mr-3 w-4 h-4 accent-green-600 dark:accent-green-500" {...props} />
         <label htmlFor={name} className="text-sm font-medium text-gray-700 dark:text-gray-200">{label}</label>
       </div>
     </div>
@@ -199,7 +199,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
                   id={`${name}-${option.value}`}
                   name={name}
                   value={option.value}
-                  className="mr-3 w-4 h-4 accent-blue-600 dark:accent-blue-500"
+                  className="mr-3 w-4 h-4 accent-green-600 dark:accent-green-500"
                   disabled={option.disabled}
                   defaultChecked={option.value === defaultValue} // Use defaultChecked for initial state
                   {...props}
@@ -256,7 +256,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
               <button
                 key={starValue}
                 type="button"
-                className="p-1 hover:scale-110 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                className="p-1 hover:scale-110 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-green-500 rounded"
                 onClick={() => handleStarClick(starValue)}
                 onMouseEnter={() => handleStarHover(starValue)}
                 aria-label={`Rate ${starValue} out of ${maxRating} stars`}
@@ -612,7 +612,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             </div>
             <div className="w-full bg-gray-200 dark:bg-zinc-700 rounded-full h-2">
               <div 
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-in-out"
+                className="bg-green-600 h-2 rounded-full transition-all duration-300 ease-in-out"
                 style={{ width: `${((internalState.stepIndex + 1) / actualFormDef.length) * 100}%` }}
               />
             </div>
@@ -647,7 +647,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
                 <button
                   type="button"
                   onClick={handleNextStep}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all duration-200 dark:bg-blue-500 dark:hover:bg-blue-600"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 transition-all duration-200 dark:bg-green-500 dark:hover:bg-green-600"
                 >
                   Next
                   <ChevronRight className="w-4 h-4" />

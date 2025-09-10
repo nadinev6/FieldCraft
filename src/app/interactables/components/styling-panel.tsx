@@ -105,7 +105,7 @@ function StylingPanelBase(props: StylingPanelProps) {
                   value={styles.backgroundColor || ""}
                   onChange={(e) => handleChange("backgroundColor", e.target.value)}
                   placeholder="#ffffff"
-                  className={`flex-1 px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-gray-100 ${
+                  className={`flex-1 px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-zinc-700 dark:text-gray-100 ${
                     updatedFields.has("backgroundColor") ? "animate-pulse" : ""
                   }`}
                 />
@@ -129,7 +129,7 @@ function StylingPanelBase(props: StylingPanelProps) {
                   value={styles.textColor || ""}
                   onChange={(e) => handleChange("textColor", e.target.value)}
                   placeholder="#000000"
-                  className={`flex-1 px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-gray-100 ${
+                  className={`flex-1 px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-zinc-700 dark:text-gray-100 ${
                     updatedFields.has("textColor") ? "animate-pulse" : ""
                   }`}
                 />
@@ -153,7 +153,7 @@ function StylingPanelBase(props: StylingPanelProps) {
                   value={styles.borderColor || ""}
                   onChange={(e) => handleChange("borderColor", e.target.value)}
                   placeholder="#e5e7eb"
-                  className={`flex-1 px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-gray-100 ${
+                  className={`flex-1 px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-zinc-700 dark:text-gray-100 ${
                     updatedFields.has("borderColor") ? "animate-pulse" : ""
                   }`}
                 />
@@ -176,7 +176,7 @@ function StylingPanelBase(props: StylingPanelProps) {
                 max="72"
                 value={styles.fontSize || 16}
                 onChange={(e) => handleChange("fontSize", parseInt(e.target.value))}
-                className={`w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-gray-100 ${
+                className={`w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-zinc-700 dark:text-gray-100 ${
                   updatedFields.has("fontSize") ? "animate-pulse" : ""
                 }`}
               />
@@ -188,7 +188,7 @@ function StylingPanelBase(props: StylingPanelProps) {
               <select
                 value={styles.fontFamily || "Arial, sans-serif"}
                 onChange={(e) => handleChange("fontFamily", e.target.value)}
-                className={`w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-gray-100 ${
+                className={`w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-zinc-700 dark:text-gray-100 ${
                   updatedFields.has("fontFamily") ? "animate-pulse" : ""
                 }`}
               >
@@ -218,7 +218,7 @@ function StylingPanelBase(props: StylingPanelProps) {
                 max="50"
                 value={styles.borderRadius || 8}
                 onChange={(e) => handleChange("borderRadius", parseInt(e.target.value))}
-                className={`w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-gray-100 ${
+                className={`w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-zinc-700 dark:text-gray-100 ${
                   updatedFields.has("borderRadius") ? "animate-pulse" : ""
                 }`}
               />
@@ -233,7 +233,7 @@ function StylingPanelBase(props: StylingPanelProps) {
                 max="10"
                 value={styles.borderWidth || 1}
                 onChange={(e) => handleChange("borderWidth", parseInt(e.target.value))}
-                className={`w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-gray-100 ${
+                className={`w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-zinc-700 dark:text-gray-100 ${
                   updatedFields.has("borderWidth") ? "animate-pulse" : ""
                 }`}
               />
@@ -248,7 +248,7 @@ function StylingPanelBase(props: StylingPanelProps) {
                 max="100"
                 value={styles.padding || 16}
                 onChange={(e) => handleChange("padding", parseInt(e.target.value))}
-                className={`w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-gray-100 ${
+                className={`w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-zinc-700 dark:text-gray-100 ${
                   updatedFields.has("padding") ? "animate-pulse" : ""
                 }`}
               />
@@ -263,7 +263,7 @@ function StylingPanelBase(props: StylingPanelProps) {
                 max="100"
                 value={styles.margin || 8}
                 onChange={(e) => handleChange("margin", parseInt(e.target.value))}
-                className={`w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-gray-100 ${
+                className={`w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-zinc-700 dark:text-gray-100 ${
                   updatedFields.has("margin") ? "animate-pulse" : ""
                 }`}
               />

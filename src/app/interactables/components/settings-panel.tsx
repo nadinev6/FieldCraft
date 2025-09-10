@@ -179,7 +179,7 @@ function SettingsPanelBase(props: SettingsProps) {
                     },
                   })
                 }
-                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
               />
               <span className="ml-2 text-sm text-gray-700">
                 Email notifications
@@ -201,7 +201,7 @@ function SettingsPanelBase(props: SettingsProps) {
                     },
                   })
                 }
-                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
               />
               <span className="ml-2 text-sm text-gray-700">
                 Push notifications
@@ -223,7 +223,7 @@ function SettingsPanelBase(props: SettingsProps) {
                     },
                   })
                 }
-                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
               />
               <span className="ml-2 text-sm text-gray-700">
                 SMS notifications
@@ -247,7 +247,7 @@ function SettingsPanelBase(props: SettingsProps) {
                     theme: e.target.value as "light" | "dark" | "system",
                   })
                 }
-                className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${
                   updatedFields.has("theme") ? "animate-pulse" : ""
                 }`}
               >
@@ -267,7 +267,7 @@ function SettingsPanelBase(props: SettingsProps) {
                     language: e.target.value as "en" | "es" | "fr" | "de",
                   })
                 }
-                className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${
                   updatedFields.has("language") ? "animate-pulse" : ""
                 }`}
               >
@@ -302,7 +302,7 @@ function SettingsPanelBase(props: SettingsProps) {
                     },
                   })
                 }
-                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
               />
               <span className="ml-2 text-sm text-gray-700">
                 Share usage analytics
@@ -326,7 +326,7 @@ function SettingsPanelBase(props: SettingsProps) {
                     },
                   })
                 }
-                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
               />
               <span className="ml-2 text-sm text-gray-700">
                 Enable personalization

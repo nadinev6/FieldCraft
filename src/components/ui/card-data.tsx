@@ -114,7 +114,7 @@ export const DataCard = React.forwardRef<HTMLDivElement, DataCardProps>(
                     className={cn(
                       "w-4 h-4 border rounded-sm flex items-center justify-center transition-colors",
                       state && state.selectedValues.includes(card.value)
-                        ? "bg-blue-500 border-blue-500 text-white"
+                        ? "bg-green-500 border-green-500 text-white"
                         : "border-gray-200 hover:border-gray-300",
                     )}
                   >
@@ -133,11 +133,11 @@ export const DataCard = React.forwardRef<HTMLDivElement, DataCardProps>(
                 >
                   <h3
                     className={cn(
-                      "text-blue-600 font-medium text-sm",
-                      "group-hover:text-blue-700",
+                      "text-green-600 font-medium text-sm",
+                      "group-hover:text-green-700",
                       state &&
                         state.selectedValues.includes(card.value) &&
-                        "text-blue-700",
+                        "text-green-700",
                     )}
                   >
                     {card.label}
