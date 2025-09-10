@@ -157,6 +157,14 @@ export const PlaceholdersAndVanishInput = ({
     if (e.key === "Enter" && !animating) {
       vanishAndSubmit();
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    vanishAndSubmit();
+  };
+
+  const vanishAndSubmit = () => {
     setAnimating(true);
     draw();
     const value = inputRef.current?.value || "";
@@ -169,15 +177,11 @@ export const PlaceholdersAndVanishInput = ({
     }
     
     // Call onSubmit after animation starts to ensure navigation happens
-    onSubmit && onSubmit();
-    
-    // Call onSubmit after animation starts to ensure navigation happens
-    onSubmit && onSubmit();
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    vanishAndSubmit();
+    if (onSubmit) {
+      setTimeout(() => {
+        onSubmit();
+      }, 100);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
