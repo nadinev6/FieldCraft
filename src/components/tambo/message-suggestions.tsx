@@ -337,13 +337,13 @@ const MessageSuggestionsList = React.forwardRef<
               <button
                 className={cn(
                   "py-2 px-2.5 rounded-xl text-xs transition-all duration-200",
-                  "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200",
-                  "shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_1px_3px_rgba(0,0,0,0.1),0_1px_2px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_1px_3px_rgba(0,0,0,0.2),0_1px_2px_rgba(0,0,0,0.1)]",
+                  "bg-neutral-900 dark:bg-neutral-800 text-white",
+                  "shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_1px_3px_rgba(0,0,0,0.2),0_1px_2px_rgba(0,0,0,0.1)]",
                   isGenerating
                     ? "opacity-60 cursor-not-allowed"
                     : selectedSuggestionId === suggestion.id
-                      ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-                      : "hover:bg-gray-50 dark:hover:bg-gray-700 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] dark:active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] active:translate-y-[0.5px]",
+                      ? "bg-neutral-700 text-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                      : "hover:bg-neutral-800 dark:hover:bg-neutral-700 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] active:translate-y-[0.5px]",
                 )}
                 onClick={async () =>
                   !isGenerating && (await accept({ suggestion }))
@@ -360,7 +360,7 @@ const MessageSuggestionsList = React.forwardRef<
           placeholders.map((_, index) => (
             <div
               key={`placeholder-${index}`}
-              className="py-2 px-2.5 rounded-xl text-xs bg-gray-100 dark:bg-gray-800 text-transparent animate-pulse shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_1px_3px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_1px_3px_rgba(0,0,0,0.2)]"
+              className="py-2 px-2.5 rounded-xl text-xs bg-neutral-900 dark:bg-neutral-800 text-transparent animate-pulse shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_1px_3px_rgba(0,0,0,0.2)]"
               data-placeholder-index={index}
             >
               <span className="invisible">Placeholder</span>

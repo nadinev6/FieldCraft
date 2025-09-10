@@ -559,9 +559,9 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   return (
     <TooltipProvider>
       <div className={cn(
-        "max-w-md mx-auto p-8 rounded-xl shadow-lg border border-gray-200 dark:border-zinc-700",
+        "max-w-md mx-auto p-8 rounded-xl shadow-lg border border-gray-200",
         "bg-white", // Always white background for forms
-        "text-gray-900 dark:text-gray-100"
+        "text-gray-900"
       )}>
         {multiStep && (
           <div className="mb-6">
@@ -569,13 +569,13 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
               <span className="text-sm font-medium">
                 Step {stepIndex + 1} of {actualFormDef.length}
               </span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-gray-500">
                 {Math.round(((stepIndex + 1) / actualFormDef.length) * 100)}%
               </span>
             </div>
-            <div className="w-full bg-gray-200 dark:bg-zinc-700 rounded-full h-2">
+            <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
-                className="bg-green-600 h-2 rounded-full transition-all duration-300 ease-in-out"
+                className="bg-gray-900 h-2 rounded-full transition-all duration-300 ease-in-out"
                 style={{ width: `${((stepIndex + 1) / actualFormDef.length) * 100}%` }}
               />
             </div>
