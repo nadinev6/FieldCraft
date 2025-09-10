@@ -75,7 +75,17 @@ export const formRendererPropsSchema = z.object({
     })).min(1).describe("Array of form steps, each containing fields"),
     allowStepSkipping: z.boolean().optional().default(false).describe("Whether users can skip steps or must complete them in order"),
     showStepNumbers: z.boolean().optional().default(true).describe("Whether to show step numbers in the progress indicator"),
-  })).optional().describe("Multi-step form definition with steps containing fields"),
+  })).optional().describe("Multi-step form configuration with steps, each containing fields"),
+  // Styling properties for AI-controlled form appearance
+  backgroundColor: z.string().optional().describe("Background color (hex, rgb, or CSS color name)"),
+  textColor: z.string().optional().describe("Text color (hex, rgb, or CSS color name)"),
+  fontSize: z.number().min(8).max(72).optional().describe("Font size in pixels"),
+  fontFamily: z.string().optional().describe("Font family name"),
+  borderRadius: z.number().min(0).max(50).optional().describe("Border radius in pixels"),
+  padding: z.number().min(0).max(100).optional().describe("Padding in pixels"),
+  margin: z.number().min(0).max(100).optional().describe("Margin in pixels"),
+  borderWidth: z.number().min(0).max(10).optional().describe("Border width in pixels"),
+  borderColor: z.string().optional().describe("Border color (hex, rgb, or CSS color name)"),
 });
 
 export type FormRendererProps = z.infer<typeof formRendererPropsSchema>;
@@ -295,10 +305,10 @@ const FieldComponents: Record<string, React.FC<any>> = {
   verticalDivider: () => (
     <div className="w-px bg-gray-300 dark:bg-zinc-700 mx-4 self-stretch"></div>
   ),
-  heading: ({ text, level = "h2", alignment = "left", className, ...props }) => {
-    const HeadingTag = level as keyof JSX.IntrinsicElements;
+  heading: ({ text, level = "h2", alignment = "left", className, ...props }: any) => {
+    const HeadingTag = level as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
     const alignmentClass = alignment === "center" ? "text-center" : alignment === "right" ? "text-right" : "text-left";
-    const levelClasses = {
+    const levelClasses: Record<string, string> = {
       h1: "text-3xl font-bold mb-6 mt-8",
       h2: "text-2xl font-bold mb-4 mt-6", 
       h3: "text-xl font-semibold mb-3 mt-5",
@@ -307,18 +317,18 @@ const FieldComponents: Record<string, React.FC<any>> = {
       h6: "text-sm font-medium mb-2 mt-2"
     };
     
-    return (
-      <HeadingTag 
-        className={cn(
+    return React.createElement(
+      HeadingTag,
+      {
+        className: cn(
           levelClasses[level],
           alignmentClass,
           "text-gray-900 dark:text-gray-200",
           className
-        )}
-        {...props}
-      >
-        {text}
-      </HeadingTag>
+        ),
+        ...props
+      },
+      text
     );
   },
   paragraph: ({ text, alignment = "left", className, ...props }) => {
@@ -523,7 +533,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
               section.columns && "grid gap-x-4 items-start",
               section.columns && getGridColsClass(section.columns)
             )}>
-              {section.fields.map((field, fIdx) => {
+              {section.fields.map((field: any, fIdx: number) => {
                 return renderFormSection(field, fIdx);
               })}
             </div>
@@ -678,7 +688,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
                     key={idx}
                     type={button.type}
                     className={cn(
-                      button.colorClass || buttonVariants[button.variant || "primary"]
+                      buttonVariants[button.variant || "primary"]
                     )}
                     onClick={(e) => handleButtonClick(button, e)}
                   >
