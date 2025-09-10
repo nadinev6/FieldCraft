@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: false,
   },
-  // Development server configuration removed - devIndicators.buildActivity is deprecated
 };
 
 export default nextConfig;
