@@ -10,7 +10,8 @@
 
 import { Graph, graphSchema } from "@/components/tambo/graph";
 import { DataCard, dataCardSchema } from "@/components/ui/card-data";
-import { FormRenderer, formRendererPropsSchema } from "@/components/form/form-renderer";
+import { FormRenderer } from "@/components/form/form-renderer";
+import { formRendererPropsSchema } from "@/lib/form-field-schemas";
 import { ThemeSwitcher, themeSwitcherSchema } from "@/components/theme-switcher";
 import { Logo, logoSchema } from "@/components/tambo/logo";
 import {

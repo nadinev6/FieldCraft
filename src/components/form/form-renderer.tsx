@@ -65,43 +65,6 @@ const buttonVariants = {
   danger: "px-6 py-3 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-all duration-200",
 };
 
-// Button schema for custom buttons
-const buttonSchema = z.object({
-  label: z.string().describe("The text displayed on the button"),
-  type: z.enum(["submit", "button", "reset"]).optional().default("button").describe("The HTML button type"),
-  variant: z.enum(["primary", "secondary", "outline", "danger"]).optional().default("primary").describe("The visual style variant of the button"),
-  action: z.string().optional().describe("Optional action identifier for handling button clicks"),
-});
-
-// Zod schema for FormRenderer props
-export const formRendererPropsSchema = z.object({
-  formDef: z.array(formFieldSchema).optional().describe("Array of form field definitions that define the structure and fields of the form to render"),
-  buttons: z.array(buttonSchema).optional().describe("Optional array of custom buttons to render at the bottom of the form"),
-  buttonsAlign: z.enum(["left", "center", "right"]).optional().default("right").describe("Global alignment for all form buttons"),
-  multiStep: z.boolean().optional().default(false).describe("Enable multi-step form navigation where only one section is visible at a time"),
-  multiStepFormDef: z.lazy(() => z.object({
-    steps: z.array(z.object({
-      title: z.string().describe("Title of the form step"),
-      description: z.string().optional().describe("Optional description for the step"),
-      fields: z.array(formFieldSchema).describe("Array of form fields for this step"),
-    })).min(1).describe("Array of form steps, each containing fields"),
-    allowStepSkipping: z.boolean().optional().default(false).describe("Whether users can skip steps or must complete them in order"),
-    showStepNumbers: z.boolean().optional().default(true).describe("Whether to show step numbers in the progress indicator"),
-  })).optional().describe("Multi-step form configuration with steps, each containing fields"),
-  // Styling properties for AI-controlled form appearance
-  backgroundColor: z.string().optional().describe("Background color (hex, rgb, or CSS color name)"),
-  textColor: z.string().optional().describe("Text color (hex, rgb, or CSS color name)"),
-  fontSize: z.number().min(8).max(72).optional().describe("Font size in pixels"),
-  fontFamily: z.string().optional().describe("Font family name"),
-  borderRadius: z.number().min(0).max(50).optional().describe("Border radius in pixels"),
-  padding: z.number().min(0).max(100).optional().describe("Padding in pixels"),
-  margin: z.number().min(0).max(100).optional().describe("Margin in pixels"),
-  borderWidth: z.number().min(0).max(10).optional().describe("Border width in pixels"),
-  borderColor: z.string().optional().describe("Border color (hex, rgb, or CSS color name)"),
-});
-
-export type FormRendererProps = z.infer<typeof formRendererPropsSchema>;
-
 // Helper function to get explicit Tailwind grid column classes
 const getGridColsClass = (columns?: number) => {
   switch (columns) {
