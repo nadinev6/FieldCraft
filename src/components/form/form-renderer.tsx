@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+"use client";
+
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTamboComponentState } from "@tambo-ai/react";
 import { exampleForm } from "@/lib/form-definitions";
@@ -283,9 +285,6 @@ const FieldComponents: Record<string, React.FC<any>> = {
               </button>
             );
           })}
-          <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
-            {rating > 0 ? `${rating}/${maxRating}` : 'No rating'}
-          </span>
         </div>
         <input
           type="hidden"
@@ -305,7 +304,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
   verticalDivider: () => (
     <div className="w-px bg-gray-300 dark:bg-zinc-700 mx-4 self-stretch"></div>
   ),
-  heading: ({ text, level = "h2", alignment = "left", className, ...props }: any) => {
+  heading: ({ text, level = "h2", alignment = "left", className, backgroundColor, textColor, ...props }: any) => {
     const HeadingTag = level as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
     const alignmentClass = alignment === "center" ? "text-center" : alignment === "right" ? "text-right" : "text-left";
     const levelClasses: Record<string, string> = {
@@ -317,6 +316,14 @@ const FieldComponents: Record<string, React.FC<any>> = {
       h6: "text-sm font-medium mb-2 mt-2"
     };
     
+    const dynamicStyles: React.CSSProperties = {};
+    if (backgroundColor) {
+      dynamicStyles.backgroundColor = backgroundColor;
+      dynamicStyles.padding = '0.75rem';
+      dynamicStyles.borderRadius = '0.375rem';
+    }
+    if (textColor) dynamicStyles.color = textColor;
+    
     return React.createElement(
       HeadingTag,
       {
@@ -326,25 +333,126 @@ const FieldComponents: Record<string, React.FC<any>> = {
           "text-gray-900 dark:text-gray-200",
           className
         ),
+        style: dynamicStyles,
         ...props
       },
       text
     );
   },
-  paragraph: ({ text, alignment = "left", className, ...props }) => {
+  paragraph: ({ text, alignment = "left", className, backgroundColor, textColor, ...props }) => {
     const alignmentClass = alignment === "center" ? "text-center" : alignment === "right" ? "text-right" : "text-left";
+    
+    const dynamicStyles: React.CSSProperties = {};
+    if (backgroundColor) dynamicStyles.backgroundColor = backgroundColor;
+    if (textColor) dynamicStyles.color = textColor;
     
     return (
       <p 
         className={cn(
-          "mb-4 text-gray-700 dark:text-gray-200 leading-relaxed",
+          "mb-4 text-gray-700 dark:text-gray-200 leading-relaxed px-3 py-2 rounded",
           alignmentClass,
           className
         )}
+        style={dynamicStyles}
         {...props}
       >
         {text}
       </p>
+    );
+  },
+  file: ({ label, name, accept = "image/*", ...props }) => {
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        setSelectedFile(file);
+        
+        // Create preview for images
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            setPreviewUrl(e.target?.result as string);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          setPreviewUrl(null);
+        }
+      }
+    };
+    
+    const handleRemoveFile = () => {
+      setSelectedFile(null);
+      setPreviewUrl(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    };
+    
+    return (
+      <div className="mb-4">
+        <label className={baseLabelClass}>{label}</label>
+        <div className="space-y-4">
+          <div className="flex items-center justify-center w-full">
+            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                </svg>
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Click to upload</span> or drag and drop
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF</p>
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                id={name}
+                name={name}
+                accept={accept}
+                className="hidden"
+                onChange={handleFileChange}
+                {...props}
+              />
+            </label>
+          </div>
+          
+          {selectedFile && (
+            <div className="mt-4 p-4 border border-gray-200 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  {previewUrl && (
+                    <img 
+                      src={previewUrl} 
+                      alt="Preview" 
+                      className="w-12 h-12 object-cover rounded"
+                    />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {selectedFile.name}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRemoveFile}
+                  className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     );
   },
 };

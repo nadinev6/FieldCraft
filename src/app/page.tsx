@@ -15,10 +15,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen p-8 flex flex-col items-center justify-center relative bg-gradient-to-b from-[#7FFFC3]/25 via-transparent to-transparent">
-      {/* Theme Switcher in top-right corner */}
-      <div className="absolute top-8 right-8 z-10">
-        <ThemeSwitcher />
-      </div>
+      {/* Theme Switcher - now draggable */}
+      <ThemeSwitcher />
       
 
       {/* Main Content */}
