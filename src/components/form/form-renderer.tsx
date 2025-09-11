@@ -46,11 +46,19 @@ const getBaseInputClass = (backgroundColor?: string, textColor?: string) => {
     return baseClass;
   }
   return `${baseClass} bg-[var(--form-field-background)] text-[var(--form-field-text-color)]`;
+  if (backgroundColor || textColor) {
+    return baseClass;
+  }
+  return `${baseClass} bg-[var(--form-field-background)] text-[var(--form-field-text-color)]`;
 };
 
 // Base label styling
 const getBaseLabelClass = (textColor?: string) => {
   const baseClass = "block mb-2 font-medium text-sm";
+  if (textColor) {
+    return baseClass;
+  }
+  return `${baseClass} text-[var(--form-label-text-color)]`;
   if (textColor) {
     return baseClass;
   }
@@ -629,6 +637,15 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   margin,
   borderWidth,
   borderColor
+  backgroundColor,
+  textColor,
+  fontSize,
+  fontFamily,
+  borderRadius,
+  padding,
+  margin,
+  borderWidth,
+  borderColor
 }) => {
   // Internal UI state (not controlled by Tambo)
   const [stepIndex, setStepIndex] = useState(0);
@@ -640,6 +657,17 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   const [currentButtonsAlign] = useTamboComponentState("buttonsAlign", buttonsAlign || "right");
   const [isMultiStep] = useTamboComponentState("multiStep", multiStep || false);
   const [currentMultiStepFormDef] = useTamboComponentState("multiStepFormDef", multiStepFormDef);
+  
+  // Tambo-controlled styling props
+  const [currentBackgroundColor] = useTamboComponentState("backgroundColor", backgroundColor);
+  const [currentTextColor] = useTamboComponentState("textColor", textColor);
+  const [currentFontSize] = useTamboComponentState("fontSize", fontSize);
+  const [currentFontFamily] = useTamboComponentState("fontFamily", fontFamily);
+  const [currentBorderRadius] = useTamboComponentState("borderRadius", borderRadius);
+  const [currentPadding] = useTamboComponentState("padding", padding);
+  const [currentMargin] = useTamboComponentState("margin", margin);
+  const [currentBorderWidth] = useTamboComponentState("borderWidth", borderWidth);
+  const [currentBorderColor] = useTamboComponentState("borderColor", borderColor);
   
   // Tambo-controlled styling props
   const [currentBackgroundColor] = useTamboComponentState("backgroundColor", backgroundColor);
@@ -800,6 +828,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             )}>
               {section.fields.map((field: any, fIdx: number) => {
                 const processedField = { ...field, backgroundColor: currentBackgroundColor, textColor: currentTextColor };
+                const processedField = { ...field, backgroundColor: currentBackgroundColor, textColor: currentTextColor };
                 return renderFormSection(processedField, fIdx);
               })}
             </div>
@@ -820,6 +849,36 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   const getSectionIndex = (renderIndex: number) => {
     return renderIndex;
   };
+
+  // Generate dynamic styles from Tambo-controlled props
+  const dynamicStyles: React.CSSProperties = React.useMemo(() => {
+    const styles: React.CSSProperties = {};
+    
+    if (currentBackgroundColor) styles.backgroundColor = currentBackgroundColor;
+    if (currentTextColor) styles.color = currentTextColor;
+    if (currentFontSize) styles.fontSize = `${currentFontSize}px`;
+    if (currentFontFamily) styles.fontFamily = currentFontFamily;
+    if (currentBorderRadius) styles.borderRadius = `${currentBorderRadius}px`;
+    if (currentPadding) styles.padding = `${currentPadding}px`;
+    if (currentMargin) styles.margin = `${currentMargin}px`;
+    if (currentBorderWidth) {
+      styles.borderWidth = `${currentBorderWidth}px`;
+      styles.borderStyle = 'solid';
+    }
+    if (currentBorderColor) styles.borderColor = currentBorderColor;
+    
+    return styles;
+  }, [
+    currentBackgroundColor,
+    currentTextColor,
+    currentFontSize,
+    currentFontFamily,
+    currentBorderRadius,
+    currentPadding,
+    currentMargin,
+    currentBorderWidth,
+    currentBorderColor
+  ]);
 
   // Calculate step boundaries based on multiStep mode
   const { isFirstStep, isLastStep, totalSteps, currentStep } = React.useMemo(() => {
@@ -886,6 +945,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
         "bg-white", // Always white background for forms
         "text-gray-900"
       )}
+      style={dynamicStyles}
       style={dynamicStyles}
       >
         {isMultiStep && (
