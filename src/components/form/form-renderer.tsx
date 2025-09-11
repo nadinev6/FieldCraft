@@ -620,11 +620,15 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   buttonsAlign,
   multiStep = false,
   multiStepFormDef,
-  borderColor,
+  backgroundColor,
+  textColor,
+  fontSize,
+  fontFamily,
   borderRadius,
   padding,
   margin,
   borderWidth,
+  borderColor,
 }) => {
   // Internal UI state (not controlled by Tambo)
   const [stepIndex, setStepIndex] = useState(0);
