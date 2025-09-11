@@ -75,6 +75,11 @@
   --panel-left-width: 500px;
   --panel-right-width: 500px;
   --sidebar-width: 3rem;
+
+  /* Form field styling variables */
+  --form-field-background: oklch(1 0 0);
+  --form-field-text-color: oklch(0.14 0 285);
+  --form-label-text-color: oklch(0.31 0.02 150);
 }
 
 .dark {
@@ -116,6 +121,11 @@
   --panel-left-width: 500px;
   --panel-right-width: 500px;
   --sidebar-width: 3rem;
+
+  /* Form field styling variables for dark mode */
+  --form-field-background: oklch(0.15 0 0);
+  --form-field-text-color: oklch(1 0 0);
+  --form-label-text-color: oklch(0.64 0 0);
 }
 
 @layer base {

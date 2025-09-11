@@ -40,12 +40,22 @@ const InfoPopover: React.FC<{
 };
 
 // Base input styling
-const baseInputClass =
-  "w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200";
+const getBaseInputClass = (backgroundColor?: string, textColor?: string) => {
+  const baseClass = "w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200";
+  if (backgroundColor || textColor) {
+    return baseClass;
+  }
+  return `${baseClass} bg-[var(--form-field-background)] text-[var(--form-field-text-color)]`;
+};
 
 // Base label styling
-const baseLabelClass =
-  "block mb-2 font-medium text-gray-700 dark:text-gray-200 text-sm";
+const getBaseLabelClass = (textColor?: string) => {
+  const baseClass = "block mb-2 font-medium text-sm";
+  if (textColor) {
+    return baseClass;
+  }
+  return `${baseClass} text-[var(--form-label-text-color)]`;
+};
 
 // Button styling variants
 const buttonVariants = {
@@ -127,27 +137,59 @@ const getButtonAlignmentClass = (alignment?: "left" | "center" | "right") => {
 
 // Individual field components
 const FieldComponents: Record<string, React.FC<any>> = {
-  text: ({ label, name, ...props }) => (
+  text: ({ label, name, backgroundColor, textColor, ...props }) => {
+    const inputStyle: React.CSSProperties = {};
+    if (backgroundColor) inputStyle.backgroundColor = backgroundColor;
+    if (textColor) inputStyle.color = textColor;
+    
+    const labelStyle: React.CSSProperties = {};
+    if (textColor) labelStyle.color = textColor;
+    
+    return (
     <div className="mb-4">
-      <label htmlFor={name} className={baseLabelClass}>{label}</label>
-      <input type="text" id={name} name={name} className={baseInputClass} {...props} />
+      <label htmlFor={name} className={getBaseLabelClass(textColor)} style={labelStyle}>{label}</label>
+      <input type="text" id={name} name={name} className={getBaseInputClass(backgroundColor, textColor)} style={inputStyle} {...props} />
     </div>
-  ),
-  email: ({ label, name, ...props }) => (
+  )},
+  email: ({ label, name, backgroundColor, textColor, ...props }) => {
+    const inputStyle: React.CSSProperties = {};
+    if (backgroundColor) inputStyle.backgroundColor = backgroundColor;
+    if (textColor) inputStyle.color = textColor;
+    
+    const labelStyle: React.CSSProperties = {};
+    if (textColor) labelStyle.color = textColor;
+    
+    return (
     <div className="mb-4">
-      <label htmlFor={name} className={baseLabelClass}>{label}</label>
-      <input type="email" id={name} name={name} className={baseInputClass} {...props} />
+      <label htmlFor={name} className={getBaseLabelClass(textColor)} style={labelStyle}>{label}</label>
+      <input type="email" id={name} name={name} className={getBaseInputClass(backgroundColor, textColor)} style={inputStyle} {...props} />
     </div>
-  ),
-  password: ({ label, name, ...props }) => (
+  )},
+  password: ({ label, name, backgroundColor, textColor, ...props }) => {
+    const inputStyle: React.CSSProperties = {};
+    if (backgroundColor) inputStyle.backgroundColor = backgroundColor;
+    if (textColor) inputStyle.color = textColor;
+    
+    const labelStyle: React.CSSProperties = {};
+    if (textColor) labelStyle.color = textColor;
+    
+    return (
     <div className="mb-4">
-      <label htmlFor={name} className={baseLabelClass}>{label}</label>
-      <input type="password" id={name} name={name} className={baseInputClass} {...props} />
+      <label htmlFor={name} className={getBaseLabelClass(textColor)} style={labelStyle}>{label}</label>
+      <input type="password" id={name} name={name} className={getBaseInputClass(backgroundColor, textColor)} style={inputStyle} {...props} />
     </div>
-  ),
-  number: ({ label, name, min, max, step, ...props }) => (
+  )},
+  number: ({ label, name, min, max, step, backgroundColor, textColor, ...props }) => {
+    const inputStyle: React.CSSProperties = {};
+    if (backgroundColor) inputStyle.backgroundColor = backgroundColor;
+    if (textColor) inputStyle.color = textColor;
+    
+    const labelStyle: React.CSSProperties = {};
+    if (textColor) labelStyle.color = textColor;
+    
+    return (
     <div className="mb-4">
-      <label htmlFor={name} className={baseLabelClass}>{label}</label>
+      <label htmlFor={name} className={getBaseLabelClass(textColor)} style={labelStyle}>{label}</label>
       <input 
         type="number" 
         id={name} 
@@ -155,23 +197,36 @@ const FieldComponents: Record<string, React.FC<any>> = {
         min={min}
         max={max}
         step={step}
-        className={baseInputClass} 
+        className={getBaseInputClass(backgroundColor, textColor)}
+        style={inputStyle}
         {...props} 
       />
     </div>
-  ),
-  checkbox: ({ label, name, ...props }) => (
+  )},
+  checkbox: ({ label, name, textColor, ...props }) => {
+    const labelStyle: React.CSSProperties = {};
+    if (textColor) labelStyle.color = textColor;
+    
+    return (
     <div className="mb-4">
       <div className="flex items-center">
         <input type="checkbox" id={name} name={name} className="mr-3 w-4 h-4 accent-gray-600" {...props} />
-        <label htmlFor={name} className="text-sm font-medium text-gray-700">{label}</label>
+        <label htmlFor={name} className="text-sm font-medium text-[var(--form-label-text-color)]" style={labelStyle}>{label}</label>
       </div>
     </div>
-  ),
-  select: ({ label, name, options, ...props }) => (
+  )},
+  select: ({ label, name, options, backgroundColor, textColor, ...props }) => {
+    const selectStyle: React.CSSProperties = {};
+    if (backgroundColor) selectStyle.backgroundColor = backgroundColor;
+    if (textColor) selectStyle.color = textColor;
+    
+    const labelStyle: React.CSSProperties = {};
+    if (textColor) labelStyle.color = textColor;
+    
+    return (
     <div className="mb-4">
-      <label htmlFor={name} className={baseLabelClass}>{label}</label>
-      <select id={name} name={name} className={baseInputClass} {...props}>
+      <label htmlFor={name} className={getBaseLabelClass(textColor)} style={labelStyle}>{label}</label>
+      <select id={name} name={name} className={getBaseInputClass(backgroundColor, textColor)} style={selectStyle} {...props}>
         {options?.map((option: any, idx: number) => (
           <option key={idx} value={option.value} disabled={option.disabled}>
             {option.label}
@@ -179,30 +234,50 @@ const FieldComponents: Record<string, React.FC<any>> = {
         ))}
       </select>
     </div>
-  ),
-  textarea: ({ label, name, rows = 4, ...props }) => (
+  )},
+  textarea: ({ label, name, rows = 4, backgroundColor, textColor, ...props }) => {
+    const textareaStyle: React.CSSProperties = {};
+    if (backgroundColor) textareaStyle.backgroundColor = backgroundColor;
+    if (textColor) textareaStyle.color = textColor;
+    
+    const labelStyle: React.CSSProperties = {};
+    if (textColor) labelStyle.color = textColor;
+    
+    return (
     <div className="mb-4">
-      <label htmlFor={name} className={baseLabelClass}>{label}</label>
+      <label htmlFor={name} className={getBaseLabelClass(textColor)} style={labelStyle}>{label}</label>
       <textarea
         id={name}
         name={name}
         rows={rows}
-        className={baseInputClass}
+        className={getBaseInputClass(backgroundColor, textColor)}
+        style={textareaStyle}
         {...props}
       />
     </div>
-  ),
-  date: ({ label, name, ...props }) => (
+  )},
+  date: ({ label, name, backgroundColor, textColor, ...props }) => {
+    const inputStyle: React.CSSProperties = {};
+    if (backgroundColor) inputStyle.backgroundColor = backgroundColor;
+    if (textColor) inputStyle.color = textColor;
+    
+    const labelStyle: React.CSSProperties = {};
+    if (textColor) labelStyle.color = textColor;
+    
+    return (
     <div className="mb-4">
-      <label htmlFor={name} className={baseLabelClass}>{label}</label>
-      <input type="date" id={name} name={name} className={baseInputClass} {...props} />
+      <label htmlFor={name} className={getBaseLabelClass(textColor)} style={labelStyle}>{label}</label>
+      <input type="date" id={name} name={name} className={getBaseInputClass(backgroundColor, textColor)} style={inputStyle} {...props} />
     </div>
-  ),
-  radio: ({ label, name, options, defaultValue, ...props }) => {
+  )},
+  radio: ({ label, name, options, defaultValue, textColor, ...props }) => {
+    const labelStyle: React.CSSProperties = {};
+    if (textColor) labelStyle.color = textColor;
+    
     return (
       <div className="mb-4">
         <fieldset>
-          <legend className={baseLabelClass}>{label}</legend>
+          <legend className={getBaseLabelClass(textColor)} style={labelStyle}>{label}</legend>
           <div className="space-y-2">
             {options?.map((option: any, idx: number) => (
               <div key={`${name}-${option.value}`} className="flex items-center">
@@ -216,7 +291,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
                   defaultChecked={option.value === defaultValue} // Use defaultChecked for initial state
                   {...props}
                 />
-                <label htmlFor={`${name}-${option.value}`} className="text-sm text-gray-700 dark:text-gray-200">
+                <label htmlFor={`${name}-${option.value}`} className="text-sm text-[var(--form-label-text-color)]" style={labelStyle}>
                   {option.label}
                 </label>
               </div>
@@ -226,9 +301,15 @@ const FieldComponents: Record<string, React.FC<any>> = {
       </div>
     );
   },
-  starRating: ({ label, name, maxRating = 5, defaultValue = 0, allowHalf = false, ...props }) => {
+  starRating: ({ label, name, maxRating = 5, defaultValue = 0, allowHalf = false, textColor, ...props }) => {
     const [rating, setRating] = useState(defaultValue);
     const [hoverRating, setHoverRating] = useState(0);
+    
+    const labelStyle: React.CSSProperties = {};
+    if (textColor) labelStyle.color = textColor;
+    
+    const ratingTextStyle: React.CSSProperties = {};
+    if (textColor) ratingTextStyle.color = textColor;
     
     const handleStarClick = (starValue: number) => {
       setRating(starValue);
@@ -258,8 +339,8 @@ const FieldComponents: Record<string, React.FC<any>> = {
     
     return (
       <div className="mb-4">
-        <label className={baseLabelClass}>{label}</label>
-        <div className="flex items-center gap-1" onMouseLeave={handleMouseLeave}>
+        <label className={getBaseLabelClass(textColor)} style={labelStyle}>{label}</label>
+        <div className="flex items-center gap-3" onMouseLeave={handleMouseLeave}>
           {Array.from({ length: maxRating }, (_, index) => {
             const starValue = index + 1;
             const fillType = getStarFill(starValue);
@@ -285,11 +366,78 @@ const FieldComponents: Record<string, React.FC<any>> = {
               </button>
             );
           })}
+          <span className="text-sm font-medium text-[var(--form-label-text-color)]" style={ratingTextStyle}>
+            {rating} / {maxRating}
+          </span>
         </div>
         <input
           type="hidden"
           name={name}
           defaultValue={rating}
+          {...props}
+        />
+      </div>
+    );
+  },
+  boxRating: ({ label, name, maxRating = 10, defaultValue = 0, minLabel, maxLabel, textColor, ...props }) => {
+    const [rating, setRating] = useState(defaultValue);
+    
+    const labelStyle: React.CSSProperties = {};
+    if (textColor) labelStyle.color = textColor;
+    
+    const handleBoxClick = (value: number) => {
+      setRating(value);
+    };
+    
+    return (
+      <div className="mb-4">
+        <label className={getBaseLabelClass(textColor)} style={labelStyle}>{label}</label>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            {minLabel && (
+              <span className="text-xs text-[var(--form-label-text-color)] flex-shrink-0" style={labelStyle}>
+                {minLabel}
+              </span>
+            )}
+            <div className="flex items-center gap-1 flex-wrap justify-center">
+              {Array.from({ length: maxRating + 1 }, (_, index) => {
+                const value = index;
+                const isSelected = rating === value;
+                
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    className={cn(
+                      "w-10 h-10 border-2 rounded-md font-medium text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500",
+                      isSelected
+                        ? "bg-gray-900 text-white border-gray-900"
+                        : "bg-white text-gray-700 border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                    )}
+                    onClick={() => handleBoxClick(value)}
+                    aria-label={`Rate ${value} out of ${maxRating}`}
+                  >
+                    {value}
+                  </button>
+                );
+              })}
+            </div>
+            {maxLabel && (
+              <span className="text-xs text-[var(--form-label-text-color)] flex-shrink-0" style={labelStyle}>
+                {maxLabel}
+              </span>
+            )}
+          </div>
+          <div className="text-center">
+            <span className="text-sm font-medium text-[var(--form-label-text-color)]" style={labelStyle}>
+              Selected: {rating}
+            </span>
+          </div>
+        </div>
+        <input
+          type="hidden"
+          name={name}
+          value={rating}
           {...props}
         />
       </div>
@@ -360,7 +508,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
       </p>
     );
   },
-  file: ({ label, name, accept = "*/*", ...props }) => {
+  file: ({ label, name, accept = "*/*", textColor, ...props }) => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -391,9 +539,12 @@ const FieldComponents: Record<string, React.FC<any>> = {
       }
     };
     
+    const labelStyle: React.CSSProperties = {};
+    if (textColor) labelStyle.color = textColor;
+    
     return (
       <div className="mb-4">
-        <label className={baseLabelClass}>{label}</label>
+        <label className={getBaseLabelClass(textColor)} style={labelStyle}>{label}</label>
         <div className="space-y-4">
           <div className="flex items-center justify-center w-full">
             <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
@@ -581,7 +732,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       return null;
     }
     
-    return <Field key={key} {...field} />;
+    return <Field key={key} {...field} backgroundColor={currentBackgroundColor} textColor={currentTextColor} />;
   };
 
   const renderFormSection = (section: any, idx: number): React.ReactNode => {
@@ -648,7 +799,8 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
               section.columns && getGridColsClass(section.columns)
             )}>
               {section.fields.map((field: any, fIdx: number) => {
-                return renderFormSection(field, fIdx);
+                const processedField = { ...field, backgroundColor: currentBackgroundColor, textColor: currentTextColor };
+                return renderFormSection(processedField, fIdx);
               })}
             </div>
           </div>

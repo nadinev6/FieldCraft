@@ -132,6 +132,18 @@ export const starRatingFieldSchema = z.object({
   allowHalf: z.boolean().optional().default(false),
 });
 
+// Box rating field schema
+export const boxRatingFieldSchema = z.object({
+  type: z.literal("boxRating"),
+  label: z.string(),
+  name: z.string(),
+  maxRating: z.number().min(1).max(10).optional().default(10),
+  required: z.boolean().optional(),
+  defaultValue: z.number().min(0).optional(),
+  minLabel: z.string().optional().describe("Label for the minimum rating (e.g., 'Least Likely')"),
+  maxLabel: z.string().optional().describe("Label for the maximum rating (e.g., 'Most Likely')"),
+});
+
 // Heading field schema
 export const headingFieldSchema = z.object({
   type: z.literal("heading"),
@@ -162,6 +174,7 @@ export const formFieldSchema = z.union([
   dividerFieldSchema,
   verticalDividerFieldSchema,
   starRatingFieldSchema,
+  boxRatingFieldSchema,
   headingFieldSchema,
   paragraphFieldSchema,
 ]);
