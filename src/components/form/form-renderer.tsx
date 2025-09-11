@@ -795,8 +795,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
               section.columns && getGridColsClass(section.columns)
             )}>
               {section.fields.map((field: any, fIdx: number) => {
-                const processedField = { ...field, backgroundColor: currentBackgroundColor, textColor: currentTextColor };
-                return renderFormSection(processedField, fIdx);
+                return renderFormField(field, fIdx);
               })}
             </div>
           </div>
