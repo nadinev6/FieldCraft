@@ -549,12 +549,10 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     }
   };
 
-  const sectionsToRender = isMultiStep 
-    ? [actualFormDef[stepIndex]].filter(Boolean)
-    : actualFormDef;
+  const sectionsToRender = actualFormDef;
 
   const getSectionIndex = (renderIndex: number) => {
-    return isMultiStep ? stepIndex : renderIndex;
+    return renderIndex;
   };
 
   // Calculate step boundaries based on multiStep mode
@@ -665,7 +663,10 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             {/* Spacer for button alignment when no previous button */}
             {isMultiStep && isFirstStep && <div></div>}
             
-            <div className="flex gap-3">
+            <div className={cn(
+              "flex gap-3",
+              !isMultiStep || isLastStep ? getButtonAlignmentClass(currentButtonsAlign) : "justify-end"
+            )}>
               {isMultiStep && !isLastStep ? (
                 <button
                   type="button"
