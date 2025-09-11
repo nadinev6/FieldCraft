@@ -728,7 +728,14 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       return null;
     }
     
-    return <Field key={key} {...field} backgroundColor={currentBackgroundColor} textColor={currentTextColor} />;
+    return <Field 
+      key={key} 
+      {...field} 
+      backgroundColor={currentBackgroundColor} 
+      textColor={currentTextColor}
+      fontSize={currentFontSize}
+      fontFamily={currentFontFamily}
+    />;
   };
 
   const renderFormSection = (section: any, idx: number): React.ReactNode => {
