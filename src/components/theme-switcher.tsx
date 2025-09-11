@@ -70,46 +70,10 @@ function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
 
   const [isMounted, setIsMounted] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     setIsMounted(true);
-    // Set initial position to top-right corner
-    setPosition({ x: window.innerWidth - 120, y: 32 });
   }, []);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setDragStart({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y
-    });
-  };
-
-  const handleMouseMove = (e: MouseEvent) => {
-    if (isDragging) {
-      const newX = Math.max(0, Math.min(window.innerWidth - 96, e.clientX - dragStart.x));
-      const newY = Math.max(0, Math.min(window.innerHeight - 32, e.clientY - dragStart.y));
-      setPosition({ x: newX, y: newY });
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDragging, dragStart]);
 
   if (!isMounted) {
     return <div className="flex h-8 w-24" />;
@@ -121,16 +85,8 @@ function ThemeSwitcher() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="inline-flex items-center overflow-hidden rounded-full bg-white ring-1 ring-zinc-200 ring-inset dark:bg-zinc-950 dark:ring-zinc-700 shadow-lg cursor-move"
-      style={{
-        position: 'fixed',
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        zIndex: 50,
-        userSelect: 'none'
-      }}
+      className="fixed top-8 right-8 z-50 inline-flex items-center overflow-hidden rounded-full bg-white ring-1 ring-zinc-200 ring-inset dark:bg-zinc-950 dark:ring-zinc-700"
       role="radiogroup"
-      onMouseDown={handleMouseDown}
     >
       {THEME_OPTIONS.map((option) => (
         <ThemeOption

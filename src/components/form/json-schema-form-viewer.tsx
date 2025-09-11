@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Form from '@rjsf/core';
 import validator from '@rjsf/validator-ajv8';
-import type { RJSFSchema, UiSchema, FormProps } from '@rjsf/utils';
+import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 import { cn } from '@/lib/utils';
 
 // Star Rating Widget Component
@@ -63,9 +63,6 @@ const StarRatingWidget: React.FC<any> = (props) => {
           </button>
         );
       })}
-      <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
-        {value}/{maxRating}
-      </span>
     </div>
   );
 };

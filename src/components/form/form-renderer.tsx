@@ -360,7 +360,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
       </p>
     );
   },
-  file: ({ label, name, accept = "image/*", ...props }) => {
+  file: ({ label, name, accept = "*/*", ...props }) => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -404,7 +404,7 @@ const FieldComponents: Record<string, React.FC<any>> = {
                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                   <span className="font-semibold">Click to upload</span> or drag and drop
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Images, Documents, PDFs, and more</p>
               </div>
               <input
                 ref={fileInputRef}
@@ -423,12 +423,18 @@ const FieldComponents: Record<string, React.FC<any>> = {
             <div className="mt-4 p-4 border border-gray-200 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  {previewUrl && (
+                  {previewUrl ? (
                     <img 
                       src={previewUrl} 
                       alt="Preview" 
                       className="w-12 h-12 object-cover rounded"
                     />
+                  ) : (
+                    <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center">
+                      <svg className="w-6 h-6 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
                   )}
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -756,7 +762,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             return renderFormSection(section, actualIdx);
           })}
           
-          <div className="flex justify-between items-center mt-6">
+          <div className="flex items-center justify-center gap-4 mt-6">
             {isMultiStep && !isFirstStep && (
               <button
                 type="button"
@@ -768,8 +774,6 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
               </button>
             )}
             
-            {/* Spacer for button alignment when no previous button */}
-            {isMultiStep && isFirstStep && <div></div>}
             
             <div className={cn(
               "flex gap-3",
