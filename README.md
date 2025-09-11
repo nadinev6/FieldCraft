@@ -1,7 +1,5 @@
 # FieldCraft
 
-[![Demo of FieldCraft](https://img.youtube.com/vi/W7i0ZMEhVFw/0.jpg)](https://www.youtube.com/watch?v=W7i0ZMEhVFw)
-
 FieldCraft is Cursor for Form Builders powered by Tambo AI, designed for the TamboHack. It uses Next.js, React, TypeScript, Tailwind CSS, and Zod for schema validation. This README will guide you through the architecture and file structure so you can replicate or extend the app.
 
 ---
