@@ -206,16 +206,6 @@ export const formRendererPropsSchema = z.object({
   margin: z.number().min(0).max(100).optional().describe("Margin in pixels"),
   borderWidth: z.number().min(0).max(10).optional().describe("Border width in pixels"),
   borderColor: z.string().optional().describe("Border color (hex, rgb, or CSS color name)"),
-  // Styling properties for AI-controlled form appearance
-  backgroundColor: z.string().optional().describe("Background color (hex, rgb, or CSS color name)"),
-  textColor: z.string().optional().describe("Text color (hex, rgb, or CSS color name)"),
-  fontSize: z.number().min(8).max(72).optional().describe("Font size in pixels"),
-  fontFamily: z.string().optional().describe("Font family name"),
-  borderRadius: z.number().min(0).max(50).optional().describe("Border radius in pixels"),
-  padding: z.number().min(0).max(100).optional().describe("Padding in pixels"),
-  margin: z.number().min(0).max(100).optional().describe("Margin in pixels"),
-  borderWidth: z.number().min(0).max(10).optional().describe("Border width in pixels"),
-  borderColor: z.string().optional().describe("Border color (hex, rgb, or CSS color name)"),
 });
 
 // Form step schema for multi-step forms
