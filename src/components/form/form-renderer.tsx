@@ -618,7 +618,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   return (
     <TooltipProvider>
       <div className={cn(
-        "max-w-md mx-auto p-8 rounded-xl shadow-lg border border-gray-200",
+        "w-full max-w-2xl mx-auto p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200",
         "bg-white", // Always white background for forms
         "text-gray-900"
       )}
@@ -628,16 +628,16 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">
-                Step {stepIndex + 1} of {actualFormDef.length}
+                Step {currentStep} of {totalSteps}
               </span>
               <span className="text-sm text-gray-500">
-                {Math.round(((stepIndex + 1) / actualFormDef.length) * 100)}%
+                {Math.round((currentStep / totalSteps) * 100)}%
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
               <div 
                 className="bg-gray-900 h-2 rounded-full transition-all duration-300 ease-in-out"
-                style={{ width: `${((stepIndex + 1) / actualFormDef.length) * 100}%` }}
+                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
               />
             </div>
           </div>
@@ -650,58 +650,56 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             return renderFormSection(section, actualIdx);
           })}
           
-          {isMultiStep && (
-            <div className="flex justify-between items-center mt-6">
+          <div className="flex justify-between items-center mt-6">
+            {isMultiStep && !isFirstStep && (
               <button
                 type="button"
                 onClick={handlePreviousStep}
-                disabled={isFirstStep}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200",
-                  isFirstStep 
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-zinc-800 dark:text-zinc-600" 
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600"
-                )}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition-all duration-200 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Previous
               </button>
-              
-              {!isLastStep ? (
+            )}
+            
+            {/* Spacer for button alignment when no previous button */}
+            {isMultiStep && isFirstStep && <div></div>}
+            
+            <div className="flex gap-3">
+              {isMultiStep && !isLastStep ? (
                 <button
                   type="button"
                   onClick={handleNextStep}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 transition-all duration-200 dark:bg-green-500 dark:hover:bg-green-600"
+                  className="flex items-center gap-2 px-6 py-3 rounded-lg bg-gray-900 text-white font-medium hover:bg-gray-800 transition-all duration-200"
                 >
                   Next
                   <ChevronRight className="w-4 h-4" />
                 </button>
-              ) : null}
-            </div>
-          )}
-          
-          {(!isMultiStep || isLastStep) && (
-            <div className={cn("flex gap-3 mt-6", getButtonAlignmentClass(currentButtonsAlign))}>
-              {currentButtons && currentButtons.length > 0 ? (
-                currentButtons.map((button, idx) => (
-                  <button
-                    key={idx}
-                    type={button.type}
-                    className={cn(
-                      buttonVariants[button.variant || "primary"]
-                    )}
-                    onClick={(e) => handleButtonClick(button, e)}
-                  >
-                    {button.label}
-                  </button>
-                ))
               ) : (
-                <button type="submit" className={buttonVariants.primary}>
-                  Submit
-                </button>
+                // Show submit button on last step or for non-multistep forms
+                <>
+                  {currentButtons && currentButtons.length > 0 ? (
+                    currentButtons.map((button, idx) => (
+                      <button
+                        key={idx}
+                        type={button.type}
+                        className={cn(
+                          buttonVariants[button.variant || "primary"]
+                        )}
+                        onClick={(e) => handleButtonClick(button, e)}
+                      >
+                        {button.label}
+                      </button>
+                    ))
+                  ) : (
+                    <button type="submit" className={buttonVariants.primary}>
+                      Submit
+                    </button>
+                  )}
+                </>
               )}
             </div>
-          )}
+          </div>
         </form>
       </div>
     </TooltipProvider>
