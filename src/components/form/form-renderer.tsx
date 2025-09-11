@@ -653,7 +653,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
               <button
                 type="button"
                 onClick={handlePreviousStep}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition-all duration-200 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600"
+                className="flex items-center gap-2 px-6 py-3 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition-all duration-200 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Previous
@@ -680,20 +680,34 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
                 // Show submit button on last step or for non-multistep forms
                 <>
                   {currentButtons && currentButtons.length > 0 ? (
-                    currentButtons.map((button, idx) => (
-                      <button
-                        key={idx}
-                        type={button.type}
-                        className={cn(
-                          buttonVariants[button.variant || "primary"]
-                        )}
-                        onClick={(e) => handleButtonClick(button, e)}
-                      >
-                        {button.label}
-                      </button>
-                    ))
+                    currentButtons
+                      .filter(button => {
+                        // Filter out navigation buttons on multistep forms
+                        if (isMultiStep) {
+                          const label = button.label.toLowerCase();
+                          return !label.includes('previous') && !label.includes('next');
+                        }
+                        return true;
+                      })
+                      .map((button, idx) => (
+                        <button
+                          key={idx}
+                          type={button.type}
+                          className={cn(
+                            "px-6 py-3 rounded-lg font-medium transition-all duration-200",
+                            button.variant === "primary" ? "bg-gray-900 text-white hover:bg-gray-800" :
+                            button.variant === "secondary" ? "bg-gray-200 text-gray-800 hover:bg-gray-300" :
+                            button.variant === "outline" ? "border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50" :
+                            button.variant === "danger" ? "bg-red-600 text-white hover:bg-red-700" :
+                            "bg-gray-900 text-white hover:bg-gray-800"
+                          )}
+                          onClick={(e) => handleButtonClick(button, e)}
+                        >
+                          {button.label}
+                        </button>
+                      ))
                   ) : (
-                    <button type="submit" className={buttonVariants.primary}>
+                    <button type="submit" className="px-6 py-3 rounded-lg bg-gray-900 text-white font-medium hover:bg-gray-800 transition-all duration-200">
                       Submit
                     </button>
                   )}
