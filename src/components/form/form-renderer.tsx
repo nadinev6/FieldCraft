@@ -619,6 +619,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   buttons,
   buttonsAlign,
   multiStep = false,
+  multiStepFormDef,
   borderColor,
   borderRadius,
   padding,
